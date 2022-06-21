@@ -2,18 +2,22 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { QuestionDto } from './dto/question.dto';
 import { SelectionDto } from './dto/selection.dto';
+import { Alcohol } from './entities/alcohol.entity';
 import { Question } from './entities/question.entity';
 import { Selection } from './entities/selection.entity';
 import { QuestionRepository } from './question.repository';
 import { SelectionRepository } from './selection.repository';
+import { AlcoholRepository } from './alcohol.repository';
 
 @Injectable()
 export class QuestionService {
     constructor(
         @InjectRepository(QuestionRepository)
         @InjectRepository(SelectionRepository)
+        @InjectRepository(AlcoholRepository)
         private questionRepository: QuestionRepository,
         private selectionRepository: SelectionRepository,
+        private alcoholRepository: AlcoholRepository,
     ){}
 
     // 작품 리스트 조회
@@ -80,5 +84,24 @@ export class QuestionService {
     async deleteSelection(id: number): Promise<void> {
         const result = await this.selectionRepository.delete(id);
         console.log(result);
+    }
+
+
+    /////// 술
+
+    // 술 리스트 조회
+    async getAlcoholList(): Promise <Alcohol[]> {
+        return await this.alcoholRepository.find();
+    }
+
+    // 술 조회
+    async getAlcoholById(id: number): Promise<Alcohol> {
+        const found = await this.alcoholRepository.findOne(id);
+
+        if (!found) {
+            throw new NotFoundException(`Cant't find question with id ${id}`);
+        }
+
+        return found;
     }
 }

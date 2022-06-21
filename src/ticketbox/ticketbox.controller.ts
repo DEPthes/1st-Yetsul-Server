@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { ApiCreatedResponse, ApiOperation } from '@nestjs/swagger';
 import { QuestionDto } from './dto/question.dto';
 import { SelectionDto } from './dto/selection.dto';
+import { Alcohol } from './entities/alcohol.entity';
 import { Question } from './entities/question.entity';
 import { Selection } from './entities/selection.entity';
 import { QuestionService } from './ticketbox.service';
@@ -91,5 +92,23 @@ export class QuestionController {
     deleteArt(@Param('id') id: number): Promise<void> {
         return this.questionService.deleteSelection(id);
     }
+
+    ///////// 술
+
+    // 술 리스트 조회
+    @Get('/alcohols')
+    getAlcoholList(): Promise<Alcohol[]> {
+        return this.questionService.getAlcoholList();
+    }
+
+    // 개별 술 조회
+    @Get('/alcohol/:id')
+    @ApiOperation({ summary: 'id로 술 조회 API', description: 'id로 술 조회' })
+    @ApiCreatedResponse({ description: 'id로 술 조회', type: Alcohol })
+    getAlcoholById(@Param('id') id: number): Promise<Alcohol> {
+        return this.questionService.getAlcoholById(id);
+    }
+
+    
     
 }

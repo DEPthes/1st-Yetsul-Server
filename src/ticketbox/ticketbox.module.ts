@@ -5,10 +5,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { QuestionRepository } from './question.repository';
 import { NestjsFormDataModule } from 'nestjs-form-data';
 import { SelectionRepository } from './selection.repository';
+import { AlcoholRepository } from './alcohol.repository';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([QuestionRepository, SelectionRepository]), NestjsFormDataModule
+    TypeOrmModule.forFeature([QuestionRepository, SelectionRepository, AlcoholRepository]), NestjsFormDataModule
   ],
   controllers: [QuestionController],
   providers: [QuestionService]
