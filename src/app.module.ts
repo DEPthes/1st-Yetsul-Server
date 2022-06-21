@@ -1,11 +1,14 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { QuestionModule } from './ticketbox/question.module';
-import { SelectionModule } from './selection/selection.module';
+import { QuestionModule } from './ticketbox/ticketbox.module';
+import { typeORMConfig } from './config/typeorm.config';
 
 @Module({
-  imports: [QuestionModule, SelectionModule],
+  imports: [
+    TypeOrmModule.forRoot(typeORMConfig), 
+    QuestionModule],
   controllers: [AppController],
   providers: [AppService],
 })
