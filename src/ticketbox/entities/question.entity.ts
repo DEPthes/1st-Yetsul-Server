@@ -6,8 +6,5 @@ export class Question extends BaseEntity {
     question_id: number;
 
     @Column()
-    question : string;
-
-
-
+    questionContent: string;
 }
