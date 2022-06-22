@@ -10,7 +10,7 @@ import { SelectionRepository } from './selection.repository';
 import { AlcoholRepository } from './alcohol.repository';
 
 @Injectable()
-export class QuestionService {
+export class TicketboxService {
     constructor(
         @InjectRepository(QuestionRepository)
         @InjectRepository(SelectionRepository)
@@ -20,12 +20,12 @@ export class QuestionService {
         private alcoholRepository: AlcoholRepository,
     ){}
 
-    // 작품 리스트 조회
+    // 질문 리스트 조회
     async getQuestionList(): Promise <Question[]> {
         return await this.questionRepository.find();
     }
 
-    // 작품 업로드
+    // 질문 업로드
     async uploadQuestion(questionDto: QuestionDto): Promise<Question> {
         return this.questionRepository.uploadQuestion(questionDto);
     }
@@ -52,19 +52,18 @@ export class QuestionService {
         console.log(result);
     }
 
-    ////////////// 답안
 
-    // 답안 리스트 조회
+    // 선택지 리스트 조회
     async getSelectionList(): Promise <Selection[]> {
         return await this.selectionRepository.find();
     }
 
-    // 답안 업로드
+    // 선택지 업로드
     async uploadSelection(selectionDto: SelectionDto): Promise<Selection> {
         return this.selectionRepository.uploadSelection(selectionDto);
     }
 
-    // 답안 조회
+    // 선택지 조회
     async getSelectionById(id: number): Promise<Selection> {
         const found = await this.selectionRepository.findOne(id);
 
@@ -75,12 +74,12 @@ export class QuestionService {
         return found;
     }
 
-    // 답안 수정
+    // 선택지 수정
     async updateSelection(id: number, newSelection: SelectionDto): Promise<Selection> {
         return this.selectionRepository.updateSelection(id, newSelection);
     }
 
-    // 답안 삭제
+    // 선택지 삭제
     async deleteSelection(id: number): Promise<void> {
         const result = await this.selectionRepository.delete(id);
         console.log(result);
