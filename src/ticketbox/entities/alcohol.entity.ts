@@ -6,35 +6,40 @@ export class Alcohol extends BaseEntity {
     @PrimaryGeneratedColumn() 
     id: number;
     
-    @Column('character varying', {nullable: true})
-    //@Column()
+    @Column()
     AlcoholName: string;
 
-    @Column({nullable: true})
-    //@Column()
+    @Column()
     category: string;
 
-    @Column({nullable: true})
+    // 도수
+    @Column()
     AlcoholByVolume: number;
 
-    @Column({nullable: true})
+    // 달달함
+    @Column()
     sweet: boolean;
 
-    @Column({nullable: true})
+    // 씁쓸함
+    @Column()
     bitter: boolean;
 
-    @Column({nullable: true})
+    // 상큼함
+    @Column()
     refreshing: boolean;
 
-    @Column({nullable: true})
+    // 깔끔함
+    @Column()
     clean: boolean;
 
-    @Column({nullable: true})
-    fresh: boolean;
+    // 청량함
+    @Column()
+    cool: boolean;
 
-    @Column({nullable: true})
+    // 새콤달콤함
+    @Column()
     sour: boolean;
 
-    @Column({nullable: true})
+    @Column()
     description: string;
 }
