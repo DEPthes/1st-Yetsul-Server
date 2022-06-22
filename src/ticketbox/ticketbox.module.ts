@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { QuestionService } from './ticketbox.service';
+import { TicketboxService } from './ticketbox.service';
 import { QuestionController } from './ticketbox.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { QuestionRepository } from './question.repository';
@@ -12,6 +12,6 @@ import { AlcoholRepository } from './alcohol.repository';
     TypeOrmModule.forFeature([QuestionRepository, SelectionRepository, AlcoholRepository]), NestjsFormDataModule
   ],
   controllers: [QuestionController],
-  providers: [QuestionService]
+  providers: [TicketboxService]
 })
 export class QuestionModule {}
