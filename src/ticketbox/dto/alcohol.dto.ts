@@ -7,24 +7,31 @@ export class AlcoholDto {
     @IsString() 
     category: string;
 
+    // 도수
     @IsInt()
     AlcoholByVolume: number;
 
+    // 달달함
     @IsBoolean()
     sweet: boolean;
 
+    // 씁슬함
     @IsBoolean()
     bitter: boolean;
 
+    // 상큼함
     @IsBoolean()
     refreshing: boolean;
 
+    // 깔끔함
     @IsBoolean()
     clean: boolean;
 
+    // 청량함
     @IsBoolean()
-    fresh: boolean;
+    cool: boolean;
 
+    // 새콤달콤
     @IsBoolean()
     sour: boolean;
 
