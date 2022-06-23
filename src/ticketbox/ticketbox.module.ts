@@ -1,17 +1,16 @@
 import { Module } from '@nestjs/common';
 import { TicketboxService } from './ticketbox.service';
-import { QuestionController } from './ticketbox.controller';
+import { TicketboxController } from './ticketbox.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { QuestionRepository } from './question.repository';
 import { NestjsFormDataModule } from 'nestjs-form-data';
-import { SelectionRepository } from './selection.repository';
-import { AlcoholRepository } from './alcohol.repository';
+import { QuestionRepository } from 'src/admin/question/question.repository';
+import { SelectionRepository } from 'src/admin/selection/selection.repository';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([QuestionRepository, SelectionRepository, AlcoholRepository]), NestjsFormDataModule
+    TypeOrmModule.forFeature([QuestionRepository, SelectionRepository]), NestjsFormDataModule
   ],
-  controllers: [QuestionController],
+  controllers: [TicketboxController],
   providers: [TicketboxService]
 })
 export class QuestionModule {}
