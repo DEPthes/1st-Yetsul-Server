@@ -1,5 +1,4 @@
 import { EntityRepository, Repository } from "typeorm";
-import { QuestionDto } from "./dto/question.dto";
 import { SelectionDto } from "./dto/selection.dto";
 import { Selection } from "./entities/selection.entity";
 

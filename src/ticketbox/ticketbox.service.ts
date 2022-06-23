@@ -1,33 +1,42 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { QuestionDto } from './dto/question.dto';
-import { SelectionDto } from './dto/selection.dto';
-import { Alcohol } from './entities/alcohol.entity';
-import { Question } from './entities/question.entity';
-import { Selection } from './entities/selection.entity';
-import { QuestionRepository } from './question.repository';
-import { SelectionRepository } from './selection.repository';
-import { AlcoholRepository } from './alcohol.repository';
+import { Question } from 'src/admin/question/entities/question.entity';
+import { QuestionRepository } from 'src/admin/question/question.repository';
+import { QuestionService } from 'src/admin/question/question.service';
+import { Selection } from 'src/admin/selection/entities/selection.entity';
+import { SelectionRepository } from 'src/admin/selection/selection.repository';
+import { SelectionService } from 'src/admin/selection/selection.service';
 
 @Injectable()
-export class QuestionService {
+export class TicketboxService {
     constructor(
         @InjectRepository(QuestionRepository)
         @InjectRepository(SelectionRepository)
-        @InjectRepository(AlcoholRepository)
         private questionRepository: QuestionRepository,
         private selectionRepository: SelectionRepository,
-        private alcoholRepository: AlcoholRepository,
+        private questionService: QuestionService,
+        private selectionService: SelectionService
     ){}
 
-    // 작품 리스트 조회
-    async getQuestionList(): Promise <Question[]> {
-        return await this.questionRepository.find();
-    }
 
-    // 작품 업로드
-    async uploadQuestion(questionDto: QuestionDto): Promise<Question> {
-        return this.questionRepository.uploadQuestion(questionDto);
+        async getSelectionList(id: number) {
+
+            return await this.selectionRepository.find({
+                where:[
+                    {selection_id: id}, {selection_id: id+1}
+                ]
+            });
+        }
+
+
+
+
+
+
+    async getTestByQuestionId(id:number) {
+        return await this.selectionService.getSelectionById(id);
+
+        
     }
 
     // 질문 조회
@@ -37,34 +46,10 @@ export class QuestionService {
         if (!found) {
             throw new NotFoundException(`Cant't find question with id ${id}`);
         }
-
         return found;
     }
 
-    // 질문 수정
-    async updateQuestion(id: number, newQuestion: QuestionDto): Promise<Question> {
-        return this.questionRepository.updateQuestion(id, newQuestion);
-    }
-
-    // 질문 삭제
-    async deleteQuestion(id: number): Promise<void> {
-        const result = await this.questionRepository.delete(id);
-        console.log(result);
-    }
-
-    ////////////// 답안
-
-    // 답안 리스트 조회
-    async getSelectionList(): Promise <Selection[]> {
-        return await this.selectionRepository.find();
-    }
-
-    // 답안 업로드
-    async uploadSelection(selectionDto: SelectionDto): Promise<Selection> {
-        return this.selectionRepository.uploadSelection(selectionDto);
-    }
-
-    // 답안 조회
+    // 선택지 조회
     async getSelectionById(id: number): Promise<Selection> {
         const found = await this.selectionRepository.findOne(id);
 
@@ -75,33 +60,5 @@ export class QuestionService {
         return found;
     }
 
-    // 답안 수정
-    async updateSelection(id: number, newSelection: SelectionDto): Promise<Selection> {
-        return this.selectionRepository.updateSelection(id, newSelection);
-    }
-
-    // 답안 삭제
-    async deleteSelection(id: number): Promise<void> {
-        const result = await this.selectionRepository.delete(id);
-        console.log(result);
-    }
-
-
-    /////// 술
-
-    // 술 리스트 조회
-    async getAlcoholList(): Promise <Alcohol[]> {
-        return await this.alcoholRepository.find();
-    }
-
-    // 술 조회
-    async getAlcoholById(id: number): Promise<Alcohol> {
-        const found = await this.alcoholRepository.findOne(id);
-
-        if (!found) {
-            throw new NotFoundException(`Cant't find question with id ${id}`);
-        }
-
-        return found;
-    }
+ 
 }
