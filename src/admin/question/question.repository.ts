@@ -4,20 +4,14 @@ import { Question } from "./entities/question.entity";
 
 @EntityRepository(Question)
 export class QuestionRepository extends Repository<Question> {
-
-    // 작품 업로드
-    async uploadQuestion(questionDto: QuestionDto): Promise<Question> {
-
-        const {questionContent} = questionDto;
-
-        const question = this.create({
-            questionContent
-        })
+    async createQuestion(questionDto: QuestionDto): Promise<Question> {
+        const { questionContent } = questionDto;
+        const question = this.create({ questionContent });
 
         await this.save(question);
 
         return question;
-    }
+    } 
 
     // 질문 수정
     async updateQuestion(id: number, newQuestion: QuestionDto): Promise<Question> {
@@ -28,6 +22,6 @@ export class QuestionRepository extends Repository<Question> {
         await this.save(questionToUpdate);
 
         return questionToUpdate;
-
     }
+
 }

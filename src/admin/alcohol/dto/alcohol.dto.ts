@@ -5,7 +5,7 @@ export class AlcoholDto {
     AlcoholName: string;
 
     @IsString() 
-    category: string;
+    Category: string;
 
     // 도수
     @IsInt()
