@@ -2,12 +2,27 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { ApiCreatedResponse, ApiOperation } from '@nestjs/swagger';
 import { Question } from 'src/admin/question/entities/question.entity';
 import { Selection } from 'src/admin/selection/entities/selection.entity';
+import { SelectionService } from 'src/admin/selection/selection.service';
 import { ResultDto } from './dto/result.dto';
 import { TicketboxService } from './ticketbox.service';
 
 @Controller("ticketbox")
 export class TicketboxController {
-    constructor(private ticketboxService: TicketboxService) { }
+    constructor(private ticketboxService: TicketboxService, private selectionService: SelectionService) { }
+
+    @Get('/qq/:id')
+    getSelectionList(@Param('id') id: number): Promise<Selection[]> {
+        return this.ticketboxService.getSelectionList(id);
+    }
+
+
+
+
+
+
+
+
+
 
     @Get('/test/:id')
     getTestPage(@Param('id') id: number): Promise<Selection> {

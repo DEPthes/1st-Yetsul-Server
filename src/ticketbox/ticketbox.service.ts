@@ -18,8 +18,25 @@ export class TicketboxService {
         private selectionService: SelectionService
     ){}
 
+
+        async getSelectionList(id: number) {
+
+            return await this.selectionRepository.find({
+                where:[
+                    {selection_id: id}, {selection_id: id+1}
+                ]
+            });
+        }
+
+
+
+
+
+
     async getTestByQuestionId(id:number) {
         return await this.selectionService.getSelectionById(id);
+
+        
     }
 
     // 질문 조회

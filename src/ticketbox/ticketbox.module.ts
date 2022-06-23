@@ -5,12 +5,15 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { NestjsFormDataModule } from 'nestjs-form-data';
 import { QuestionRepository } from 'src/admin/question/question.repository';
 import { SelectionRepository } from 'src/admin/selection/selection.repository';
+import { SelectionService } from 'src/admin/selection/selection.service';
+import { QuestionService } from 'src/admin/question/question.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([QuestionRepository, SelectionRepository]), NestjsFormDataModule
+    TypeOrmModule.forFeature([QuestionRepository, SelectionRepository])
   ],
   controllers: [TicketboxController],
-  providers: [TicketboxService]
+  providers: [TicketboxService, SelectionService, QuestionService],
+  exports: [QuestionService, SelectionService]
 })
-export class QuestionModule {}
+export class TicketboxModule {}
