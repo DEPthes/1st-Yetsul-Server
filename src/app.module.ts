@@ -6,11 +6,12 @@ import { typeORMConfig } from './config/typeorm.config';
 import { QuestionModule } from './admin/question/question.module';
 import { SelectionModule } from './admin/selection/selection.module';
 import { AlcoholModule } from './admin/alcohol/alcohol.module';
+import { TicketboxModule } from './ticketbox/ticketbox.module';
 
 @Module({
   imports: [
     TypeOrmModule.forRoot(typeORMConfig), 
-    QuestionModule, SelectionModule, AlcoholModule],
+    TicketboxModule, QuestionModule, SelectionModule, AlcoholModule],
   controllers: [AppController],
   providers: [AppService],
 })
