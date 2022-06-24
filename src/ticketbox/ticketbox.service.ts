@@ -1,9 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Question } from 'src/admin/question/entities/question.entity';
 import { QuestionRepository } from 'src/admin/question/question.repository';
-import { QuestionService } from 'src/admin/question/question.service';
-import { Selection } from 'src/admin/selection/entities/selection.entity';
 import { SelectionRepository } from 'src/admin/selection/selection.repository';
 import { SelectionService } from 'src/admin/selection/selection.service';
 
@@ -17,10 +14,15 @@ export class TicketboxService {
         private selectionService: SelectionService
     ) { }
 
-    // 답 1개, 선택지 2개 가져오기, 7,8번은 답안 3,4개 이므로 예외
-    async getTest(id: string) {
+    // 답 1개와 그에 맞는 선택지들 가져오기
+    async getTest(uuid: string) {
+
+        const que = await this.questionRepository.findOne(uuid);
+
+        const id = que.question_id;
+
         let sel;
-        if (id == '7')
+        if (id == 7)
         {
             sel = await this.selectionRepository.find({
                 where: [
@@ -28,7 +30,7 @@ export class TicketboxService {
                 ]
             });
         }
-        else if (id == '8')
+        else if (id == 8)
         {
             sel = await this.selectionRepository.find({
                 where: [
@@ -39,12 +41,10 @@ export class TicketboxService {
         else {
             sel = await this.selectionRepository.find({
                 where: [
-                    { selection_id: parseInt(id)*2-1 }, { selection_id: parseInt(id)*2 }
+                    { selection_id: id*2-1 }, { selection_id: id*2 }
                 ]
             });
         }
-
-        const que = await this.questionRepository.findOne(id);
 
         return [sel, que];
     }
