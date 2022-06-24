@@ -1,9 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Question } from 'src/admin/question/entities/question.entity';
 import { QuestionRepository } from 'src/admin/question/question.repository';
-import { QuestionService } from 'src/admin/question/question.service';
-import { Selection } from 'src/admin/selection/entities/selection.entity';
 import { SelectionRepository } from 'src/admin/selection/selection.repository';
 import { SelectionService } from 'src/admin/selection/selection.service';
 
@@ -14,51 +11,41 @@ export class TicketboxService {
         @InjectRepository(SelectionRepository)
         private questionRepository: QuestionRepository,
         private selectionRepository: SelectionRepository,
-        private questionService: QuestionService,
         private selectionService: SelectionService
-    ){}
+    ) { }
 
+    // 답 1개와 그에 맞는 선택지들 가져오기
+    async getTest(uuid: string) {
 
-        async getSelectionList(id: number) {
+        const que = await this.questionRepository.findOne(uuid);
 
-            return await this.selectionRepository.find({
-                where:[
-                    {selection_id: id}, {selection_id: id+1}
+        const id = que.question_id;
+
+        let sel;
+        if (id == 7)
+        {
+            sel = await this.selectionRepository.find({
+                where: [
+                    { selection_id: 13 }, { selection_id: 14 }, { selection_id: 15 }
+                ]
+            });
+        }
+        else if (id == 8)
+        {
+            sel = await this.selectionRepository.find({
+                where: [
+                    { selection_id: 16 }, { selection_id: 17 }, { selection_id: 18 }
+                ]
+            });
+        }
+        else {
+            sel = await this.selectionRepository.find({
+                where: [
+                    { selection_id: id*2-1 }, { selection_id: id*2 }
                 ]
             });
         }
 
-
-
-
-
-
-    async getTestByQuestionId(id:number) {
-        return await this.selectionService.getSelectionById(id);
-
-        
+        return [sel, que];
     }
-
-    // 질문 조회
-    async getQuestionById(id: number): Promise<Question> {
-        const found = await this.questionRepository.findOne(id);
-
-        if (!found) {
-            throw new NotFoundException(`Cant't find question with id ${id}`);
-        }
-        return found;
-    }
-
-    // 선택지 조회
-    async getSelectionById(id: number): Promise<Selection> {
-        const found = await this.selectionRepository.findOne(id);
-
-        if (!found) {
-            throw new NotFoundException(`Cant't find question with id ${id}`);
-        }
-
-        return found;
-    }
-
- 
 }
