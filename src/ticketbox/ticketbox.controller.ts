@@ -10,42 +10,15 @@ import { TicketboxService } from './ticketbox.service';
 export class TicketboxController {
     constructor(private ticketboxService: TicketboxService, private selectionService: SelectionService) { }
 
-    @Get('/qq/:id')
-    getSelectionList(@Param('id') id: number): Promise<Selection[]> {
-        return this.ticketboxService.getSelectionList(id);
-    }
-
-
-
-
-
-
-
-
-
-
+    // 답 1개, 선택지 2개 가져오기 (id, id+1)
     @Get('/test/:id')
-    getTestPage(@Param('id') id: number): Promise<Selection> {
-        return this.ticketboxService.getTestByQuestionId(id);
+    getTest(@Param('id') id: string): Promise<any> {
+        return this.ticketboxService.getTest(id);
     }
 
-
-    // 질문 조회
-    @Get('/:id')
-    @ApiOperation({ summary: 'id로 질문 조회 API', description: 'id로 질문 조회' })
-    @ApiCreatedResponse({ description: 'id로 질문 조회', type: Question })
-
-    getQuestionById(@Param('id') id: number): Promise<Question> {
-        return this.ticketboxService.getQuestionById(id);
+    // 답 1개, 선택지 2개 가져오기 (id, id+1) => uuid
+    @Get('/test/:uuid')
+    getTest2(@Body('id') id: string): Promise<any> {
+        return this.ticketboxService.getTest(id);
     }
-
-
-    // // 선택지 조회
-    // @Get('/:id')
-    // @ApiOperation({ summary: 'id로 선택지 조회 API', description: 'id로 선택지 작품 조회' })
-    // @ApiCreatedResponse({ description: 'id로 선택지 작품 조회', type: Selection })
-    // getSelectionById(@Param('id') id: number): Promise<Selection> {
-    //     return this.ticketboxService.getSelectionById(id);
-    // }
-
 }

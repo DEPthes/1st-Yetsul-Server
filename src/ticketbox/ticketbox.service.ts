@@ -14,51 +14,38 @@ export class TicketboxService {
         @InjectRepository(SelectionRepository)
         private questionRepository: QuestionRepository,
         private selectionRepository: SelectionRepository,
-        private questionService: QuestionService,
         private selectionService: SelectionService
-    ){}
+    ) { }
 
-
-        async getSelectionList(id: number) {
-
-            return await this.selectionRepository.find({
-                where:[
-                    {selection_id: id}, {selection_id: id+1}
+    // 답 1개, 선택지 2개 가져오기, 7,8번은 답안 3,4개 이므로 예외
+    async getTest(id: string) {
+        let sel;
+        if (id == '7')
+        {
+            sel = await this.selectionRepository.find({
+                where: [
+                    { selection_id: 13 }, { selection_id: 14 }, { selection_id: 15 }
+                ]
+            });
+        }
+        else if (id == '8')
+        {
+            sel = await this.selectionRepository.find({
+                where: [
+                    { selection_id: 16 }, { selection_id: 17 }, { selection_id: 18 }
+                ]
+            });
+        }
+        else {
+            sel = await this.selectionRepository.find({
+                where: [
+                    { selection_id: parseInt(id)*2-1 }, { selection_id: parseInt(id)*2 }
                 ]
             });
         }
 
+        const que = await this.questionRepository.findOne(id);
 
-
-
-
-
-    async getTestByQuestionId(id:number) {
-        return await this.selectionService.getSelectionById(id);
-
-        
+        return [sel, que];
     }
-
-    // 질문 조회
-    async getQuestionById(id: number): Promise<Question> {
-        const found = await this.questionRepository.findOne(id);
-
-        if (!found) {
-            throw new NotFoundException(`Cant't find question with id ${id}`);
-        }
-        return found;
-    }
-
-    // 선택지 조회
-    async getSelectionById(id: number): Promise<Selection> {
-        const found = await this.selectionRepository.findOne(id);
-
-        if (!found) {
-            throw new NotFoundException(`Cant't find question with id ${id}`);
-        }
-
-        return found;
-    }
-
- 
 }
