@@ -25,29 +25,31 @@ export class TicketboxService {
     async getTest(uuid: string) {
 
         const question = await this.questionRepository.findOne(uuid);
-        const id = question.question_id;
+        const question_id = question.question_id;
 
         let selection;
-        if (id == 7)
-        {
+
+        if (question_id == 7){
             selection = await this.selectionRepository.find({
                 where: [
-                    { selection_id: 13 }, { selection_id: 14 }, { selection_id: 15 }
+                    { selection_id: 13 }, 
+                    { selection_id: 14 }, 
+                    { selection_id: 15 }
                 ]
-            });
-        }
-        else if (id == 8)
-        {
+            });}
+
+        else if (question_id == 8) {
             selection = await this.selectionRepository.find({
                 where: [
-                    { selection_id: 16 }, { selection_id: 17 }, { selection_id: 18 }
+                    { selection_id: 16 }, 
+                    { selection_id: 17 }, 
+                    { selection_id: 18 }
                 ]
-            });
-        }
+            });}
         else {
             selection = await this.selectionRepository.find({
                 where: [
-                    { selection_id: id*2-1 }, { selection_id: id*2 }
+                    { selection_id: question_id*2-1 }, { selection_id: question_id*2 }
                 ]
             });
         }
@@ -56,23 +58,55 @@ export class TicketboxService {
     }
 
     // 사용자의 선택지 인자로 받고 그에 해당하는 술 배열 반환
-    async getResult(answer: string) { // 1111111
-        if (answer[0] == '1' && answer[1] == '1') { // 주종
-            if (answer[2] == '1') { // 도수
-                if (answer[3] == '1') { // 청량감
-                    if (answer[5] == '1') { // 맛
-                        return await this.alcoholRepository.find({
-                            where: [
-                                { category: "카테고리1", AlcoholByVolume: LessThan(10),}
-                            ]
-                        });
-                    }
-                } else {
-
+    // 참조: https://www.kindacode.com/article/typeorm-and-or-operators/#AND_operator
+    async getResult(answer: string) { // 1111111 
+        let select_alcoholByVolume = true;
+        let select_cool = true;
+        let select_clean = true;
+        let select_bitterAndSweet = true;
+        let select_sour = true;
+        
+        for(let index = 0; index < answer.length; index++) {
+            
+            let select_categoryId = [1,2,3,4,5,6];
+            if(index === 0){ // 1번 문제
+                if(parseInt(answer[index])  % 2 == 1){
+                    select_categoryId.splice(2, 4); // 탁주 과실주 // [1,2] -> 1
+                
+                } else{
+                    select_categoryId.splice(0, 2) // 약주 청주 증류주 리큐르주 [3,4,5,6] ->34, 56
                 }
             }
-        }
+            else if(index === 1 || select_categoryId.length == 2){
+                if(parseInt(answer[index])  % 2 == 1){
+                    select_categoryId.pop(); // 탁주 과실주 // [2] -> 1 // 21 => 3456
+                }
+                else{
+                    select_categoryId.splice(0,1); // 탁주 과실주 // [1] -> 1
+                }
+            }
+            else if(index === 1 || select_categoryId.length == 4){
+                if(parseInt(answer[index])  % 2 == 1){
+                    select_categoryId.pop();  
+                    select_categoryId.pop(); // 탁주 과실주 // [2] -> 1 // 21 => 34
+                }
+                else{
+                    select_categoryId.splice(2,2); // 탁주 과실주 //5,6
+                }
+            }
+
+        return await this.alcoholRepository.find({where: {
+            
+            categoryID: select_categoryId[0],
+            alcoholByVolume : select_alcoholByVolume,
+            cool : select_cool,
+            clean : select_clean,
+            bitter : select_bitterAndSweet,
+            sweet : select_bitterAndSweet,
+            sour : select_sour,
+        }})
     }
+}
 
     // 선택지에 따른 영화 출력
     async getMovie(answer: string) { // 11111 (5자리)
@@ -82,6 +116,7 @@ export class TicketboxService {
         let index = 0;
         while(start <= end) { 
             mid = Math.floor((start + end) / 2);
+
             if(parseInt(answer[index]) % 2 == 1){ // 선택지 1 선택
                 end = mid; // 1~16
             }
@@ -92,10 +127,6 @@ export class TicketboxService {
            index += 1;
         }
 
-        return await this.movieRepository.find({
-            where: [
-                { id: start}
-            ]
-        });
+        return await this.movieRepository.find({where: [{ id: start}]});
     }
 }
