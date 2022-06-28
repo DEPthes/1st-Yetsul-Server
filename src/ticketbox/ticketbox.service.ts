@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { LessThan } from "typeorm";
+import { LessThan, MoreThan } from "typeorm";
 import { QuestionRepository } from 'src/admin/question/question.repository';
 import { SelectionRepository } from 'src/admin/selection/selection.repository';
 import { SelectionService } from 'src/admin/selection/selection.service';
@@ -29,27 +29,29 @@ export class TicketboxService {
 
         let selection;
 
-        if (question_id == 7){
+        if (question_id == 7) {
             selection = await this.selectionRepository.find({
                 where: [
-                    { selection_id: 13 }, 
-                    { selection_id: 14 }, 
+                    { selection_id: 13 },
+                    { selection_id: 14 },
                     { selection_id: 15 }
                 ]
-            });}
+            });
+        }
 
         else if (question_id == 8) {
             selection = await this.selectionRepository.find({
                 where: [
-                    { selection_id: 16 }, 
-                    { selection_id: 17 }, 
+                    { selection_id: 16 },
+                    { selection_id: 17 },
                     { selection_id: 18 }
                 ]
-            });}
+            });
+        }
         else {
             selection = await this.selectionRepository.find({
                 where: [
-                    { selection_id: question_id*2-1 }, { selection_id: question_id*2 }
+                    { selection_id: question_id * 2 - 1 }, { selection_id: question_id * 2 }
                 ]
             });
         }
@@ -59,54 +61,92 @@ export class TicketboxService {
 
     // 사용자의 선택지 인자로 받고 그에 해당하는 술 배열 반환
     // 참조: https://www.kindacode.com/article/typeorm-and-or-operators/#AND_operator
-    async getResult(answer: string) { // 1111111 
-        let select_alcoholByVolume = true;
+    async getResult(answer: string) { // 1111111 이중에서 5번째, 7번째는 안쓰임
+        let select_alcoholByVolume = MoreThan(10);
         let select_cool = true;
-        let select_clean = true;
-        let select_bitterAndSweet = true;
-        let select_sour = true;
-        
-        for(let index = 0; index < answer.length; index++) {
-            
-            let select_categoryId = [1,2,3,4,5,6];
-            if(index === 0){ // 1번 문제
-                if(parseInt(answer[index])  % 2 == 1){
+        let select_clean = false;
+        let select_bitter = false;
+        let select_sweet = false;
+        let select_sour = false;
+
+        let select_categoryId = [1, 2, 3, 4, 5, 6];
+
+        for (let index = 0; index < 6; index++) {
+
+
+            if (index == 0) { // 1번 문제
+                if (parseInt(answer[index]) == 1) { // 1번문제 답이 1이면
                     select_categoryId.splice(2, 4); // 탁주 과실주 // [1,2] -> 1
-                
-                } else{
+
+                } else {  // 1번문제 답이 2이면
                     select_categoryId.splice(0, 2) // 약주 청주 증류주 리큐르주 [3,4,5,6] ->34, 56
                 }
             }
-            else if(index === 1 || select_categoryId.length == 2){
-                if(parseInt(answer[index])  % 2 == 1){
-                    select_categoryId.pop(); // 탁주 과실주 // [2] -> 1 // 21 => 3456
+            else if (index == 1 || select_categoryId.length == 2) { // 1번문제 답을 1로 선택하고
+                if (parseInt(answer[index]) == 1) { // 2번문제 답이 1일때
+                    select_categoryId.pop(); // 탁주 과실주 // select_categoryId = [1]
                 }
-                else{
-                    select_categoryId.splice(0,1); // 탁주 과실주 // [1] -> 1
+                else { // 2번문제 답이 2일때
+                    select_categoryId.splice(0, 1); // 탁주 과실주 // select_categoryId = [2]
                 }
             }
-            else if(index === 1 || select_categoryId.length == 4){
-                if(parseInt(answer[index])  % 2 == 1){
-                    select_categoryId.pop();  
-                    select_categoryId.pop(); // 탁주 과실주 // [2] -> 1 // 21 => 34
+            else if (index == 1 || select_categoryId.length == 4) { // 1번문제 답을 2로 선택하고
+                if (parseInt(answer[index]) == 1) { // 2번문제 답이 1일때
+                    select_categoryId.pop();
+                    select_categoryId.pop(); // 약주, 청주 // select_categoryId = [3,4]
                 }
-                else{
-                    select_categoryId.splice(2,2); // 탁주 과실주 //5,6
+                else { // 2번문제 답이 2일때
+                    select_categoryId.splice(0, 2); // 증류주, 리큐르주 // select_categoryId = [5,6]
                 }
             }
 
-        return await this.alcoholRepository.find({where: {
-            
-            categoryID: select_categoryId[0],
-            alcoholByVolume : select_alcoholByVolume,
-            cool : select_cool,
-            clean : select_clean,
-            bitter : select_bitterAndSweet,
-            sweet : select_bitterAndSweet,
-            sour : select_sour,
-        }})
+            else if (index == 2) {
+                if (answer[index] == '1') {
+                    select_alcoholByVolume = LessThan(10);
+                }
+            }
+
+            else if (index == 3) {
+                if (answer[index] == '2') {
+                    select_cool = false;
+                }
+            }
+
+            else if (index == 5) {
+                if (answer[index] == '1') {
+                    select_clean = true;
+                    select_bitter = true;
+                } else if (answer[index] == '2') {
+                    select_sweet = true;
+                } else {
+                    select_sour = true;
+                }
+            }
+        }
+
+        return await this.alcoholRepository.find({
+            where: [
+                {
+                    category: select_categoryId[0],
+                    AlcoholByVolume: select_alcoholByVolume,
+                    cool: select_cool,
+                    clean: select_clean,
+                    bitter: select_bitter,
+                    sweet: select_sweet,
+                    sour: select_sour
+                },
+                {
+                    category: select_categoryId[1],
+                    AlcoholByVolume: select_alcoholByVolume,
+                    cool: select_cool,
+                    clean: select_clean,
+                    bitter: select_bitter,
+                    sweet: select_sweet,
+                    sour: select_sour
+                }
+            ]
+        })
     }
-}
 
     // 선택지에 따른 영화 출력
     async getMovie(answer: string) { // 11111 (5자리)
@@ -114,19 +154,19 @@ export class TicketboxService {
         let end = 31;
         let mid;
         let index = 0;
-        while(start <= end) { 
+        while (start <= end) {
             mid = Math.floor((start + end) / 2);
 
-            if(parseInt(answer[index]) % 2 == 1){ // 선택지 1 선택
+            if (parseInt(answer[index]) % 2 == 1) { // 선택지 1 선택
                 end = mid; // 1~16
             }
 
-           else { // 선택지 2 선택
-                start = mid+1; // 17~32 [2,2,2,2,1] mid 49/2=24
-           }
-           index += 1;
+            else { // 선택지 2 선택
+                start = mid + 1; // 17~32 [2,2,2,2,1] mid 49/2=24
+            }
+            index += 1;
         }
 
-        return await this.movieRepository.find({where: [{ id: start}]});
+        return await this.movieRepository.find({ where: [{ id: start }] });
     }
 }

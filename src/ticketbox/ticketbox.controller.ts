@@ -26,6 +26,8 @@ export class TicketboxController {
 
 
     @Get('/result/movie/:id') // 22221
+    @ApiOperation({ summary: '매표소 결과 API (영화)', description: '사용자의 선택지 param으로 받고 그에 해당하는 영화 반환' })
+    @ApiCreatedResponse({ description: '사용자의 선택지 param으로 받고 그에 해당하는 영화 반환'})
     getMovie(@Param('id') id: string): Promise<any> {
         return this.ticketboxService.getMovie(id);
     }
