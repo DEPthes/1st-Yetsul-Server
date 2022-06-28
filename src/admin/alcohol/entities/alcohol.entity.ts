@@ -10,7 +10,7 @@ export class Alcohol extends BaseEntity {
     AlcoholName: string;
 
     @Column({nullable: true})
-    category: string;
+    category: number;
 
     // 도수
     @Column({nullable: true})
