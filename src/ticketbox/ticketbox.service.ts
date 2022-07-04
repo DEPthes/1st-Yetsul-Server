@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { getConnection, LessThan, MoreThan } from "typeorm";
 import { QuestionRepository } from 'src/admin/question/question.repository';
 import { SelectionRepository } from 'src/admin/selection/selection.repository';
-import { SelectionService } from 'src/admin/selection/selection.service';
+import { AlcoholService } from 'src/admin/alcohol/alcohol.service';
 import { AlcoholRepository } from 'src/admin/alcohol/alcohol.repository';
 import { MovieRepository } from './movie/movie.repository';
 
@@ -18,7 +18,7 @@ export class TicketboxService {
         private selectionRepository: SelectionRepository,
         private alcoholRepository: AlcoholRepository,
         private movieRepository: MovieRepository,
-        private selectionService: SelectionService
+        private alcoholService: AlcoholService
     ) { }
 
     // 답 1개와 그에 맞는 선택지들 가져오기
@@ -61,7 +61,7 @@ export class TicketboxService {
 
     // 사용자의 선택지 인자로 받고 그에 해당하는 술 배열 반환
     // 참조: https://www.kindacode.com/article/typeorm-and-or-operators/#AND_operator
-    async getResult(answer: string) { // 1111111 이중에서 5번째, 7번째는 안쓰임
+    async getResultAlcohol(answer: string) { // 1111111 이중에서 5번째, 7번째는 안쓰임
         //let select_alcoholByVolume = MoreThan(10);
         let select_alcoholByVolume1 = 10;
         let select_alcoholByVolume2 = 100;
@@ -155,23 +155,23 @@ export class TicketboxService {
         // })
 
         const resultArray = await this.alcoholRepository
-        .createQueryBuilder('todo')
-        .where("todo.category IN (:...categories)", {categories: select_categoryId})
-        .andWhere('todo.AlcoholByVolume >= :select_alcoholByVolume1', {select_alcoholByVolume1})
-        .andWhere('todo.AlcoholByVolume < :select_alcoholByVolume2', {select_alcoholByVolume2})
-        .andWhere("todo.cool = :select_cool", {select_cool})
-        .andWhere("todo.clean = :select_clean", {select_clean})
-        .andWhere("todo.bitter = :select_bitter", {select_bitter})
-        .andWhere("todo.sweet = :select_sweet", {select_sweet})
-        .andWhere("todo.sour = :select_sour", {select_sour})
-        .orderBy("RANDOM()")
-        .getMany();
+            .createQueryBuilder('todo')
+            .where("todo.category IN (:...categories)", { categories: select_categoryId })
+            .andWhere('todo.AlcoholByVolume >= :select_alcoholByVolume1', { select_alcoholByVolume1 })
+            .andWhere('todo.AlcoholByVolume < :select_alcoholByVolume2', { select_alcoholByVolume2 })
+            .andWhere("todo.cool = :select_cool", { select_cool })
+            .andWhere("todo.clean = :select_clean", { select_clean })
+            .andWhere("todo.bitter = :select_bitter", { select_bitter })
+            .andWhere("todo.sweet = :select_sweet", { select_sweet })
+            .andWhere("todo.sour = :select_sour", { select_sour })
+            .orderBy("RANDOM()")
+            .getMany();
 
         return [resultArray[0], resultArray[1]];
     }
 
     // 선택지에 따른 영화 출력
-    async getMovie(answer: string) { // 11111 (5자리)
+    async getResultMovie(answer: string) { // 11111 (5자리)
         let start = 0; // [2,3,4,5,6,7]
         let end = 31;
         let mid;
@@ -189,6 +189,26 @@ export class TicketboxService {
             index += 1;
         }
 
-        return await this.movieRepository.find({ where: [{ id: start }] });
+        return await this.movieRepository.find({ where: { id: start } });
+    }
+
+    // 선택지에 따른 영화+술 결과 출력
+    async getResult(answer: string): Promise<any> {
+        const getResultMovie = await this.getResultMovie(answer); // 영화 결과
+
+        const movieAlcoholId = getResultMovie[0].alcohol; // 영화에 매치된 술 id
+        const movieAlcohol = await this.alcoholService.getAlcoholById(movieAlcoholId); // 영화에 매치된 술
+
+        let getResultAlcohol = await this.getResultAlcohol(answer); // 술 결과
+
+        // 매칭 술이 랜덤 술에 포함된다면 반복문
+        while (getResultAlcohol[0].id == movieAlcohol.id || getResultAlcohol[1].id == movieAlcohol.id) {
+            getResultAlcohol = await this.getResultAlcohol(answer);
+        }
+
+        // console.log(getResultAlcohol[0].id == movieAlcohol.id);
+        // console.log(getResultAlcohol[1].id == movieAlcohol.id);
+
+        return [getResultMovie, movieAlcohol, getResultAlcohol];
     }
 }

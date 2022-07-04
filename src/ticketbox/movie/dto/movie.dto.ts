@@ -1,4 +1,4 @@
-import {IsString } from "class-validator";
+import {IsInt, IsString } from "class-validator";
 
 export class MovieDto {
     @IsString() 
@@ -9,4 +9,7 @@ export class MovieDto {
 
     @IsString() 
     image: string;
+
+    @IsInt()
+    alcohol: number;
 }

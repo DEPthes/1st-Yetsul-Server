@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { ApiCreatedResponse, ApiOperation } from '@nestjs/swagger';
 import { Alcohol } from 'src/admin/alcohol/entities/alcohol.entity';
 import { SelectionService } from 'src/admin/selection/selection.service';
+import { Movie } from './movie/entities/movie.entity';
 import { TicketboxService } from './ticketbox.service';
 
 @Controller("ticketbox")
@@ -17,11 +18,11 @@ export class TicketboxController {
     }
 
     // 사용자의 선택지 param으로 받고 그에 해당하는 술 배열[2] 반환
-    @Get('/result/:id') // id: x1111111
+    @Get('/result/alcohol/:id') // id: x1111111
     @ApiOperation({ summary: '매표소 결과 API (술)', description: '사용자의 선택지 param으로 받고 그에 해당하는 술 배열 반환' })
     @ApiCreatedResponse({ description: '사용자의 선택지 param으로 받고 그에 해당하는 술 배열 반환'})
-    getResult(@Param('id') id: string): Promise<Alcohol[]> {
-        return this.ticketboxService.getResult(id);
+    getResultAlcohol(@Param('id') id: string): Promise<Alcohol[]> {
+        return this.ticketboxService.getResultAlcohol(id);
     }
 
 
@@ -29,6 +30,13 @@ export class TicketboxController {
     @ApiOperation({ summary: '매표소 결과 API (영화)', description: '사용자의 선택지 param으로 받고 그에 해당하는 영화 반환' })
     @ApiCreatedResponse({ description: '사용자의 선택지 param으로 받고 그에 해당하는 영화 반환'})
     getMovie(@Param('id') id: string): Promise<any> {
-        return this.ticketboxService.getMovie(id);
+        return this.ticketboxService.getResultMovie(id);
+    }
+
+    @Get('/result/:id')
+    @ApiOperation({ summary: '매표소 결과 API', description: '사용자의 선택지 param으로 받고 그에 해당하는 영화, 술 반환' })
+    @ApiCreatedResponse({ description: '사용자의 선택지 param으로 받고 그에 해당하는 영화, 술 반환'})
+    getResult(@Param('id') id: string): Promise<any> {
+        return this.ticketboxService.getResult(id);
     }
 }

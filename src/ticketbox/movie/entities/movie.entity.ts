@@ -13,4 +13,7 @@ export class Movie extends BaseEntity {
 
     @Column()
     image: string;
+
+    @Column({nullable: true})
+    alcohol: number;
 }
