@@ -8,8 +8,7 @@ export class AlcoholDto {
     Category: number;
 
     // 도수
-    @IsInt()
-    AlcoholByVolume: number;
+    AlcoholByVolume;
 
     // 달달함
     @IsBoolean()
@@ -37,4 +36,7 @@ export class AlcoholDto {
 
     @IsString() 
     description: string;
+
+    // 별점
+    star;
 }

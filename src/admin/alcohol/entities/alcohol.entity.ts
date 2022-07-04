@@ -13,8 +13,8 @@ export class Alcohol extends BaseEntity {
     category: number;
 
     // 도수
-    @Column({nullable: true})
-    AlcoholByVolume: number;
+    @Column("float", {nullable: true})
+    AlcoholByVolume;
 
     // 달달함
     @Column({nullable: true})
@@ -42,4 +42,8 @@ export class Alcohol extends BaseEntity {
 
     @Column({nullable: true})
     description: string;
+
+    // 별점
+    @Column("float", {nullable: true})
+    star;
 }

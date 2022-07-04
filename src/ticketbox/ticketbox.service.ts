@@ -1,6 +1,6 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, ParseBoolPipe } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { LessThan, MoreThan } from "typeorm";
+import { getConnection, LessThan, MoreThan } from "typeorm";
 import { QuestionRepository } from 'src/admin/question/question.repository';
 import { SelectionRepository } from 'src/admin/selection/selection.repository';
 import { SelectionService } from 'src/admin/selection/selection.service';
@@ -62,8 +62,10 @@ export class TicketboxService {
     // 사용자의 선택지 인자로 받고 그에 해당하는 술 배열 반환
     // 참조: https://www.kindacode.com/article/typeorm-and-or-operators/#AND_operator
     async getResult(answer: string) { // 1111111 이중에서 5번째, 7번째는 안쓰임
-        let select_alcoholByVolume = MoreThan(10);
-        let select_cool = true;
+        //let select_alcoholByVolume = MoreThan(10);
+        let select_alcoholByVolume1 = 10;
+        let select_alcoholByVolume2 = 100;
+        let select_cool = Boolean(true);
         let select_clean = false;
         let select_bitter = false;
         let select_sweet = false;
@@ -101,14 +103,16 @@ export class TicketboxService {
             }
 
             else if (index == 2) {
-                if (answer[index] == '1') {
-                    select_alcoholByVolume = LessThan(10);
+                if (answer[index] == '1') { // 3번째 문제 답 2이면 10도 미만
+                    //select_alcoholByVolume = LessThan(10);
+                    select_alcoholByVolume1 = 0;
+                    select_alcoholByVolume2 = 10;
                 }
             }
 
             else if (index == 3) {
                 if (answer[index] == '2') {
-                    select_cool = false;
+                    select_cool = Boolean(false);
                 }
             }
 
@@ -124,28 +128,46 @@ export class TicketboxService {
             }
         }
 
-        return await this.alcoholRepository.find({
-            where: [
-                {
-                    category: select_categoryId[0],
-                    AlcoholByVolume: select_alcoholByVolume,
-                    cool: select_cool,
-                    clean: select_clean,
-                    bitter: select_bitter,
-                    sweet: select_sweet,
-                    sour: select_sour
-                },
-                {
-                    category: select_categoryId[1],
-                    AlcoholByVolume: select_alcoholByVolume,
-                    cool: select_cool,
-                    clean: select_clean,
-                    bitter: select_bitter,
-                    sweet: select_sweet,
-                    sour: select_sour
-                }
-            ]
-        })
+        // return await this.alcoholRepository.find({
+        //     order:{
+        //         //id: "ASC"
+        //     },
+        //     where: [
+        //         {
+        //             category: select_categoryId[0],
+        //             AlcoholByVolume: select_alcoholByVolume,
+        //             cool: select_cool,
+        //             clean: select_clean,
+        //             bitter: select_bitter,
+        //             sweet: select_sweet,
+        //             sour: select_sour
+        //         },
+        //         {
+        //             category: select_categoryId[1],
+        //             AlcoholByVolume: select_alcoholByVolume,
+        //             cool: select_cool,
+        //             clean: select_clean,
+        //             bitter: select_bitter,
+        //             sweet: select_sweet,
+        //             sour: select_sour
+        //         }
+        //     ]
+        // })
+
+        const resultArray = await this.alcoholRepository
+        .createQueryBuilder('todo')
+        .where("todo.category IN (:...categories)", {categories: select_categoryId})
+        .andWhere('todo.AlcoholByVolume >= :select_alcoholByVolume1', {select_alcoholByVolume1})
+        .andWhere('todo.AlcoholByVolume < :select_alcoholByVolume2', {select_alcoholByVolume2})
+        .andWhere("todo.cool = :select_cool", {select_cool})
+        .andWhere("todo.clean = :select_clean", {select_clean})
+        .andWhere("todo.bitter = :select_bitter", {select_bitter})
+        .andWhere("todo.sweet = :select_sweet", {select_sweet})
+        .andWhere("todo.sour = :select_sour", {select_sour})
+        .orderBy("RANDOM()")
+        .getMany();
+
+        return [resultArray[0], resultArray[1]];
     }
 
     // 선택지에 따른 영화 출력

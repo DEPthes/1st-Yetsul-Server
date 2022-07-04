@@ -28,10 +28,10 @@ export class QuestionController {
 
     // 질문 조회
     @Get('/:id')
-    @ApiOperation({ summary: 'id로 질문 조회 API', description: 'id로 질문 조회' })
-    @ApiCreatedResponse({ description: 'id로 질문 조회', type: Question })
+    @ApiOperation({ summary: 'uuid로 질문 조회 API', description: 'uuid로 질문 조회' })
+    @ApiCreatedResponse({ description: 'uuid로 질문 조회', type: Question })
 
-    getQuestionById(@Param('id') id: number): Promise<Question> {
+    getQuestionById(@Param('id') id: string): Promise<Question> {
         return this.questionService.getQuestionById(id);
     }
 
