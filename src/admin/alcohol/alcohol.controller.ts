@@ -18,7 +18,7 @@ export class AlcoholController {
 
     // 개별 술 조회
     @Get('/:id')
-    @ApiOperation({ summary: 'id로 술 조회 API', description: 'id로 술 조회' })
+    @ApiOperation({ summary: 'id로 술 조회 API', description: 'id로 술 조회. /alcohol/1' })
     @ApiCreatedResponse({ description: 'id로 술 조회', type: Alcohol })
     getAlcoholById(@Param('id') id: number): Promise<Alcohol> {
         return this.alcoholService.getAlcoholById(id);

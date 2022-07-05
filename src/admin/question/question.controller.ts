@@ -12,7 +12,6 @@ export class QuestionController {
     @Get()
     @ApiOperation({ summary: '전체 질문 리스트 조회 API', description: '전체 질문 리스트 조회' }) // 요청 URL 에 매핑된 API 에 대한 설명
     @ApiCreatedResponse({ description: '전체 질문 리스트 조회', type: Question }) // API 응답에 대한 정의
-
     getQuestionList(): Promise<Question[]> {
         return this.questionService.getQuestionList();
     }
@@ -21,16 +20,14 @@ export class QuestionController {
     @Post('/upload')
     @ApiOperation({ summary: '질문 업로드 API', description: '질문 업로드' })
     @ApiCreatedResponse({ description: '질문 업로드', type: Question })
-
     createQuestion(@Body() questionDto: QuestionDto): Promise<Question> {
         return this.questionService.createQuestion(questionDto);
     }
 
-    // 질문 조회
+    // uuid로 질문 조회
     @Get('/:id')
-    @ApiOperation({ summary: 'uuid로 질문 조회 API', description: 'uuid로 질문 조회' })
+    @ApiOperation({ summary: 'uuid로 질문 조회 API', description: 'uuid로 질문 조회. /question/022d2371-6f3c-4c9a-9ad9-4d5bc2db710b' })
     @ApiCreatedResponse({ description: 'uuid로 질문 조회', type: Question })
-
     getQuestionById(@Param('id') id: string): Promise<Question> {
         return this.questionService.getQuestionById(id);
     }
