@@ -22,7 +22,7 @@ export class QuestionService {
     }
 
     // 질문 조회
-    async getQuestionById(id: number): Promise<Question> {
+    async getQuestionById(id: string): Promise<Question> {
         const found = await this.questionRepository.findOne(id);
 
         if (!found) {
