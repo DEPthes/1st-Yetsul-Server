@@ -39,4 +39,7 @@ export class AlcoholDto {
 
     // 별점
     star;
+
+    @IsString() 
+    alcoholImage: string;
 }

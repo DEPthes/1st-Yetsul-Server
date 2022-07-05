@@ -46,4 +46,7 @@ export class Alcohol extends BaseEntity {
     // 별점
     @Column("float", {nullable: true})
     star;
+
+    @Column({nullable: true})
+    alcoholImage: string;
 }
