@@ -12,7 +12,7 @@ export class SelectionController {
 
     // 전체 선택지 리스트 조회
     @Get()
-    @ApiOperation({ summary: '전체 선택지 리스트 조회 API', description: '전체 선택지 리스트 조회' }) 
+    @ApiOperation({ summary: '전체 선택지 리스트 조회 API', description: '전체 선택지 리스트 조회.' }) 
     @ApiCreatedResponse({ description: '전체 선택지 리스트 조회', type: Selection }) 
     getSelectionList(): Promise<Selection[]> {
         return this.selectionService.getSelectionList();
