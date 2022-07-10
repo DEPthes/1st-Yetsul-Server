@@ -1,5 +1,5 @@
 import { Alcohol } from "src/admin/alcohol/entities/alcohol.entity";
-import { BaseEntity, Column, Entity, ManyToOne, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity, Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity("Review")
 export class Review extends BaseEntity {
@@ -11,6 +11,10 @@ export class Review extends BaseEntity {
 
     @Column({nullable: true})
     content: string;
+
+    // 별점
+    @Column("float", {nullable: true})
+    star;
 
     @ManyToOne(type => Alcohol, alcohol => alcohol.reviews, {eager: false}) // N:1 relationship
     alcohol: Alcohol; // 유저 컬럼

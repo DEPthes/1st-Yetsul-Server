@@ -6,4 +6,6 @@ export class CreateReviewDto {
 
     @IsString()
     content: string;
+
+    star;
 }
