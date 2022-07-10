@@ -1,4 +1,6 @@
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+//import { Review } from "src/review/entities/review.entity";
+import { Review } from "src/review/entities/review.entity";
+import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity("Alcohol")
 export class Alcohol extends BaseEntity {
@@ -49,4 +51,7 @@ export class Alcohol extends BaseEntity {
 
     @Column({nullable: true})
     alcoholImage: string;
+
+    @OneToMany(type => Review, review => review.alcohol, {eager: true}) // 1:N relationship
+    reviews: Review[] // 유저에 보드라는 컬럼 넣음. 여러개 넣을 수 있으니까 배열로
 }
