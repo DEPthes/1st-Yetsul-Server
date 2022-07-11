@@ -16,6 +16,9 @@ export class Review extends BaseEntity {
     @Column("float", {nullable: true})
     star;
 
+    @Column({ nullable: true })
+    reviewImgUrl: string;
+
     @ManyToOne(type => Alcohol, alcohol => alcohol.reviews, {eager: false}) // N:1 relationship
     alcohol: Alcohol; // 유저 컬럼
 }
