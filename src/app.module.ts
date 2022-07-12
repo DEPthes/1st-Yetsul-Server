@@ -10,12 +10,15 @@ import { TicketboxModule } from './ticketbox/ticketbox.module';
 import { RecommendationModule } from './recommendation/recommendation.module';
 import { MainModule } from './main/main.module';
 import { ReviewModule } from './review/review.module';
+import { LoginModule } from './login/login.module';
+import { GoogleStrategy } from './login/google.strategy';
+import { LoginService } from './login/login.service';
 
 @Module({
   imports: [
     TypeOrmModule.forRoot(typeORMConfig), 
-    TicketboxModule, QuestionModule, SelectionModule, AlcoholModule, RecommendationModule, MainModule, ReviewModule],
+    TicketboxModule, QuestionModule, SelectionModule, AlcoholModule, RecommendationModule, MainModule, ReviewModule, LoginModule],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, LoginService, GoogleStrategy],
 })
 export class AppModule {}
