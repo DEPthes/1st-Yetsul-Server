@@ -22,7 +22,7 @@ export class AuthController {
 
     // 네이버 로그인
     @Get('/naver')
-    @UseGuards(AuthGuard('naver')) // AuthGuard에 google 전달하면 Strategy 작성 시 작성한 명칭 찾아서 적용한다
+    @UseGuards(AuthGuard('naver')) // AuthGuard에 naver 전달하면 Strategy 작성 시 작성한 명칭 찾아서 적용한다
     async naverAuth(@Req() req) {
 
     }
@@ -33,6 +33,21 @@ export class AuthController {
     naverAuthRedirect(@Req() req) { // req.user로 유저 프로필 값 가져옴
         return this.authService.naverLogin(req);
     }
+
+    // 카카오 로그인
+    @Get('/kakao')
+    @UseGuards(AuthGuard('kakao')) // AuthGuard에 kakao 전달하면 Strategy 작성 시 작성한 명칭 찾아서 적용한다
+    async kakaoAuth(@Req() req) {
+
+    }
+
+    // 카카오 로그인 후 콜백 url로 오는 요청 처리하는 api
+    @Get('kakao/callback')
+    @UseGuards(AuthGuard('kakao'))
+    kakaoAuthRedirect(@Req() req) { // req.user로 유저 프로필 값 가져옴
+        return this.authService.kakaoLogin(req);
+    }
+
     // @UseGuards(AuthGuard('jwt'))
     // @Get('profile')
     // getProfile(@Req() req) {

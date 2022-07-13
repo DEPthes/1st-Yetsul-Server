@@ -3,6 +3,7 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { GoogleStrategy } from './google.strategy';
 import { JwtStrategy } from './jwt.strategy';
+import { KakaoStrategy } from './kakao.strategy';
 import { NaverStrategy } from './naver.strategy';
 
 @Module({
@@ -10,6 +11,6 @@ import { NaverStrategy } from './naver.strategy';
     
   ],
   controllers: [AuthController],
-  providers: [AuthService, GoogleStrategy, NaverStrategy, JwtStrategy],
+  providers: [AuthService, GoogleStrategy, NaverStrategy, KakaoStrategy, JwtStrategy],
 })
 export class AuthModule {}
