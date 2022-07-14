@@ -21,8 +21,8 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
             lastName: name.familyName,
             picture: photos[0].value,
             accessToken,
-            
         }
+        console.log(profile);
         done(null, user); // 첫번째 인수는 에러 발생 시 사용, 두번째는 저장할 데이터
     }
 }
