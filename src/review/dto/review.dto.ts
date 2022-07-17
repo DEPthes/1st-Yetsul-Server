@@ -8,4 +8,7 @@ export class CreateReviewDto {
     content: string;
 
     star;
+
+    @IsString()
+    reviewImgUrl: string;
 }
