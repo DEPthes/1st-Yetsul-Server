@@ -7,6 +7,13 @@ export class AlcoholDto {
     @IsInt() 
     Category: number;
 
+    // 양조장
+    @IsString() 
+    brewery: string;
+
+    @IsInt() 
+    price: number;
+
     // 도수
     AlcoholByVolume;
 

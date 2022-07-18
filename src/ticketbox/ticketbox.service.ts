@@ -86,10 +86,10 @@ export class TicketboxService {
             }
             else if (index == 1 || select_categoryId.length == 2) { // 1번문제 답을 1로 선택하고
                 if (parseInt(answer[index]) == 1) { // 2번문제 답이 1일때
-                    select_categoryId.pop(); // 탁주 과실주 // select_categoryId = [1]
+                    select_categoryId.pop(); // 탁주 과실주 // select_categoryId = [1] // 11이면 탁주
                 }
                 else { // 2번문제 답이 2일때
-                    select_categoryId.splice(0, 1); // 탁주 과실주 // select_categoryId = [2]
+                    select_categoryId.splice(0, 1); // 탁주 과실주 // select_categoryId = [2] // 12면 과실주
                 }
             }
             else if (index == 1 || select_categoryId.length == 4) { // 1번문제 답을 2로 선택하고
@@ -103,26 +103,26 @@ export class TicketboxService {
             }
 
             else if (index == 2) {
-                if (answer[index] == '1') { // 3번째 문제 답 2이면 10도 미만
+                if (answer[index] == '1') { // 3번째 문제 답 1이면 10도 미만
                     //select_alcoholByVolume = LessThan(10);
                     select_alcoholByVolume1 = 0;
                     select_alcoholByVolume2 = 10;
                 }
             }
 
-            else if (index == 3) {
+            else if (index == 3) { // 4번째 문제 답 2면 청량감 없음
                 if (answer[index] == '2') {
                     select_cool = Boolean(false);
                 }
             }
 
-            else if (index == 5) {
-                if (answer[index] == '1') {
+            else if (index == 5) { // 6번째 문제
+                if (answer[index] == '1') { // 답 1이면 깔끔함, 쓴맛 있음
                     select_clean = true;
                     select_bitter = true;
-                } else if (answer[index] == '2') {
+                } else if (answer[index] == '2') { // 답 2면 단맛 있음
                     select_sweet = true;
-                } else {
+                } else {  // 답 3이면 신맛 있음
                     select_sour = true;
                 }
             }

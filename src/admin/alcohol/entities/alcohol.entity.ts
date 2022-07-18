@@ -14,6 +14,12 @@ export class Alcohol extends BaseEntity {
     @Column({nullable: true})
     category: number;
 
+    @Column({nullable: true})
+    brewery: string;
+
+    @Column({nullable: true})
+    price: number;
+
     // 도수
     @Column("float", {nullable: true})
     AlcoholByVolume;
