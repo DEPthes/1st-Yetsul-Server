@@ -6,21 +6,24 @@ import { CreateReviewDto } from './dto/review.dto';
 import { Review } from './entities/review.entity';
 import { ReviewRepository } from './review.repository';
 import { S3Repository } from './s3.repository';
+import { UserRepository } from 'src/auth/user.repository';
 
 @Injectable()
 export class ReviewService {
 
   constructor(
     @InjectRepository(ReviewRepository)
+    @InjectRepository(UserRepository)
     @InjectRepository(AlcoholRepository)
     @InjectRepository(S3Repository)
     private reviewRepository: ReviewRepository,
+    private userRepository: UserRepository,
     private alcoholRepository: AlcoholRepository,
     private s3Repository: S3Repository
   ) { }
 
   // 해당 술에 대한 리뷰 작성
-  async createReview(createReviewDto: CreateReviewDto, alcohol_id: number, files: Express.Multer.File[], location: string): Promise<Review> {
+  async createReview(createReviewDto: CreateReviewDto, user_id: number, alcohol_id: number, files: Express.Multer.File[], location: string): Promise<Review> {
 
     try {
       const uploadFiles = [];
@@ -35,7 +38,8 @@ export class ReviewService {
       console.log({ url });
 
       const alcohol = await this.alcoholRepository.findOne(alcohol_id);
-      return this.reviewRepository.createReview(createReviewDto, alcohol, url);
+      const user = await this.userRepository.findOne(user_id);
+      return this.reviewRepository.createReview(createReviewDto, user, alcohol, url);
     } catch (error) {
       throw new BadRequestException(error.message);
     }
@@ -46,6 +50,17 @@ export class ReviewService {
     const query = this.reviewRepository.createQueryBuilder('review'); // 쿼리 사용
 
     query.where('review.alcoholId = :alcoholId', { alcoholId: alcohol_id });
+
+    const reviews = await query.getMany(); // 전부 가져옴. getOne()은 하나
+
+    return reviews;
+  }
+
+  async getUsersReview(user: number): Promise<Review[]> {
+
+    const query = this.reviewRepository.createQueryBuilder('review'); // 쿼리 사용
+
+    query.where('review.userId = :userId', { userId: user });
 
     const reviews = await query.getMany(); // 전부 가져옴. getOne()은 하나
 

@@ -1,4 +1,5 @@
 import { Alcohol } from "src/admin/alcohol/entities/alcohol.entity";
+import { User } from "src/auth/entities/user.entity";
 import { BaseEntity, Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity("Review")
@@ -20,5 +21,8 @@ export class Review extends BaseEntity {
     reviewImgUrl: string;
 
     @ManyToOne(type => Alcohol, alcohol => alcohol.reviews, {eager: false}) // N:1 relationship
-    alcohol: Alcohol; // 유저 컬럼
+    alcohol: Alcohol; // 술 컬럼
+
+    @ManyToOne(type => User, user => user.reviews, {eager: false}) // N:1 relationship
+    user: User; // 유저 컬럼
 }

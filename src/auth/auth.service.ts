@@ -72,4 +72,8 @@ export class AuthService {
             user: req.user
         }
     }
+
+    async getUsersInfo() {
+        return await this.userRepository.find();
+    }
 }

@@ -35,9 +35,9 @@ export class ReviewController {
       }
     }),
   }))
-  async createReview(@Body() createReviewDto: CreateReviewDto, @Param() alcohol: number, @UploadedFiles() files: Express.Multer.File[], @Req() request, @Res() response) {
+  async createReview(@Body() createReviewDto: CreateReviewDto, @Body('user') user: number, @Param() alcohol: number, @UploadedFiles() files: Express.Multer.File[], @Req() request, @Res() response) {
     const { location } = request.files[0];
-    const uploadedReview = await this.reviewService.createReview(createReviewDto, alcohol, files, location);
+    const uploadedReview = await this.reviewService.createReview(createReviewDto, user, alcohol, files, location);
     //return this.reviewService.createReview(createReviewDto, alcohol);
     response.send(uploadedReview);
   }
@@ -47,5 +47,12 @@ export class ReviewController {
   @ApiCreatedResponse({ description: '술 id param으로 받음', type: Alcohol })
   getAllReview(@Param('id') alcohol_id: number): Promise<Review[]> {
     return this.reviewService.getAllReview(alcohol_id);
+  }
+
+  @Get('user') // 해당 유저가 작성한 모든 리뷰 조회
+  @ApiOperation({ summary: '유저가 작성한 리뷰 조회 API', description: '유저가 작성한 리뷰 조회' })
+  @ApiCreatedResponse({ description: '유저 id body으로 받음' })
+  getUsersReview(@Body('user') user: number): Promise<Review[]> {
+    return this.reviewService.getUsersReview(user);
   }
 }
