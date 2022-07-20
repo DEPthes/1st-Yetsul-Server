@@ -55,6 +55,13 @@ export class AuthController {
         return this.authService.kakaoLogin(req);
     }
 
+    // 개발 / 관리자 사용 용도 : 등록된 유저 정보 가져오기
+    @Get('/userinfo')
+    getUsersInfo() {
+        return this.authService.getUsersInfo();
+    }
+
+
     // @UseGuards(AuthGuard('jwt'))
     // @Get('profile')
     // getProfile(@Req() req) {
