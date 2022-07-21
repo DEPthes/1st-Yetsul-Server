@@ -47,13 +47,13 @@ export class RecommendationService {
   async getWeatherRecommendation(weather: string) {
     if (weather == 'clean') {
       return await this.alcoholRepository.find({
-        order: {
-          star: "ASC"
-        },
+        // order: {
+        //   star: "ASC"
+        // },
         where: [
           {
             bitter: true,
-            AlcoholByVolume: LessThan(8)
+            AlcoholByVolume: LessThan(10)
           }
         ]
       });

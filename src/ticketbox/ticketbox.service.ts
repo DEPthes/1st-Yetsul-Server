@@ -6,6 +6,7 @@ import { SelectionRepository } from 'src/admin/selection/selection.repository';
 import { AlcoholService } from 'src/admin/alcohol/alcohol.service';
 import { AlcoholRepository } from 'src/admin/alcohol/alcohol.repository';
 import { MovieRepository } from './movie/movie.repository';
+import { QuestionAndSelectionDto } from './dto/questionAndSelection.dto';
 
 @Injectable()
 export class TicketboxService {
@@ -21,43 +22,77 @@ export class TicketboxService {
         private alcoholService: AlcoholService
     ) { }
 
-    // 답 1개와 그에 맞는 선택지들 가져오기
-    async getTest(uuid: string) {
+    // // 답 1개와 그에 맞는 선택지들 가져오기
+    // async getTest(uuid: string) {
 
-        const question = await this.questionRepository.findOne(uuid);
-        const question_id = question.question_id;
+    //     const question = await this.questionRepository.findOne(uuid);
+    //     const question_id = question.question_id;
 
-        let selection;
+    //     let selection;
 
-        if (question_id == 7) {
-            selection = await this.selectionRepository.find({
-                where: [
-                    { selection_id: 13 },
-                    { selection_id: 14 },
-                    { selection_id: 15 }
-                ]
-            });
+    //     if (question_id == 7) {
+    //         selection = await this.selectionRepository.find({
+    //             where: [
+    //                 { selection_id: 13 },
+    //                 { selection_id: 14 },
+    //                 { selection_id: 15 }
+    //             ]
+    //         });
+    //     }
+
+    //     else if (question_id == 8) {
+    //         selection = await this.selectionRepository.find({
+    //             where: [
+    //                 { selection_id: 16 },
+    //                 { selection_id: 17 },
+    //                 { selection_id: 18 }
+    //             ]
+    //         });
+    //     }
+    //     else {
+    //         selection = await this.selectionRepository.find({
+    //             where: [
+    //                 { selection_id: question_id * 2 - 1 }, { selection_id: question_id * 2 }
+    //             ]
+    //         });
+    //     }
+
+    //     return [question, selection];
+    // }
+
+    async getTest(questionAndSelectionDto: QuestionAndSelectionDto) {
+
+        let { question, selection1, selection2, selection3 } = questionAndSelectionDto;
+        const test = [];
+
+        for (let questionID = 1; questionID <= 8; questionID++) { //질문지 1번부터 8번까지 객체 생성
+            console.log(questionID);
+
+            question = await (await (await this.questionRepository.findOne(questionID))).questionContent;
+
+            if (questionID == 7) {
+                selection1 = await (await this.selectionRepository.findOne(13)).selectionContent;
+                selection2 = await (await this.selectionRepository.findOne(14)).selectionContent;
+                selection3 = await (await this.selectionRepository.findOne(15)).selectionContent;
+            }
+
+            else if (questionID == 8) {
+                selection1 = await (await this.selectionRepository.findOne(16)).selectionContent;
+                selection2 = await (await this.selectionRepository.findOne(17)).selectionContent;
+                selection3 = await (await this.selectionRepository.findOne(18)).selectionContent;
+            }
+            else {
+                selection1 = await (await this.selectionRepository.findOne(questionID * 2 - 1)).selectionContent;
+                selection2 = await (await this.selectionRepository.findOne(questionID * 2)).selectionContent;
+                selection3 = null;
+            }
+            //test.push(questionAndSelectionDto);
+            test.push({ questionID, question, selection1, selection2, selection3 });
         }
 
-        else if (question_id == 8) {
-            selection = await this.selectionRepository.find({
-                where: [
-                    { selection_id: 16 },
-                    { selection_id: 17 },
-                    { selection_id: 18 }
-                ]
-            });
-        }
-        else {
-            selection = await this.selectionRepository.find({
-                where: [
-                    { selection_id: question_id * 2 - 1 }, { selection_id: question_id * 2 }
-                ]
-            });
-        }
-
-        return [question, selection];
+        return test;
     }
+
 
     // 사용자의 선택지 인자로 받고 그에 해당하는 술 배열 반환
     // 참조: https://www.kindacode.com/article/typeorm-and-or-operators/#AND_operator
@@ -86,10 +121,10 @@ export class TicketboxService {
             }
             else if (index == 1 || select_categoryId.length == 2) { // 1번문제 답을 1로 선택하고
                 if (parseInt(answer[index]) == 1) { // 2번문제 답이 1일때
-                    select_categoryId.pop(); // 탁주 과실주 // select_categoryId = [1]
+                    select_categoryId.pop(); // 탁주 과실주 // select_categoryId = [1] // 11이면 탁주
                 }
                 else { // 2번문제 답이 2일때
-                    select_categoryId.splice(0, 1); // 탁주 과실주 // select_categoryId = [2]
+                    select_categoryId.splice(0, 1); // 탁주 과실주 // select_categoryId = [2] // 12면 과실주
                 }
             }
             else if (index == 1 || select_categoryId.length == 4) { // 1번문제 답을 2로 선택하고
@@ -103,26 +138,26 @@ export class TicketboxService {
             }
 
             else if (index == 2) {
-                if (answer[index] == '1') { // 3번째 문제 답 2이면 10도 미만
+                if (answer[index] == '1') { // 3번째 문제 답 1이면 10도 미만
                     //select_alcoholByVolume = LessThan(10);
                     select_alcoholByVolume1 = 0;
                     select_alcoholByVolume2 = 10;
                 }
             }
 
-            else if (index == 3) {
+            else if (index == 3) { // 4번째 문제 답 2면 청량감 없음
                 if (answer[index] == '2') {
                     select_cool = Boolean(false);
                 }
             }
 
-            else if (index == 5) {
-                if (answer[index] == '1') {
+            else if (index == 5) { // 6번째 문제
+                if (answer[index] == '1') { // 답 1이면 깔끔함, 쓴맛 있음
                     select_clean = true;
                     select_bitter = true;
-                } else if (answer[index] == '2') {
+                } else if (answer[index] == '2') { // 답 2면 단맛 있음
                     select_sweet = true;
-                } else {
+                } else {  // 답 3이면 신맛 있음
                     select_sour = true;
                 }
             }
@@ -201,14 +236,19 @@ export class TicketboxService {
 
         let getResultAlcohol = await this.getResultAlcohol(answer); // 술 결과
 
-        // 매칭 술이 랜덤 술에 포함된다면 반복문
-        while (getResultAlcohol[0].id == movieAlcohol.id || getResultAlcohol[1].id == movieAlcohol.id) {
-            getResultAlcohol = await this.getResultAlcohol(answer);
+        try {
+            // 매칭 술이 랜덤 술에 포함된다면 반복문
+            while (getResultAlcohol[0].id == movieAlcohol.id || getResultAlcohol[1].id == movieAlcohol.id) {
+                getResultAlcohol = await this.getResultAlcohol(answer);
+            }
+
+            // console.log(getResultAlcohol[0].id == movieAlcohol.id);
+            // console.log(getResultAlcohol[1].id == movieAlcohol.id);
+
+            return [getResultMovie, movieAlcohol, getResultAlcohol];
+        }catch (err) {
+            console.log('결과값이 없습니다.');
+            throw new NotFoundException;
         }
-
-        // console.log(getResultAlcohol[0].id == movieAlcohol.id);
-        // console.log(getResultAlcohol[1].id == movieAlcohol.id);
-
-        return [getResultMovie, movieAlcohol, getResultAlcohol];
     }
 }

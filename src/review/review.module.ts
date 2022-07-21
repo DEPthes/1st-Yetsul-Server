@@ -5,10 +5,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ReviewRepository } from './review.repository';
 import { AlcoholRepository } from 'src/admin/alcohol/alcohol.repository';
 import { S3Repository } from './s3.repository';
+import { UserRepository } from 'src/auth/user.repository';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([ReviewRepository, AlcoholRepository, S3Repository]),
+    TypeOrmModule.forFeature([ReviewRepository, UserRepository, AlcoholRepository, S3Repository]),
   ],
   controllers: [ReviewController],
   providers: [ReviewService]
