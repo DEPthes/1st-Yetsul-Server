@@ -9,7 +9,7 @@ export const typeORMConfig : TypeOrmModuleOptions = {
     password: process.env.DB_PASSWORD, // 'depth2022',
     database:  process.env.DB_DATABASE, // 'postgres',
     entities: [__dirname + '/../**/*.entity.{js, ts}'], // entities: [__dirname + '/../**/*.entity.{js, ts}', __dirname + '/../**/*.repository.{js, ts}'],
-    synchronize: true,
+    synchronize: false,
 }
 
 // import { TypeOrmModuleOptions } from "@nestjs/typeorm";

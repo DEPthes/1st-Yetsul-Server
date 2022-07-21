@@ -17,7 +17,7 @@ export class TicketboxController {
     //     return this.ticketboxService.getTest(uuid);
     // }
 
-    @Get('/test/question') // 문제의 uuid
+    @Post('/test/question') // 문제의 uuid
     @ApiOperation({ summary: '답과 선택지 조회 API', description: '답과 그에 대응하는 선택지 조회. /ticketbox/test/question' })
     getTest(@Body() questionAndSelectionDto: QuestionAndSelectionDto ): Promise<any> {
         return this.ticketboxService.getTest(questionAndSelectionDto);
