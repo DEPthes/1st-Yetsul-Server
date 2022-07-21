@@ -14,8 +14,8 @@ export class Review extends BaseEntity {
     content: string;
 
     // 별점
-    @Column("float", {nullable: true})
-    star;
+    @Column("decimal", {nullable: true})
+    star: number;
 
     @Column({ nullable: true })
     reviewImgUrl: string;

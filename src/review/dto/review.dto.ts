@@ -12,7 +12,7 @@ export class CreateReviewDto {
     content: string;
     
     @ApiProperty({description: "리뷰 별점"})
-    star;
+    star: number;
     
     @ApiProperty({description: "리뷰 이미지 url"})
     @IsString()

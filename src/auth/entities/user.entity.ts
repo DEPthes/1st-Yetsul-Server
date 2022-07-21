@@ -1,3 +1,4 @@
+import { ApiProperty } from "@nestjs/swagger";
 import { Review } from "src/review/entities/review.entity";
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn, Unique } from "typeorm";
 
@@ -5,11 +6,14 @@ import { Column, Entity, OneToMany, PrimaryGeneratedColumn, Unique } from "typeo
 @Unique(['email'])
 export class User {
     @PrimaryGeneratedColumn()
+    @ApiProperty({ description: "유저 id"})
     id: number;
-
+    
+    @ApiProperty({ description: "이메일"})
     @Column()
     email: string;
-
+    
+    @ApiProperty({ description: "프로필 이미지"})
     @Column({nullable: true})
     profileImg: string;
 
