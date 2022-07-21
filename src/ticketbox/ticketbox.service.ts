@@ -22,43 +22,38 @@ export class TicketboxService {
         private alcoholService: AlcoholService
     ) { }
 
-    // // 답 1개와 그에 맞는 선택지들 가져오기
-    // async getTest(uuid: string) {
+    /* Method
+        1. getResult(): 매표소 결과 출력
+        2. getTest(): 매표소 모든 테스트 객체 출력
+        3. getResultAlcohol()
+        4. getResultMovie()
+    */
 
-    //     const question = await this.questionRepository.findOne(uuid);
-    //     const question_id = question.question_id;
+    // 선택지에 따른 영화+술 결과 출력
+    async getResult(resultCombination: string): Promise<any> {
+        // let {resultCombination} = resultDto;
+        const getResultMovie = await this.getResultMovie(resultCombination); // 영화 결과
 
-    //     let selection;
+        const movieAlcoholId = getResultMovie[0].alcohol; // 영화에 매치된 술 id
+        const movieAlcohol = await this.alcoholService.getAlcoholById(movieAlcoholId); // 영화에 매치된 술
 
-    //     if (question_id == 7) {
-    //         selection = await this.selectionRepository.find({
-    //             where: [
-    //                 { selection_id: 13 },
-    //                 { selection_id: 14 },
-    //                 { selection_id: 15 }
-    //             ]
-    //         });
-    //     }
+        let getResultAlcohol = await this.getResultAlcohol(resultCombination); // 술 결과
 
-    //     else if (question_id == 8) {
-    //         selection = await this.selectionRepository.find({
-    //             where: [
-    //                 { selection_id: 16 },
-    //                 { selection_id: 17 },
-    //                 { selection_id: 18 }
-    //             ]
-    //         });
-    //     }
-    //     else {
-    //         selection = await this.selectionRepository.find({
-    //             where: [
-    //                 { selection_id: question_id * 2 - 1 }, { selection_id: question_id * 2 }
-    //             ]
-    //         });
-    //     }
+        try {
+            // 매칭 술이 랜덤 술에 포함된다면 반복문
+            while (getResultAlcohol[0].id == movieAlcohol.id || getResultAlcohol[1].id == movieAlcohol.id) {
+                getResultAlcohol = await this.getResultAlcohol(resultCombination);
+            }
 
-    //     return [question, selection];
-    // }
+            // console.log(getResultAlcohol[0].id == movieAlcohol.id);
+            // console.log(getResultAlcohol[1].id == movieAlcohol.id);
+
+            return [getResultMovie, movieAlcohol, getResultAlcohol];
+        }catch (err) {
+            console.log('결과값이 없습니다.');
+            throw new NotFoundException;
+        }
+    }
 
     async getTest(questionAndSelectionDto: QuestionAndSelectionDto) {
 
@@ -96,7 +91,8 @@ export class TicketboxService {
 
     // 사용자의 선택지 인자로 받고 그에 해당하는 술 배열 반환
     // 참조: https://www.kindacode.com/article/typeorm-and-or-operators/#AND_operator
-    async getResultAlcohol(answer: string) { // 1111111 이중에서 5번째, 7번째는 안쓰임
+    async getResultAlcohol(resultCombination: string) { // 1111111 이중에서 5번째, 7번째는 안쓰임
+        
         //let select_alcoholByVolume = MoreThan(10);
         let select_alcoholByVolume1 = 10;
         let select_alcoholByVolume2 = 100;
@@ -112,7 +108,7 @@ export class TicketboxService {
 
 
             if (index == 0) { // 1번 문제
-                if (parseInt(answer[index]) == 1) { // 1번문제 답이 1이면
+                if (parseInt(resultCombination[index]) == 1) { // 1번문제 답이 1이면
                     select_categoryId.splice(2, 4); // 탁주 과실주 // [1,2] -> 1
 
                 } else {  // 1번문제 답이 2이면
@@ -120,7 +116,7 @@ export class TicketboxService {
                 }
             }
             else if (index == 1 || select_categoryId.length == 2) { // 1번문제 답을 1로 선택하고
-                if (parseInt(answer[index]) == 1) { // 2번문제 답이 1일때
+                if (parseInt(resultCombination[index]) == 1) { // 2번문제 답이 1일때
                     select_categoryId.pop(); // 탁주 과실주 // select_categoryId = [1] // 11이면 탁주
                 }
                 else { // 2번문제 답이 2일때
@@ -128,7 +124,7 @@ export class TicketboxService {
                 }
             }
             else if (index == 1 || select_categoryId.length == 4) { // 1번문제 답을 2로 선택하고
-                if (parseInt(answer[index]) == 1) { // 2번문제 답이 1일때
+                if (parseInt(resultCombination[index]) == 1) { // 2번문제 답이 1일때
                     select_categoryId.pop();
                     select_categoryId.pop(); // 약주, 청주 // select_categoryId = [3,4]
                 }
@@ -138,7 +134,7 @@ export class TicketboxService {
             }
 
             else if (index == 2) {
-                if (answer[index] == '1') { // 3번째 문제 답 1이면 10도 미만
+                if (resultCombination[index] == '1') { // 3번째 문제 답 1이면 10도 미만
                     //select_alcoholByVolume = LessThan(10);
                     select_alcoholByVolume1 = 0;
                     select_alcoholByVolume2 = 10;
@@ -146,16 +142,16 @@ export class TicketboxService {
             }
 
             else if (index == 3) { // 4번째 문제 답 2면 청량감 없음
-                if (answer[index] == '2') {
+                if (resultCombination[index] == '2') {
                     select_cool = Boolean(false);
                 }
             }
 
             else if (index == 5) { // 6번째 문제
-                if (answer[index] == '1') { // 답 1이면 깔끔함, 쓴맛 있음
+                if (resultCombination[index] == '1') { // 답 1이면 깔끔함, 쓴맛 있음
                     select_clean = true;
                     select_bitter = true;
-                } else if (answer[index] == '2') { // 답 2면 단맛 있음
+                } else if (resultCombination[index] == '2') { // 답 2면 단맛 있음
                     select_sweet = true;
                 } else {  // 답 3이면 신맛 있음
                     select_sour = true;
@@ -206,7 +202,8 @@ export class TicketboxService {
     }
 
     // 선택지에 따른 영화 출력
-    async getResultMovie(answer: string) { // 11111 (5자리)
+    async getResultMovie(resultCombination: string) { // 11111 (5자리)
+
         let start = 0; // [2,3,4,5,6,7]
         let end = 31;
         let mid;
@@ -214,7 +211,7 @@ export class TicketboxService {
         while (start <= end) {
             mid = Math.floor((start + end) / 2);
 
-            if (parseInt(answer[index]) % 2 == 1) { // 선택지 1 선택
+            if (parseInt(resultCombination[index]) % 2 == 1) { // 선택지 1 선택
                 end = mid; // 1~16
             }
 
@@ -227,28 +224,5 @@ export class TicketboxService {
         return await this.movieRepository.find({ where: { id: start } });
     }
 
-    // 선택지에 따른 영화+술 결과 출력
-    async getResult(answer: string): Promise<any> {
-        const getResultMovie = await this.getResultMovie(answer); // 영화 결과
-
-        const movieAlcoholId = getResultMovie[0].alcohol; // 영화에 매치된 술 id
-        const movieAlcohol = await this.alcoholService.getAlcoholById(movieAlcoholId); // 영화에 매치된 술
-
-        let getResultAlcohol = await this.getResultAlcohol(answer); // 술 결과
-
-        try {
-            // 매칭 술이 랜덤 술에 포함된다면 반복문
-            while (getResultAlcohol[0].id == movieAlcohol.id || getResultAlcohol[1].id == movieAlcohol.id) {
-                getResultAlcohol = await this.getResultAlcohol(answer);
-            }
-
-            // console.log(getResultAlcohol[0].id == movieAlcohol.id);
-            // console.log(getResultAlcohol[1].id == movieAlcohol.id);
-
-            return [getResultMovie, movieAlcohol, getResultAlcohol];
-        }catch (err) {
-            console.log('결과값이 없습니다.');
-            throw new NotFoundException;
-        }
-    }
+    
 }

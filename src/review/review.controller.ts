@@ -3,7 +3,7 @@ import { ReviewService } from './review.service';
 import { CreateReviewDto } from './dto/review.dto';
 import { Review } from './entities/review.entity';
 import { Alcohol } from 'src/admin/alcohol/entities/alcohol.entity';
-import { ApiCreatedResponse, ApiOperation } from '@nestjs/swagger';
+import { ApiCreatedResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import * as AWS from 'aws-sdk';
 import * as multerS3 from 'multer-s3';
 import 'dotenv/config';
@@ -16,6 +16,7 @@ AWS.config.update({
   region: process.env.AWS_REGION
 });
 
+@ApiTags("리뷰 페이지")
 @Controller('review')
 export class ReviewController {
   constructor(private readonly reviewService: ReviewService) { }

@@ -19,15 +19,4 @@ export class SelectionRepository extends Repository<Selection> {
         return selection;
     }
 
-    // 답안 수정
-    async updateSelection(id: number, newSelection: SelectionDto): Promise<Selection> {
-
-        const selectionToUpdate = await this.findOne(id);
-        selectionToUpdate.selectionContent = newSelection.selectionContent;
-
-        await this.save(selectionToUpdate);
-
-        return selectionToUpdate;
-
-    }
 }

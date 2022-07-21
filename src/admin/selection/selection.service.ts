@@ -16,11 +16,7 @@ export class SelectionService {
           return await this.selectionRepository.find();
       }
   
-      // 선택지 업로드
-      async uploadSelection(selectionDto: SelectionDto): Promise<Selection> {
-          return this.selectionRepository.uploadSelection(selectionDto);
-      }
-  
+     
       // 선택지 조회
       async getSelectionById(id: number): Promise<Selection> {
           const found = await this.selectionRepository.findOne(id);
@@ -32,17 +28,4 @@ export class SelectionService {
           return found;
       }
   
-      // 선택지 수정
-      async updateSelection(id: number, newSelection: SelectionDto): Promise<Selection> {
-          return this.selectionRepository.updateSelection(id, newSelection);
-      }
-  
-      // 선택지 삭제
-      async deleteSelection(id: number): Promise<void> {
-          const result = await this.selectionRepository.delete(id);
-          console.log(result);
-      }
-  
-  
-
 }

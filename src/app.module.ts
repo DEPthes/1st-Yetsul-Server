@@ -8,14 +8,13 @@ import { SelectionModule } from './admin/selection/selection.module';
 import { AlcoholModule } from './admin/alcohol/alcohol.module';
 import { TicketboxModule } from './ticketbox/ticketbox.module';
 import { RecommendationModule } from './recommendation/recommendation.module';
-import { MainModule } from './main/main.module';
 import { ReviewModule } from './review/review.module';
 import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
     TypeOrmModule.forRoot(typeORMConfig), 
-    TicketboxModule, QuestionModule, SelectionModule, AlcoholModule, RecommendationModule, MainModule, ReviewModule, AuthModule],
+    TicketboxModule, QuestionModule, SelectionModule, AlcoholModule, RecommendationModule, ReviewModule, AuthModule],
   controllers: [AppController],
   providers: [AppService],
 })

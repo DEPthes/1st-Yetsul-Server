@@ -1,7 +1,8 @@
 import { Body, Controller, Get, Param } from '@nestjs/common';
-import { ApiCreatedResponse, ApiOperation } from '@nestjs/swagger';
+import { ApiCreatedResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { RecommendationService } from './recommendation.service';
 
+@ApiTags("술 추천 페이지")
 @Controller('recommendation')
 export class RecommendationController {
   constructor(private readonly recommendationService: RecommendationService) { }

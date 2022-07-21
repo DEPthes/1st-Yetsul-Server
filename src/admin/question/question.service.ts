@@ -16,11 +16,6 @@ export class QuestionService {
         return await this.questionRepository.find();
     }
 
-    // 질문 업로드
-    async createQuestion(questionDto: QuestionDto): Promise<Question> {
-        return this.questionRepository.createQuestion(questionDto);
-    }
-
     // 질문 조회
     async getQuestionById(id: string): Promise<Question> {
         const found = await this.questionRepository.findOne(id);
@@ -32,14 +27,4 @@ export class QuestionService {
         return found;
     }
 
-    // 질문 수정
-    async updateQuestion(id: number, newQuestion: QuestionDto): Promise<Question> {
-        return this.questionRepository.updateQuestion(id, newQuestion);
-    }
-
-    // 질문 삭제
-    async deleteQuestion(id: number): Promise<void> {
-        const result = await this.questionRepository.delete(id);
-        console.log(result);
-    }
   }

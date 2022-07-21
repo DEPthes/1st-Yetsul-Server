@@ -13,15 +13,5 @@ export class QuestionRepository extends Repository<Question> {
         return question;
     } 
 
-    // 질문 수정
-    async updateQuestion(id: number, newQuestion: QuestionDto): Promise<Question> {
-
-        const questionToUpdate = await this.findOne(id);
-        questionToUpdate.questionContent = newQuestion.questionContent;
-
-        await this.save(questionToUpdate);
-
-        return questionToUpdate;
-    }
-
+  
 }
