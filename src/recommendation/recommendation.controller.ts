@@ -1,8 +1,7 @@
 import { Body, Controller, Get, Param } from '@nestjs/common';
-import { ApiCreatedResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiCreatedResponse, ApiOperation } from '@nestjs/swagger';
 import { RecommendationService } from './recommendation.service';
 
-@ApiTags("술 추천 페이지")
 @Controller('recommendation')
 export class RecommendationController {
   constructor(private readonly recommendationService: RecommendationService) { }
@@ -16,10 +15,19 @@ export class RecommendationController {
   }
 
   // 날씨에 따른 술 추천
-  @Get('/weather/:id')
-  @ApiOperation({ summary: '날씨에 따른 술 추천 API', description: '날씨에 따른 술 추천' })
-  @ApiCreatedResponse({ description: '날씨에 따른 술 추천' })
+  @Get('/weather/:id') // 태그 
   getWeatherRecommendation(@Param('id') id: string) {
     return this.recommendationService.getWeatherRecommendation(id);
+  }
+
+  // 날씨에 따른 술 추천
+  @Get('/mood/:id') // 태그 
+  getMoodRecommendation(@Param('id') id: string) {
+    return this.recommendationService.getMoodRecommendation(id);
+  }
+
+  @Get('/event/:id') // 태그 
+  getEventRecommendation(@Param('id') id: string) {
+    return this.recommendationService.getEventRecommendation(id);
   }
 }
