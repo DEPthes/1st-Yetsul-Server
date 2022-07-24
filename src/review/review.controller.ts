@@ -21,6 +21,13 @@ AWS.config.update({
 export class ReviewController {
   constructor(private readonly reviewService: ReviewService) { }
 
+  @Post('/user') // 해당 유저가 작성한 모든 리뷰 조회
+  @ApiOperation({ summary: '유저가 작성한 리뷰 조회 API', description: '유저가 작성한 리뷰 조회' })
+  @ApiCreatedResponse({ description: '유저 id body으로 받음' })
+  getUsersReview(@Body('user') user: number): Promise<Review[]> {
+    return this.reviewService.getUsersReview(user);
+  }
+
   @Post('/:id') // 해당 술에 대한 리뷰 작성
   @ApiOperation({ summary: '해당 술에 대한 리뷰 작성 API', description: '답과 그에 대응하는 선택지 조회. /review/1' })
   @ApiCreatedResponse({ description: '술 id param으로 받음', type: Alcohol })
@@ -50,10 +57,5 @@ export class ReviewController {
     return this.reviewService.getAllReview(alcohol_id);
   }
 
-  @Get('user') // 해당 유저가 작성한 모든 리뷰 조회
-  @ApiOperation({ summary: '유저가 작성한 리뷰 조회 API', description: '유저가 작성한 리뷰 조회' })
-  @ApiCreatedResponse({ description: '유저 id body으로 받음' })
-  getUsersReview(@Body('user') user: number): Promise<Review[]> {
-    return this.reviewService.getUsersReview(user);
-  }
+  
 }
