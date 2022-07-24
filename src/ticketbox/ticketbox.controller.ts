@@ -23,23 +23,19 @@ export class TicketboxController {
         return this.ticketboxService.getResult(resultCombination);
     }
 
-    // 사용자의 선택지 param으로 받고 그에 해당하는 술 배열[2] 반환
-    // @ApiExcludeEndpoint()
-    // @Get('/result/alcohol') // id: (1)111111
-    // @ApiOperation({ summary: '매표소 결과 API (술)', description: '사용자의 선택지 param으로 받고 그에 해당하는 술 배열 반환. /ticketbox/result/alcohol/1111111' })
-    // @ApiCreatedResponse({ description: '사용자의 선택지 param으로 받고 그에 해당하는 술 배열 반환'})
-    // getResultAlcohol(@Body() resultDto: ResultDto): Promise<Alcohol[]> {
-    //     return this.ticketboxService.getResultAlcohol(resultDto);
-    // }
+    @ApiExcludeEndpoint()
+    @Post('/result/alcohol') // id: (1)111111
+    @ApiOperation({ summary: '매표소 결과 API (술)', description: '사용자의 선택지 Body로 받고 그에 해당하는 술 배열 반환. (2개) /ticketbox/result/alcohol/1111111' })
+    @ApiCreatedResponse({ description: '사용자의 선택지 Body로 받고 그에 해당하는 술 배열 반환. (2개)'})
+    getResultAlcohol(@Body('id') id: string): Promise<any> {
+        return this.ticketboxService.getResultAlcohol(id);
+    }
     
-    
-    // @ApiExcludeEndpoint()
-    // @Post('/result/movie') // 22221(22)
-    // @ApiOperation({ summary: '매표소 결과 API (영화)', description: '사용자의 선택지 param으로 받고 그에 해당하는 영화 반환. /ticketbox/result/movie/111111' })
-    // @ApiCreatedResponse({ description: '사용자의 선택지 param으로 받고 그에 해당하는 영화 반환'})
-    // getMovie(@Body('id') id: string): Promise<any> {
-    //     return this.ticketboxService.getResultMovie(id);
-    // }
-
-   
+    @ApiExcludeEndpoint()
+    @Post('/result/movie') // 22221(22)
+    @ApiOperation({ summary: '매표소 결과 API (영화)', description: '사용자의 선택지 param으로 받고 그에 해당하는 영화 반환. /ticketbox/result/movie/111111' })
+    @ApiCreatedResponse({ description: '사용자의 선택지 param으로 받고 그에 해당하는 영화 반환'})
+    getMovie(@Body('id') id: string): Promise<any> {
+        return this.ticketboxService.getResultMovie(id);
+    }
 }
