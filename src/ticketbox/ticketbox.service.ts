@@ -31,7 +31,7 @@ export class TicketboxService {
 
     // 선택지에 따른 영화+술 결과 출력
     async getResult(resultCombination: string): Promise<any> {
-        // let {resultCombination} = resultDto;
+        
         const getResultMovie = await this.getResultMovie(resultCombination); // 영화 결과
 
         const movieAlcoholId = getResultMovie[0].alcohol; // 영화에 매치된 술 id
@@ -41,16 +41,24 @@ export class TicketboxService {
 
         try {
             // 매칭 술이 랜덤 술에 포함된다면 반복문
+            // for문으로 전체 체크해야 함.
             while (getResultAlcohol[0].id == movieAlcohol.id || getResultAlcohol[1].id == movieAlcohol.id) {
                 getResultAlcohol = await this.getResultAlcohol(resultCombination);
             }
+
+            // 2122231 일때 187 그대로 나옴. 왜??
+            // for (let i=0; i<getResultAlcohol.length; i++) {
+            //     if (getResultAlcohol[i].id == movieAlcohol.id) { 
+            //         getResultAlcohol = await this.getResultAlcohol(resultCombination);
+            //     }
+            // }
 
             // console.log(getResultAlcohol[0].id == movieAlcohol.id);
             // console.log(getResultAlcohol[1].id == movieAlcohol.id);
 
             return [getResultMovie, movieAlcohol, getResultAlcohol];
-        }catch (err) {
-            console.log('결과값이 없습니다.');
+        } catch (err) {
+            console.log('결과값이 없습니다.', err);
             throw new NotFoundException;
         }
     }
@@ -89,10 +97,11 @@ export class TicketboxService {
     }
 
 
+    // 전체 id만 나오는 !!
     // 사용자의 선택지 인자로 받고 그에 해당하는 술 배열 반환
     // 참조: https://www.kindacode.com/article/typeorm-and-or-operators/#AND_operator
-    async getResultAlcohol(resultCombination: string) { // 1111111 이중에서 5번째, 7번째는 안쓰임
-        
+    async getResultAlcoholAll(resultCombination: string) { // 1111111 이중에서 5번째, 7번째는 안쓰임
+
         //let select_alcoholByVolume = MoreThan(10);
         let select_alcoholByVolume1 = 10;
         let select_alcoholByVolume2 = 100;
@@ -105,7 +114,6 @@ export class TicketboxService {
         let select_categoryId = [1, 2, 3, 4, 5, 6];
 
         for (let index = 0; index < 6; index++) {
-
 
             if (index == 0) { // 1번 문제
                 if (parseInt(resultCombination[index]) == 1) { // 1번문제 답이 1이면
@@ -137,7 +145,7 @@ export class TicketboxService {
                 if (resultCombination[index] == '1') { // 3번째 문제 답 1이면 10도 미만
                     //select_alcoholByVolume = LessThan(10);
                     select_alcoholByVolume1 = 0;
-                    select_alcoholByVolume2 = 10;
+                    select_alcoholByVolume2 = 21;
                 }
             }
 
@@ -150,7 +158,7 @@ export class TicketboxService {
             else if (index == 5) { // 6번째 문제
                 if (resultCombination[index] == '1') { // 답 1이면 깔끔함, 쓴맛 있음
                     select_clean = true;
-                    select_bitter = true;
+                    // select_bitter = true;
                 } else if (resultCombination[index] == '2') { // 답 2면 단맛 있음
                     select_sweet = true;
                 } else {  // 답 3이면 신맛 있음
@@ -159,37 +167,11 @@ export class TicketboxService {
             }
         }
 
-        // return await this.alcoholRepository.find({
-        //     order:{
-        //         //id: "ASC"
-        //     },
-        //     where: [
-        //         {
-        //             category: select_categoryId[0],
-        //             AlcoholByVolume: select_alcoholByVolume,
-        //             cool: select_cool,
-        //             clean: select_clean,
-        //             bitter: select_bitter,
-        //             sweet: select_sweet,
-        //             sour: select_sour
-        //         },
-        //         {
-        //             category: select_categoryId[1],
-        //             AlcoholByVolume: select_alcoholByVolume,
-        //             cool: select_cool,
-        //             clean: select_clean,
-        //             bitter: select_bitter,
-        //             sweet: select_sweet,
-        //             sour: select_sour
-        //         }
-        //     ]
-        // })
-
-        const resultArray = await this.alcoholRepository
+        let resultArray = await this.alcoholRepository
             .createQueryBuilder('todo')
             .where("todo.category IN (:...categories)", { categories: select_categoryId })
-            .andWhere('todo.AlcoholByVolume >= :select_alcoholByVolume1', { select_alcoholByVolume1 })
-            .andWhere('todo.AlcoholByVolume < :select_alcoholByVolume2', { select_alcoholByVolume2 })
+            .andWhere('todo.AlcoholByVolume >= :select_alcoholByVolume1', { select_alcoholByVolume1 }) // 10
+            .andWhere('todo.AlcoholByVolume < :select_alcoholByVolume2', { select_alcoholByVolume2 }) // 20
             .andWhere("todo.cool = :select_cool", { select_cool })
             .andWhere("todo.clean = :select_clean", { select_clean })
             .andWhere("todo.bitter = :select_bitter", { select_bitter })
@@ -198,7 +180,162 @@ export class TicketboxService {
             .orderBy("RANDOM()")
             .getMany();
 
-        return [resultArray[0], resultArray[1]];
+        let addArray;
+        if (resultArray.length < 2) { // 0,1개라면
+
+            addArray = await this.alcoholRepository
+                .createQueryBuilder('todo')
+                .where("todo.category IN (:...categories)", { categories: select_categoryId })
+                .andWhere("todo.cool = :select_cool", { select_cool })
+                // .andWhere("todo.clean = :select_clean", { select_clean })
+                // .andWhere("todo.bitter = :select_bitter", { select_bitter })
+                // .andWhere("todo.sweet = :select_sweet", { select_sweet })
+                .andWhere("todo.sour = :select_sour", { select_sour })
+                .orderBy("RANDOM()")
+                .getMany();
+
+        }
+        const finalresultArray = resultArray.concat(addArray);
+
+        if (finalresultArray[1] == null) { // 0개 나올 시 다음 조합 (1111 -> 1112)의 결과 나오도록.
+            let first = resultCombination.substring(0, 3);
+
+            let middle = '2';
+
+            let last = resultCombination.substring(4);
+
+            let fixedId = first + middle + last;
+            console.log(fixedId);
+            resultCombination = fixedId; // 이 값 가지고 다시 돌려야 함.
+            return await this.getResultAlcoholAll(resultCombination);
+        }
+        else 
+        {
+            let arrxx = [];
+            for (let i=0; i<finalresultArray.length-1; i++)
+            {
+                arrxx.push(finalresultArray[i]['id'])
+            }
+            return arrxx;
+        }
+    }
+
+    
+    // 하나만 나오는 !
+    async getResultAlcohol(resultCombination: string) { // 1111111 이중에서 5번째, 7번째는 안쓰임
+
+        //let select_alcoholByVolume = MoreThan(10);
+        let select_alcoholByVolume1 = 10;
+        let select_alcoholByVolume2 = 100;
+        let select_cool = Boolean(true);
+        let select_clean = false;
+        let select_bitter = false;
+        let select_sweet = false;
+        let select_sour = false;
+
+        let select_categoryId = [1, 2, 3, 4, 5, 6];
+
+        for (let index = 0; index < 6; index++) {
+
+            if (index == 0) { // 1번 문제
+                if (parseInt(resultCombination[index]) == 1) { // 1번문제 답이 1이면
+                    select_categoryId.splice(2, 4); // 탁주 과실주 // [1,2] -> 1
+
+                } else {  // 1번문제 답이 2이면
+                    select_categoryId.splice(0, 2) // 약주 청주 증류주 리큐르주 [3,4,5,6] ->34, 56
+                }
+            }
+            else if (index == 1 || select_categoryId.length == 2) { // 1번문제 답을 1로 선택하고
+                if (parseInt(resultCombination[index]) == 1) { // 2번문제 답이 1일때
+                    select_categoryId.pop(); // 탁주 과실주 // select_categoryId = [1] // 11이면 탁주
+                }
+                else { // 2번문제 답이 2일때
+                    select_categoryId.splice(0, 1); // 탁주 과실주 // select_categoryId = [2] // 12면 과실주
+                }
+            }
+            else if (index == 1 || select_categoryId.length == 4) { // 1번문제 답을 2로 선택하고
+                if (parseInt(resultCombination[index]) == 1) { // 2번문제 답이 1일때
+                    select_categoryId.pop();
+                    select_categoryId.pop(); // 약주, 청주 // select_categoryId = [3,4]
+                }
+                else { // 2번문제 답이 2일때
+                    select_categoryId.splice(0, 2); // 증류주, 리큐르주 // select_categoryId = [5,6]
+                }
+            }
+
+            else if (index == 2) {
+                if (resultCombination[index] == '1') { // 3번째 문제 답 1이면 10도 미만
+                    //select_alcoholByVolume = LessThan(10);
+                    select_alcoholByVolume1 = 0;
+                    select_alcoholByVolume2 = 21;
+                }
+            }
+
+            else if (index == 3) { // 4번째 문제 답 2면 청량감 없음
+                if (resultCombination[index] == '2') {
+                    select_cool = Boolean(false);
+                }
+            }
+
+            else if (index == 5) { // 6번째 문제
+                if (resultCombination[index] == '1') { // 답 1이면 깔끔함, 쓴맛 있음
+                    select_clean = true;
+                    // select_bitter = true;
+                } else if (resultCombination[index] == '2') { // 답 2면 단맛 있음
+                    select_sweet = true;
+                } else {  // 답 3이면 신맛 있음
+                    select_sour = true;
+                }
+            }
+        }
+
+        let resultArray = await this.alcoholRepository
+            .createQueryBuilder('todo')
+            .where("todo.category IN (:...categories)", { categories: select_categoryId })
+            .andWhere('todo.AlcoholByVolume >= :select_alcoholByVolume1', { select_alcoholByVolume1 }) // 10
+            .andWhere('todo.AlcoholByVolume < :select_alcoholByVolume2', { select_alcoholByVolume2 }) // 20
+            .andWhere("todo.cool = :select_cool", { select_cool })
+            .andWhere("todo.clean = :select_clean", { select_clean })
+            .andWhere("todo.bitter = :select_bitter", { select_bitter })
+            .andWhere("todo.sweet = :select_sweet", { select_sweet })
+            .andWhere("todo.sour = :select_sour", { select_sour })
+            .orderBy("RANDOM()")
+            .getMany();
+
+        let addArray;
+        if (resultArray.length < 2) { // 0,1개라면
+
+            addArray = await this.alcoholRepository
+                .createQueryBuilder('todo')
+                .where("todo.category IN (:...categories)", { categories: select_categoryId })
+                .andWhere("todo.cool = :select_cool", { select_cool })
+                // .andWhere("todo.clean = :select_clean", { select_clean })
+                // .andWhere("todo.bitter = :select_bitter", { select_bitter })
+                // .andWhere("todo.sweet = :select_sweet", { select_sweet })
+                .andWhere("todo.sour = :select_sour", { select_sour })
+                .orderBy("RANDOM()")
+                .getMany();
+
+        }
+        const finalresultArray = resultArray.concat(addArray);
+
+        if (finalresultArray[1] == null) { // 0개 나올 시 다음 조합 (1111 -> 1112)의 결과 나오도록.
+            let first = resultCombination.substring(0, 3);
+
+            let middle = '2';
+
+            let last = resultCombination.substring(4);
+
+            let fixedId = first + middle + last;
+            console.log(fixedId);
+            resultCombination = fixedId; // 이 값 가지고 다시 돌려야 함.
+            return await this.getResultAlcohol(resultCombination);
+        }
+        else 
+        {
+            // return finalresultArray;
+            return [finalresultArray[0], finalresultArray[1]];
+        }
     }
 
     // 선택지에 따른 영화 출력
@@ -223,6 +360,4 @@ export class TicketboxService {
 
         return await this.movieRepository.find({ where: { id: start } });
     }
-
-    
 }
