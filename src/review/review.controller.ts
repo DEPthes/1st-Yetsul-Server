@@ -8,7 +8,6 @@ import * as AWS from 'aws-sdk';
 import * as multerS3 from 'multer-s3';
 import 'dotenv/config';
 import { FilesInterceptor } from '@nestjs/platform-express';
-import { number } from 'joi';
 
 const s3 = new AWS.S3();
 AWS.config.update({
