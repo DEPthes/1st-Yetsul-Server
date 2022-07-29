@@ -75,62 +75,73 @@ export class RecommendationService {
     private alcoholRepository: AlcoholRepository,
   ) { }
 
+  // 날씨에 따라 추천하는 주종 설정 메서드
   async getWeatherRecommendation(weather: string) {
     let category = [];
-
-    if (weather == 'clean') {
-      category.push(4);
+    if (weather == 'clean') { // 맑음
+      category.push(2); // 청주, 과실주, 약주
+      category.push(3); // 청주, 과실주, 약주
+      category.push(4); // 청주, 과실주, 약주
+      category.push(6); // 청주, 과실주, 약주, 리큐르
     }
 
     else if (weather == 'cloud') {
-      category.push(3);
+      category.push(1); // 약주, 탁주, 리큐르 주
+      category.push(3); // 약주, 탁주, 리큐르 주 
+      category.push(6); // 약주, 탁주, 리큐르 주 
     }
 
     else if ((weather == 'rain') || (weather == 'shower rain')) {
-      category.push(1);
+      category.push(1);//탁주, 리큐르 주, 증
+      category.push(5);//탁주, 리큐르 주, 증
+      category.push(6);//탁주, 리큐르 주, 증
     }
 
     else if (weather == 'snow') {
-      category.push(6);
+      category.push(1);//리큐르 주, 과실주, 탁주 
+      category.push(2);//리큐르 주, 과실주, 탁주 
+      category.push(6);//리큐르 주, 과실주, 탁주 
     }
 
     else if (weather == 'thunderstorm') {
-      category.push(2);
-      category.push(5);
+      category.push(1);//리큐르 주, 과실주, 탁주, 
+      category.push(2);//리큐르 주, 과실주, 탁주, 
+      category.push(6);//리큐르 주, 과실주, 탁주, 
     }
 
     return category; // category[0]
   }
 
+  // 분위기에 해당되는 도수 범위 설정 메서드
   async getMoodRecommendation(mood: string) {
-    let AlcoholByVolume1 = 0;
-    let AlcoholByVolume2 = 10;
+    let AlcoholByVolumeMoreThan = 0;
+    let AlcoholByVolumeLessThan = 10;
 
     if ((mood == 'joy') || (mood == 'excited')) {
       // 그대로
     }
 
     else if ((mood == 'sad') || (mood == 'gloom') || (mood == 'drink')) {
-      AlcoholByVolume1 = 10;
-      AlcoholByVolume2 = 20;
-    }
-
-    else if (mood == 'anger') {
-      AlcoholByVolume1 = 20;
-      AlcoholByVolume2 = 30;
-    }
-
-    else if (mood == 'sentimental') {
-      AlcoholByVolume1 = 30;
-      AlcoholByVolume2 = 40;
+      AlcoholByVolumeMoreThan = 5;
+      AlcoholByVolumeLessThan = 15;
     }
 
     else if (mood == 'flutter') {
-      AlcoholByVolume1 = 40;
-      AlcoholByVolume2 = 50;
+      AlcoholByVolumeMoreThan = 10;
+      AlcoholByVolumeLessThan = 20;
     }
-
-    return [AlcoholByVolume1, AlcoholByVolume2];
+    
+    else if (mood == 'sentimental') {
+      AlcoholByVolumeMoreThan = 20;
+      AlcoholByVolumeLessThan = 40;
+    }
+    
+    else if (mood == 'anger') {
+      AlcoholByVolumeMoreThan = 30;
+      AlcoholByVolumeLessThan = 50;
+    }
+    
+    return [AlcoholByVolumeMoreThan, AlcoholByVolumeLessThan];
   }
 
   async getSituationRecommendation(situation: string) {
@@ -158,6 +169,7 @@ export class RecommendationService {
     return [select_cool, select_clean, select_bitter, select_sweet, select_sour];
   }
 
+  // 날씨, 기분별로 정한 기준에 따라 결과로 도출되는 메서드
   async getTotalRecommendation(weather: string, mood: string, situation: string) {
     const select_categoryId = await this.getWeatherRecommendation(weather);
 
@@ -166,30 +178,14 @@ export class RecommendationService {
     const select_alcoholByVolume1 = alcoholByVolume[0];
     const select_alcoholByVolume2 = alcoholByVolume[1];
 
-    const taste = await this.getSituationRecommendation(situation);
-
-    const select_cool = taste[0];
-    const select_clean = taste[1];
-    const select_bitter = taste[2];
-    const select_sweet = taste[3];
-    const select_sour = taste[4];
-
-    // 맛 이렇게 하면 거의 안나옴. 다른거 다 F로 하면 안되고 옵션으로?
-    // 아니면 도수 빼고 ..
-    // 우선순위 포인트 현빈
     let resultArray = await this.alcoholRepository
       .createQueryBuilder('todo')
       .where("todo.category IN (:...categories)", { categories: select_categoryId })
       .andWhere('todo.AlcoholByVolume >= :select_alcoholByVolume1', { select_alcoholByVolume1 })
       .andWhere('todo.AlcoholByVolume < :select_alcoholByVolume2', { select_alcoholByVolume2 })
-      .andWhere("todo.cool = :select_cool", { select_cool })
-      .andWhere("todo.clean = :select_clean", { select_clean })
-      .andWhere("todo.bitter = :select_bitter", { select_bitter })
-      .andWhere("todo.sweet = :select_sweet", { select_sweet })
-      .andWhere("todo.sour = :select_sour", { select_sour })
       .orderBy("RANDOM()")
       .getMany();
 
-    return resultArray;
+    return [resultArray[0], resultArray[1], resultArray[2]];
   }
 }

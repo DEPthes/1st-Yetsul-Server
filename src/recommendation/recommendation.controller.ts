@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
-import { ApiCreatedResponse, ApiExcludeEndpoint, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiCreatedResponse, ApiExcludeEndpoint, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { RecommendationService } from './recommendation.service';
 
 @ApiTags("술 추천 페이지")
@@ -7,43 +7,41 @@ import { RecommendationService } from './recommendation.service';
 export class RecommendationController {
   constructor(private readonly recommendationService: RecommendationService) { }
 
-
- 
-  // // 현재 날씨, 아이콘 조회
-  // @ApiExcludeEndpoint()
-  // @Get('/weather')
-  // @ApiOperation({ summary: '현재 날씨, 아이콘 조회 API', description: '현재 날씨, 아이콘 조회' })
-  // @ApiCreatedResponse({ description: '현재 날씨 조회. 사용자가 위치 정보 허용 하면 사용자의 위치로, 안하면 위치 서울로.' })
-  // getTodaysWeather(@Body('lat') lat: string, @Body('lon') lon: string) {
-  //   return this.recommendationService.getTodaysWeather(lat, lon);
-  // }
-
-  // 날씨에 따른 술 추천
-  @Get('/weather/:id')
-  @ApiOperation({ summary: '날씨에 따른 술 추천 API', description: '날씨에 따른 술 추천' })
-  @ApiCreatedResponse({ description: '날씨에 따른 술 추천' })
-  getWeatherRecommendation(@Param('id') id: string) {
-    return this.recommendationService.getWeatherRecommendation(id);
-  }
-
+  @ApiExcludeEndpoint()
   @Post('/getweather')
   getWeather(@Body('weather') weather: string, @Body('mood') mood: string, @Body('situation') situation: string) {
     return this.recommendationService.getWeatherRecommendation(weather);
   }
  
+  @ApiExcludeEndpoint()
   @Post('/getmood')
   getMood(@Body('weather') weather: string, @Body('mood') mood: string, @Body('situation') situation: string) {
     return this.recommendationService.getMoodRecommendation(mood);
   }
 
+  @ApiExcludeEndpoint()
   @Post('/getsituation')
   getsituation(@Body('weather') weather: string, @Body('mood') mood: string, @Body('situation') situation: string) {
     return this.recommendationService.getSituationRecommendation(situation);
   }
 
-  @Post('/total') // 태그 
-  getRecommendation(@Body('weather') weather: string, @Body('mood') mood: string, @Body('situation') situation: string) {
+  @Post('/total')
+  @ApiBody({
+    schema: {
+      properties: {
+        weather: { type: "string" },
+        mood: { type: "string" },
+        situation: { type: "string" }
+      }
+    }
+  })
+  @ApiOperation({ summary: '술롯머신', 
+  description: `날씨, 기분, 상황에 따른 술 추천. \n
+  날씨: clean, cloud, rain, shower rain, snow, thunderstorm \n
+  기분: joy, excited, sad, gloom, drink, flutter, sentimental, anger \n
+  상황: party, festival, sports, mt, exam, homework, meeting, travel, picnic, endCourse` })
+  @ApiCreatedResponse({ description: '날씨, 기분, 상황에 따른 술 추천' })
+  async getRecommendation(@Body('weather') weather: string, @Body('mood') mood: string, @Body('situation') situation: string) {
     return this.recommendationService.getTotalRecommendation(weather, mood, situation);
-    // return [weather, mood];
   }
 }

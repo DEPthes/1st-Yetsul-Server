@@ -10,13 +10,20 @@ export class TicketboxController {
 
     @Post('/test')
     @ApiBody({ type: QuestionAndSelectionDto })
-    @ApiOperation({ summary: '답과 선택지 조회 API', description: '답과 그에 대응하는 선택지 조회. /ticketbox/test/question' })
+    @ApiOperation({ summary: '답과 선택지 조회 API', description: '답과 그에 대응하는 선택지 조회.' })
     getTest(@Body() questionAndSelectionDto: QuestionAndSelectionDto): Promise<any> {
         return this.ticketboxService.getTest(questionAndSelectionDto);
     }
     @Post('/result')
-    @ApiOperation({ summary: '매표소 결과 API', description: 'requestBody: {"resultCombination": "string:"} - 사용자의 선택지 param으로 받고 그에 해당하는 영화, 술 반환. /ticketbox/result/1111111' })
-    @ApiCreatedResponse({ description: '사용자의 선택지 param으로 받고 그에 해당하는 영화, 술 반환' })
+    @ApiBody({
+        schema: {
+          properties: {
+            resultCombination: { type: "string" }
+          }
+        }
+      })
+    @ApiOperation({ summary: '매표소 결과 API', description: '사용자의 선택지(1212121)에 해당하는 영화, 술 반환' })
+    @ApiCreatedResponse({ description: '사용자의 선택지(1212121)에 해당하는 영화, 술 반환' })
     getResult(@Body('resultCombination') resultCombination: string): Promise<any> {
         return this.ticketboxService.getResult(resultCombination);
     }

@@ -69,7 +69,7 @@ export class TicketboxService {
         const test = [];
 
         for (let questionID = 1; questionID <= 8; questionID++) { //질문지 1번부터 8번까지 객체 생성
-            console.log(questionID);
+            // console.log(questionID);
 
             question = await (await (await this.questionRepository.findOne(questionID))).questionContent;
 
@@ -212,11 +212,13 @@ export class TicketboxService {
         else 
         {
             let arrxx = [];
-            for (let i=0; i<finalresultArray.length-1; i++)
+            // for (let i=0; i<finalresultArray.length-1; i++)
+            for (let i=0; i<2; i++)
             {
                 arrxx.push(finalresultArray[i]['id'])
             }
             return arrxx;
+            // return arrxx.length;
         }
     }
 

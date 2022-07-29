@@ -3,11 +3,12 @@ import { ReviewService } from './review.service';
 import { CreateReviewDto } from './dto/review.dto';
 import { Review } from './entities/review.entity';
 import { Alcohol } from 'src/admin/alcohol/entities/alcohol.entity';
-import { ApiCreatedResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiCreatedResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import * as AWS from 'aws-sdk';
 import * as multerS3 from 'multer-s3';
 import 'dotenv/config';
 import { FilesInterceptor } from '@nestjs/platform-express';
+import { number } from 'joi';
 
 const s3 = new AWS.S3();
 AWS.config.update({
@@ -22,6 +23,13 @@ export class ReviewController {
   constructor(private readonly reviewService: ReviewService) { }
 
   @Post('/user') // 해당 유저가 작성한 모든 리뷰 조회
+  @ApiBody({
+    schema: {
+      properties: {
+        userId: { type: "number" }
+      }
+    }
+  })
   @ApiOperation({ summary: '유저가 작성한 리뷰 조회 API', description: '유저가 작성한 리뷰 조회' })
   @ApiCreatedResponse({ description: '유저 id body으로 받음' })
   getUsersReview(@Body('user') user: number): Promise<Review[]> {
