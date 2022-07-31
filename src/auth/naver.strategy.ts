@@ -19,7 +19,7 @@ export class NaverStrategy extends PassportStrategy(Strategy, 'naver') {
             email: profile.email,
             name: profile.name,
             id: profile.id,
-            picture: profile.profileImage+"",
+            picture: profile.profileImage+"" || 'https://depthes.s3.ap-northeast-2.amazonaws.com/1659277489924-%EB%94%94%ED%8F%B4%ED%8A%B8%EC%9D%B4%EB%AF%B8%EC%A7%80.png',
             accessToken,
         }
         console.log(profile);

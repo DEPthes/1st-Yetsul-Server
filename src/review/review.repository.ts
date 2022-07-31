@@ -6,9 +6,15 @@ import { Review } from "./entities/review.entity";
 
 @EntityRepository(Review)
 export class ReviewRepository extends Repository<Review> {
-    async createReview(createReviewDto: CreateReviewDto, user: User, alcohol: Alcohol, url: string): Promise<Review> {
+    async createReview(createReviewDto: CreateReviewDto, user: User, alcohol: Alcohol, url: any): Promise<Review> {
         try {
-            const reviewImgUrl = url;
+            // const reviewImgUrl = url;
+            let reviewImgUrl;
+            if (url == null)
+                reviewImgUrl = '';
+            else {
+                reviewImgUrl = url.location;
+            }
             const {title, content, star} = createReviewDto;
 
             const review = this.create({ // 새로운 객체 생성. typeorm 메소드

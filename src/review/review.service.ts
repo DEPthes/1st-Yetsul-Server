@@ -35,6 +35,7 @@ export class ReviewService {
 
       await this.s3Repository.save(uploadFiles);
       const url = (location);
+
       console.log({ url });
 
       const alcohol = await this.alcoholRepository.findOne(alcohol_id);
