@@ -1,8 +1,7 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { SelectionService } from './selection.service';
-import { SelectionDto } from './dto/selection.dto';
 import { ApiCreatedResponse, ApiExcludeController, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { Selection } from './entities/selection.entity';
+import { Selection } from '../../Entity/box_office/selection.entity';
 
 
 @ApiExcludeController()

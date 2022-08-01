@@ -1,14 +1,20 @@
-import { Alcohol } from "src/admin/alcohol/entities/alcohol.entity";
+import { Alcohol } from "src/Entity/Alcohol/alcohol.entity";
 import { User } from "src/auth/entities/user.entity";
 import { EntityRepository, Repository } from "typeorm";
-import { CreateReviewDto } from "./dto/review.dto";
-import { Review } from "./entities/review.entity";
+import { CreateReviewDto } from "../DTO/review.dto";
+import { Review } from "../Entity/Alcohol/review.entity";
 
 @EntityRepository(Review)
 export class ReviewRepository extends Repository<Review> {
-    async createReview(createReviewDto: CreateReviewDto, user: User, alcohol: Alcohol, url: string): Promise<Review> {
+    async createReview(createReviewDto: CreateReviewDto, user: User, alcohol: Alcohol, url: any): Promise<Review> {
         try {
-            const reviewImgUrl = url;
+            // const reviewImgUrl = url;
+            let reviewImgUrl;
+            if (url == null)
+                reviewImgUrl = '';
+            else {
+                reviewImgUrl = url.location;
+            }
             const {title, content, star} = createReviewDto;
 
             const review = this.create({ // 새로운 객체 생성. typeorm 메소드

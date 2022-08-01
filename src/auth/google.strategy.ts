@@ -19,7 +19,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
             email: emails[0].value,
             firstName: name.givenName,
             lastName: name.familyName,
-            picture: photos[0].value,
+            picture: photos[0].value || 'https://depthes.s3.ap-northeast-2.amazonaws.com/1659277489924-%EB%94%94%ED%8F%B4%ED%8A%B8%EC%9D%B4%EB%AF%B8%EC%A7%80.png',
             accessToken,
         }
         console.log(profile);

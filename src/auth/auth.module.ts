@@ -1,5 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { AlcoholRepository } from 'src/Repository/alcohol.repository';
+import { S3Repository } from 'src/Repository/s3.repository';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { GoogleStrategy } from './google.strategy';
@@ -10,7 +12,7 @@ import { UserRepository } from './user.repository';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([UserRepository])
+    TypeOrmModule.forFeature([UserRepository, AlcoholRepository, S3Repository])
   ],
   controllers: [AuthController],
   providers: [AuthService, GoogleStrategy, NaverStrategy, KakaoStrategy, JwtStrategy],

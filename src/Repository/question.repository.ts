@@ -1,6 +1,6 @@
 import { EntityRepository, Repository } from "typeorm";
-import { QuestionDto } from "./dto/question.dto";
-import { Question } from "./entities/question.entity";
+import { QuestionDto } from "../DTO/question.dto";
+import { Question } from "../Entity/box_office/question.entity";
 
 @EntityRepository(Question)
 export class QuestionRepository extends Repository<Question> {

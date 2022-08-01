@@ -1,11 +1,11 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { S3 } from './entities/s3.entity';
-import { AlcoholRepository } from 'src/admin/alcohol/alcohol.repository';
-import { CreateReviewDto } from './dto/review.dto';
-import { Review } from './entities/review.entity';
-import { ReviewRepository } from './review.repository';
-import { S3Repository } from './s3.repository';
+import { S3 } from '../../../Entity/s3.entity';
+import { AlcoholRepository } from 'src/Repository/alcohol.repository';
+import { CreateReviewDto } from '../../../DTO/review.dto';
+import { Review } from '../../../Entity/Alcohol/review.entity';
+import { ReviewRepository } from '../../../Repository/review.repository';
+import { S3Repository } from '../../../Repository/s3.repository';
 import { UserRepository } from 'src/auth/user.repository';
 
 @Injectable()
@@ -35,6 +35,7 @@ export class ReviewService {
 
       await this.s3Repository.save(uploadFiles);
       const url = (location);
+
       console.log({ url });
 
       const alcohol = await this.alcoholRepository.findOne(alcohol_id);

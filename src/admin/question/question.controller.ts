@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { ApiCreatedResponse, ApiExcludeController, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { QuestionDto } from './dto/question.dto';
-import { Question } from './entities/question.entity';
+import { QuestionDto } from '../../DTO/question.dto';
+import { Question } from '../../Entity/box_office/question.entity';
 import { QuestionService } from './question.service';
 
 @ApiExcludeController()

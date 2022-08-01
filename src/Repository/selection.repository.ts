@@ -1,6 +1,6 @@
+import { SelectionDto } from "src/DTO/selection.dto";
+import { Selection } from "src/Entity/box_office/selection.entity";
 import { EntityRepository, Repository } from "typeorm";
-import { SelectionDto } from "./dto/selection.dto";
-import { Selection } from "./entities/selection.entity";
 
 @EntityRepository(Selection)
 export class SelectionRepository extends Repository<Selection> {

@@ -1,9 +1,9 @@
 import { Controller, Get, Post, Body, Param, UseInterceptors, UploadedFiles, Req, Res } from '@nestjs/common';
 import { ReviewService } from './review.service';
-import { CreateReviewDto } from './dto/review.dto';
-import { Review } from './entities/review.entity';
-import { Alcohol } from 'src/admin/alcohol/entities/alcohol.entity';
-import { ApiCreatedResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { CreateReviewDto } from '../../../DTO/review.dto';
+import { Review } from '../../../Entity/Alcohol/review.entity';
+import { Alcohol } from 'src/Entity/Alcohol/alcohol.entity';
+import { ApiBody, ApiCreatedResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import * as AWS from 'aws-sdk';
 import * as multerS3 from 'multer-s3';
 import 'dotenv/config';
@@ -22,6 +22,13 @@ export class ReviewController {
   constructor(private readonly reviewService: ReviewService) { }
 
   @Post('/user') // 해당 유저가 작성한 모든 리뷰 조회
+  @ApiBody({
+    schema: {
+      properties: {
+        userId: { type: "number" }
+      }
+    }
+  })
   @ApiOperation({ summary: '유저가 작성한 리뷰 조회 API', description: '유저가 작성한 리뷰 조회' })
   @ApiCreatedResponse({ description: '유저 id body으로 받음' })
   getUsersReview(@Body('user') user: number): Promise<Review[]> {
@@ -29,8 +36,8 @@ export class ReviewController {
   }
 
   @Post('/:id') // 해당 술에 대한 리뷰 작성
-  @ApiOperation({ summary: '해당 술에 대한 리뷰 작성 API', description: '답과 그에 대응하는 선택지 조회. /review/1' })
-  @ApiCreatedResponse({ description: '술 id param으로 받음', type: Alcohol })
+  @ApiOperation({ summary: '해당 술에 대한 리뷰 작성 API', description: '해당 술에 대한 리뷰 작성. /review/1' })
+  @ApiCreatedResponse({ description: '술 id param으로 받음, 사용자는 body로', type: Alcohol })
   @UseInterceptors(FilesInterceptor("file", 10, {
     storage: multerS3({
       s3: s3,
@@ -44,9 +51,19 @@ export class ReviewController {
     }),
   }))
   async createReview(@Body() createReviewDto: CreateReviewDto, @Body('user') user: number, @Param() alcohol: number, @UploadedFiles() files: Express.Multer.File[], @Req() request, @Res() response) {
-    const { location } = request.files[0];
+    
+    let location;
+    if (request.files[0] == undefined) {
+      console.log("no image file.");
+      location = null;
+    }
+    else
+    {
+      console.log('image file exist.');
+      location = request.files[0];
+    }
+    
     const uploadedReview = await this.reviewService.createReview(createReviewDto, user, alcohol, files, location);
-    //return this.reviewService.createReview(createReviewDto, alcohol);
     response.send(uploadedReview);
   }
 
@@ -56,6 +73,4 @@ export class ReviewController {
   getAllReview(@Param('id') alcohol_id: number): Promise<Review[]> {
     return this.reviewService.getAllReview(alcohol_id);
   }
-
-  
 }

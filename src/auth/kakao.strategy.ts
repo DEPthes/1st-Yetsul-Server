@@ -19,10 +19,11 @@ export class KakaoStrategy extends PassportStrategy(Strategy, 'kakao') {
             //email: profile._json && profile._json.kakao_account_email,
             email: profile._json.kakao_account.email,
             nick: profile.displayName,
-            profile_image: profile._json.properties.profile_image,
+            picture: profile._json.properties.profile_image|| 'https://depthes.s3.ap-northeast-2.amazonaws.com/1659277489924-%EB%94%94%ED%8F%B4%ED%8A%B8%EC%9D%B4%EB%AF%B8%EC%A7%80.png',
             accessToken,
         }
-        console.log(profile);
+        console.log("validate에서 찍은 profile입니다. ")
+        // console.log(profile);
         done(null, user); // 첫번째 인수는 에러 발생 시 사용, 두번째는 저장할 데이터
     }
 }

@@ -1,12 +1,12 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { ApiCreatedResponse, ApiExcludeEndpoint, ApiOperation } from '@nestjs/swagger';
-import { AlcoholService } from './alcohol.service';
-import { AlcoholDto } from '../../DTO/alcohol.dto';
-import { Alcohol } from '../../Entity/Alcohol/alcohol.entity';
+import { ApiCreatedResponse, ApiExcludeEndpoint, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Alcohol } from 'src/Entity/Alcohol/alcohol.entity';
+import { IntroductionAlcoholService } from './introductionAlcohol.service';
 
+@ApiTags("술 소개 페이지")
 @Controller('alcohol')
-export class AlcoholController {
-  constructor(private readonly alcoholService: AlcoholService) {}
+export class IntroductionAlcoholController {
+  constructor(private readonly alcoholService: IntroductionAlcoholService) {}
  
     // 술 리스트 조회
     @Get()
