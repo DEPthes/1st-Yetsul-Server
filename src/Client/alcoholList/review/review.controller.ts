@@ -1,8 +1,8 @@
 import { Controller, Get, Post, Body, Param, UseInterceptors, UploadedFiles, Req, Res } from '@nestjs/common';
 import { ReviewService } from './review.service';
 import { CreateReviewDto } from '../../../DTO/review.dto';
-import { Review } from '../../../Entity/review.entity';
-import { Alcohol } from 'src/Entity/alcohol.entity';
+import { Review } from '../../../Entity/Alcohol/review.entity';
+import { Alcohol } from 'src/Entity/Alcohol/alcohol.entity';
 import { ApiBody, ApiCreatedResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import * as AWS from 'aws-sdk';
 import * as multerS3 from 'multer-s3';

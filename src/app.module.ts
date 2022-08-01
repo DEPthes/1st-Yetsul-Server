@@ -6,7 +6,7 @@ import { typeORMConfig } from './config/typeorm.config';
 import { QuestionModule } from './admin/question/question.module';
 import { SelectionModule } from './admin/selection/selection.module';
 import { AlcoholModule } from './admin/alcohol/alcohol.module';
-import { TicketboxModule } from './Client/ticketbox/ticketbox.module';
+import { TicketboxModule } from './Client/boxOffice/ticketbox.module';
 import { RecommendationModule } from './Client/recommendation/recommendation.module';
 import { ReviewModule } from './Client/alcoholList/review/review.module';
 import { AuthModule } from './auth/auth.module';

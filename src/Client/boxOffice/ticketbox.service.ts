@@ -33,7 +33,6 @@ export class TicketboxService {
     async getResult(resultCombination: string): Promise<any> {
         
         const getResultMovie = await this.getResultMovie(resultCombination); // 영화 결과
-
         const movieAlcoholId = getResultMovie[0].alcohol; // 영화에 매치된 술 id
         const movieAlcohol = await this.alcoholService.getAlcoholById(movieAlcoholId); // 영화에 매치된 술
 

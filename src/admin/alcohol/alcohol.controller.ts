@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { ApiCreatedResponse, ApiExcludeEndpoint, ApiOperation } from '@nestjs/swagger';
 import { AlcoholService } from './alcohol.service';
 import { AlcoholDto } from '../../DTO/alcohol.dto';
-import { Alcohol } from '../../Entity/alcohol.entity';
+import { Alcohol } from '../../Entity/Alcohol/alcohol.entity';
 
 @Controller('alcohol')
 export class AlcoholController {
