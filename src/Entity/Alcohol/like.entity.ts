@@ -10,7 +10,7 @@ export class Like extends BaseEntity {
     @PrimaryGeneratedColumn() 
     readonly id: number;
     
-    @Column({nullable: true})
+    @Column({nullable: true}) 
     liked: boolean;
 
     @ManyToOne(type => Alcohol) // N:1 relationship
