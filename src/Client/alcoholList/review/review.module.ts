@@ -2,9 +2,9 @@ import { Module } from '@nestjs/common';
 import { ReviewService } from './review.service';
 import { ReviewController } from './review.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ReviewRepository } from './review.repository';
-import { AlcoholRepository } from 'src/admin/alcohol/alcohol.repository';
-import { S3Repository } from './s3.repository';
+import { ReviewRepository } from '../../../Repository/review.repository';
+import { AlcoholRepository } from 'src/Repository/alcohol.repository';
+import { S3Repository } from '../../../Repository/s3.repository';
 import { UserRepository } from 'src/auth/user.repository';
 
 @Module({

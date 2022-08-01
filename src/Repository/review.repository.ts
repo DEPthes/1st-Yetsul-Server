@@ -1,8 +1,8 @@
-import { Alcohol } from "src/admin/alcohol/entities/alcohol.entity";
+import { Alcohol } from "src/Entity/alcohol.entity";
 import { User } from "src/auth/entities/user.entity";
 import { EntityRepository, Repository } from "typeorm";
-import { CreateReviewDto } from "./dto/review.dto";
-import { Review } from "./entities/review.entity";
+import { CreateReviewDto } from "../DTO/review.dto";
+import { Review } from "../Entity/review.entity";
 
 @EntityRepository(Review)
 export class ReviewRepository extends Repository<Review> {

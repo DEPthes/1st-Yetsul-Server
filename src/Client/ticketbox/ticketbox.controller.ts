@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Body } from '@nestjs/common';
 import {ApiBody, ApiCreatedResponse, ApiExcludeEndpoint, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { QuestionAndSelectionDto } from './dto/questionAndSelection.dto';
+import { QuestionAndSelectionDto } from '../../DTO/questionAndSelection.dto';
 import { TicketboxService } from './ticketbox.service';
 
 @ApiTags("매표소")

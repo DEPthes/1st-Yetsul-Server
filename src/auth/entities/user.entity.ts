@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { Alcohol } from "src/admin/alcohol/entities/alcohol.entity";
-import { Review } from "src/review/entities/review.entity";
+import { Alcohol } from "src/Entity/alcohol.entity";
+import { Review } from "src/Entity/review.entity";
 import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn, Unique } from "typeorm";
 
 @Entity('User')

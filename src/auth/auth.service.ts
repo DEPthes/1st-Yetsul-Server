@@ -1,8 +1,8 @@
 import { BadRequestException, Injectable, Req, UploadedFiles } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { AlcoholRepository } from 'src/admin/alcohol/alcohol.repository';
-import { S3 } from 'src/review/entities/s3.entity';
-import { S3Repository } from 'src/review/s3.repository';
+import { AlcoholRepository } from 'src/Repository/alcohol.repository';
+import { S3 } from 'src/Entity/s3.entity';
+import { S3Repository } from 'src/Repository/s3.repository';
 import { UserRepository } from './user.repository';
 
 

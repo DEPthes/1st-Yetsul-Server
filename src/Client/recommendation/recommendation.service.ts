@@ -64,7 +64,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import axios, { AxiosInstance } from 'axios';
-import { AlcoholRepository } from 'src/admin/alcohol/alcohol.repository';
+import { AlcoholRepository } from 'src/Repository/alcohol.repository';
 import { LessThan, MoreThan } from 'typeorm';
 
 @Injectable()

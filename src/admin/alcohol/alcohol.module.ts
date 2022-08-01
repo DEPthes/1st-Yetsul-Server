@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { AlcoholService } from './alcohol.service';
 import { AlcoholController } from './alcohol.controller';
-import { AlcoholRepository } from './alcohol.repository';
+import { AlcoholRepository } from '../../Repository/alcohol.repository';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({

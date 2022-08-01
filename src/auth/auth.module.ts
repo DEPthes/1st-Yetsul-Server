@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AlcoholRepository } from 'src/admin/alcohol/alcohol.repository';
-import { S3Repository } from 'src/review/s3.repository';
+import { AlcoholRepository } from 'src/Repository/alcohol.repository';
+import { S3Repository } from 'src/Repository/s3.repository';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { GoogleStrategy } from './google.strategy';

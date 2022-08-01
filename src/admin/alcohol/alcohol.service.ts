@@ -1,8 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { AlcoholRepository } from './alcohol.repository';
-import { AlcoholDto } from './dto/alcohol.dto';
-import { Alcohol } from './entities/alcohol.entity';
+import { AlcoholRepository } from '../../Repository/alcohol.repository';
+import { AlcoholDto } from '../../DTO/alcohol.dto';
+import { Alcohol } from '../../Entity/alcohol.entity';
 
 @Injectable()
 export class AlcoholService {
