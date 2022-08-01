@@ -1,5 +1,5 @@
 import { SelectionDto } from "src/DTO/selection.dto";
-import { Selection } from "src/Entity/selection.entity";
+import { Selection } from "src/Entity/box_office/selection.entity";
 import { EntityRepository, Repository } from "typeorm";
 
 @EntityRepository(Selection)

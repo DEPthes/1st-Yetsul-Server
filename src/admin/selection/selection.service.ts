@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { SelectionRepository } from 'src/Repository/selection.repository';
-import { Selection } from '../../Entity/selection.entity';
+import { Selection } from '../../Entity/box_office/selection.entity';
 
 @Injectable()
 export class SelectionService {

@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { S3 } from '../../../Entity/s3.entity';
 import { AlcoholRepository } from 'src/Repository/alcohol.repository';
 import { CreateReviewDto } from '../../../DTO/review.dto';
-import { Review } from '../../../Entity/review.entity';
+import { Review } from '../../../Entity/Alcohol/review.entity';
 import { ReviewRepository } from '../../../Repository/review.repository';
 import { S3Repository } from '../../../Repository/s3.repository';
 import { UserRepository } from 'src/auth/user.repository';
