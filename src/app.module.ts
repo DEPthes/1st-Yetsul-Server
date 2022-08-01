@@ -7,14 +7,14 @@ import { QuestionModule } from './admin/question/question.module';
 import { SelectionModule } from './admin/selection/selection.module';
 import { AlcoholModule } from './admin/alcohol/alcohol.module';
 import { TicketboxModule } from './Client/boxOffice/ticketbox.module';
-import { RecommendationModule } from './Client/recommendation/recommendation.module';
-import { ReviewModule } from './Client/alcoholList/review/review.module';
+import { alcoholListModule } from './Client/alcoholList/alcoholList.module';
 import { AuthModule } from './auth/auth.module';
+import { slotMachineModule } from './Client/slotMachine/slotMachine.module';
 
 @Module({
   imports: [
     TypeOrmModule.forRoot(typeORMConfig), 
-    TicketboxModule, QuestionModule, SelectionModule, AlcoholModule, RecommendationModule, ReviewModule, AuthModule],
+    TicketboxModule, QuestionModule, SelectionModule, AlcoholModule, slotMachineModule, alcoholListModule, AuthModule],
   controllers: [AppController],
   providers: [AppService],
 })
