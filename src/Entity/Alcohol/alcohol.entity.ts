@@ -27,10 +27,7 @@ export class Alcohol extends BaseEntity {
     @Column({nullable: true})
     price: number;
     
-    // https://it-timehacker.tistory.com/167
-    @ApiProperty({description: "술 도수 정도"})
-    @Column("decimal", {nullable: true})
-    AlcoholByVolume: number;
+   
     
     @ApiProperty({description: "술 달달함의 여부"})
     @Column({nullable: true})
@@ -62,9 +59,13 @@ export class Alcohol extends BaseEntity {
     
     // 별점
     @ApiProperty({description: "해당 술에 대한 별점"})
-    @Column("decimal", {nullable: true})
+    @Column({nullable: true})
     star: number;
-    
+
+    @ApiProperty({description: "술 도수 정도"})
+    @Column('numeric', {nullable: true})
+    AlcoholByVolume: number;
+
     @ApiProperty({description: "해당 술 이미지 url"})
     @Column({nullable: true})
     alcoholImage: string;
@@ -72,6 +73,6 @@ export class Alcohol extends BaseEntity {
     @OneToMany(type => Review, review => review.alcohol, {eager: true}) // 1:N relationship
     reviews: Review[] // 유저에 보드라는 컬럼 넣음. 여러개 넣을 수 있으니까 배열로
 
-    @ManyToMany(() => User, (user) => user.alcohols)
-    user: User[];
+    // @ManyToMany(() => User, (user) => user.alcohols)
+    // user: User[];
 }
