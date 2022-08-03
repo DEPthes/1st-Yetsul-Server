@@ -2,7 +2,6 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/auth/entities/user.entity';
 import { UserRepository } from 'src/auth/user.repository';
-import { LikeDto } from 'src/DTO/like.dto';
 import { Alcohol } from 'src/Entity/Alcohol/alcohol.entity';
 import { AlcoholRepository } from 'src/Repository/alcohol.repository';
 import { LikeRepository } from 'src/Repository/like.repository';
@@ -31,14 +30,6 @@ export class IntroductionAlcoholService {
         }
         return await this.alcoholRepository.find();
     }
-
-    /*
-    * @Body LikeDto{userId:string, alcoholId:number}
-    * @Method Post
-    * @Date 22/08/01
-    * @Description 술 리스트 전체 
-    * @Return LikeDto 
-    */
 
    async userLikedAlcohol(userEmail: string, alcoholId: number) {
 

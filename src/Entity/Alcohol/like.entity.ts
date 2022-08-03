@@ -11,11 +11,9 @@ export class Like extends BaseEntity {
     readonly id: number;
 
     @ManyToOne(type => Alcohol, {eager: false}) // N:1 relationship
-    @JoinColumn({name : "alcohol_id", referencedColumnName: "id" })
-    alcohol_id: Alcohol;
+    alcohol: Alcohol;
 
-    @ManyToOne(type => User, (user) => user.likeAlcoholId, {nullable: true, eager: false})// N:1 relationship
-    @JoinColumn({name : "userEmail", referencedColumnName: "id" })
-    userEmail: User; // 유저 컬럼
+    @ManyToOne(type => User, (user) => user.like, {nullable: true, eager: true})// N:1 relationship
+    user: User; // 유저 컬럼
 }
 

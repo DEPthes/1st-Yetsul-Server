@@ -2,7 +2,6 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@n
 import { AuthGuard } from '@nestjs/passport';
 import { ApiCreatedResponse, ApiExcludeEndpoint, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { User } from 'src/auth/entities/user.entity';
-import { LikeDto } from 'src/DTO/like.dto';
 import { Alcohol } from 'src/Entity/Alcohol/alcohol.entity';
 import { Like } from 'src/Entity/Alcohol/like.entity';
 import { IntroductionAlcoholService } from './introductionAlcohol.service';

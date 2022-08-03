@@ -26,8 +26,8 @@ export class User {
     @OneToMany(type => Review, review => review.user, { eager: true }) // 1:N relationship
     reviews: Review[]; // 유저에 보드라는 컬럼 넣음. 여러개 넣을 수 있으니까 배열로
 
-    @OneToMany(type => Like, like => like.userEmail, { eager: false })
-    likeAlcoholId: Like[];
+    @OneToMany(type => Like, like => like.user, { eager: false })
+    like: Like[];
 
 
     // @ManyToMany(() => Alcohol, (alcohols) => alcohols.user)
