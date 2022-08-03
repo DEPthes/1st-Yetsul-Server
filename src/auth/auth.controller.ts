@@ -5,6 +5,8 @@ import { AuthService } from './auth.service';
 import * as multerS3 from 'multer-s3';
 import * as AWS from 'aws-sdk';
 import { FilesInterceptor } from '@nestjs/platform-express';
+import { User } from './entities/user.entity';
+import { GetUser } from './getUser.decorator';
 
 const s3 = new AWS.S3();
 AWS.config.update({
@@ -18,7 +20,13 @@ AWS.config.update({
 export class AuthController {
     constructor(private authService: AuthService) { }
     
-    
+    @Get('/mypage')
+    @UseGuards(AuthGuard('kakao'))
+    async mypage(@GetUser() user: User){
+
+        return ;
+    }
+
     // // 찜하기
     // @UseGuards(AuthGuard('kakao'))
     // @Post('/like/:alcoholId')

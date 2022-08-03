@@ -10,6 +10,7 @@ export class LikeRepository extends Repository<Like> {
     async saveUserLikedAlcohol(user: User, alcohol: Alcohol) {
 
         const LikeAlcohol = {user: user, alcohol: alcohol};
-        return this.save(LikeAlcohol);
+        const hello = this.create(LikeAlcohol)
+        return this.save(hello);
     }
 }
