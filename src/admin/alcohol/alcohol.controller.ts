@@ -3,12 +3,13 @@ import { ApiCreatedResponse, ApiOperation } from '@nestjs/swagger';
 import { AlcoholService } from './alcohol.service';
 import { Alcohol } from '../../Entity/Alcohol/alcohol.entity';
 
-@Controller('alcohol')
+@Controller('admin')
 export class AlcoholController {
+
     constructor(private readonly alcoholService: AlcoholService) { }
 
     // 개별 술 조회
-    @Get('/:id')
+    @Get('/alcohol/:id')
     @ApiOperation({ summary: 'id로 술 조회 API', description: 'id로 술 조회. /alcohol/1' })
     @ApiCreatedResponse({ description: 'id로 술 조회', type: Alcohol })
     getAlcoholById(@Param('id') id: number): Promise<Alcohol> {

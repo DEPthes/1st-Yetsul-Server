@@ -18,25 +18,25 @@ export class AuthService {
         private s3Repository: S3Repository
     ) { }
 
-    // 찜하기
-    async likeAlcohol(userId: number, alcoholId: number) {
-        const user = await this.userRepository.findOne(userId);
-        await this.userRepository.save(user);
-        const alcohol = await this.alcoholRepository.findOne(alcoholId);
-        await this.alcoholRepository.save(alcohol);
+    // // 찜하기
+    // async likeAlcohol(userId: number, alcoholId: number) {
+    //     const user = await this.userRepository.findOne(userId);
+    //     await this.userRepository.save(user);
+    //     const alcohol = await this.alcoholRepository.findOne(alcoholId);
+    //     await this.alcoholRepository.save(alcohol);
 
-        // if (user.alcohols === undefined)
-        if (!user.alcohols) {
-            console.log('ee');
-            user.alcohols = []; // 아무것도 없을 시 undefinded일 때 push하면 오류 ??
-        }
+    //     // if (user.alcohols === undefined)
+    //     if (!user.alcohols) {
+    //         console.log('ee');
+    //         user.alcohols = []; // 아무것도 없을 시 undefinded일 때 push하면 오류 ??
+    //     }
 
-        user.alcohols.push(alcohol);
-        console.log('user = ', user);
-        console.log('user.alcohols = ', user.alcohols.length);
+    //     user.alcohols.push(alcohol);
+    //     console.log('user = ', user);
+    //     console.log('user.alcohols = ', user.alcohols.length);
 
-        return await this.userRepository.save(user);
-    }
+    //     return await this.userRepository.save(user);
+    // }
 
     async googleLogin(req) {
         if (!req.user) {

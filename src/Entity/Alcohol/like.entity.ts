@@ -9,16 +9,11 @@ export class Like extends BaseEntity {
     @ApiProperty({description: "리뷰 pk 값"})
     @PrimaryGeneratedColumn() 
     readonly id: number;
-    
-    @Column({nullable: true}) 
-    liked: boolean;
 
-    @ManyToOne(type => Alcohol) // N:1 relationship
-    @JoinColumn({name : "alcohol_id", referencedColumnName: "id" })
-    alcohol_id: Alcohol;
+    @ManyToOne(type => Alcohol, {eager: false}) // N:1 relationship
+    alcohol: Alcohol;
 
-    @ManyToOne(type => User) // N:1 relationship
-    @JoinColumn({name : "user_id", referencedColumnName: "id" })
-    userId: User; // 유저 컬럼
+    @ManyToOne(type => User, (user) => user.like, {nullable: true, eager: true})// N:1 relationship
+    user: User; // 유저 컬럼
 }
 

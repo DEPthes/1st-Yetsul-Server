@@ -102,8 +102,8 @@ export class TicketboxService {
     async getResultAlcoholAll(resultCombination: string) { // 1111111 이중에서 5번째, 7번째는 안쓰임
 
         //let select_alcoholByVolume = MoreThan(10);
-        let select_alcoholByVolume1 = 10;
-        let select_alcoholByVolume2 = 100;
+        let select_alcoholByVolume1 = 10.0;
+        let select_alcoholByVolume2 = 100.0;
         let select_cool = Boolean(true);
         let select_clean = false;
         let select_bitter = false;
@@ -143,8 +143,8 @@ export class TicketboxService {
             else if (index == 2) {
                 if (resultCombination[index] == '1') { // 3번째 문제 답 1이면 10도 미만
                     //select_alcoholByVolume = LessThan(10);
-                    select_alcoholByVolume1 = 0;
-                    select_alcoholByVolume2 = 21;
+                    select_alcoholByVolume1 = 0.0;
+                    select_alcoholByVolume2 = 21.0;
                 }
             }
 
@@ -226,8 +226,8 @@ export class TicketboxService {
     async getResultAlcohol(resultCombination: string) { // 1111111 이중에서 5번째, 7번째는 안쓰임
 
         //let select_alcoholByVolume = MoreThan(10);
-        let select_alcoholByVolume1 = 10;
-        let select_alcoholByVolume2 = 100;
+        let select_alcoholByVolume1 = 10.0;
+        let select_alcoholByVolume2 = 100.0;
         let select_cool = Boolean(true);
         let select_clean = false;
         let select_bitter = false;
@@ -267,8 +267,8 @@ export class TicketboxService {
             else if (index == 2) {
                 if (resultCombination[index] == '1') { // 3번째 문제 답 1이면 10도 미만
                     //select_alcoholByVolume = LessThan(10);
-                    select_alcoholByVolume1 = 0;
-                    select_alcoholByVolume2 = 21;
+                    select_alcoholByVolume1 = 0.0;
+                    select_alcoholByVolume2 = 21.0;
                 }
             }
 

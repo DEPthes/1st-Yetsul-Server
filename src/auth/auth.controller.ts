@@ -5,6 +5,8 @@ import { AuthService } from './auth.service';
 import * as multerS3 from 'multer-s3';
 import * as AWS from 'aws-sdk';
 import { FilesInterceptor } from '@nestjs/platform-express';
+import { User } from './entities/user.entity';
+import { GetUser } from './getUser.decorator';
 
 const s3 = new AWS.S3();
 AWS.config.update({
@@ -17,13 +19,20 @@ AWS.config.update({
 @Controller('auth')
 export class AuthController {
     constructor(private authService: AuthService) { }
+    
+    @Get('/mypage')
+    @UseGuards(AuthGuard('kakao'))
+    async mypage(@GetUser() user: User){
 
-
-    // 찜하기
-    @Post('/like/:alcoholId')
-    likeAlcohol(@Body('userId') userId: number, @Param('alcoholId') alcoholId: number) {
-        return this.authService.likeAlcohol(userId, alcoholId);
+        return ;
     }
+
+    // // 찜하기
+    // @UseGuards(AuthGuard('kakao'))
+    // @Post('/like/:alcoholId')
+    // likeAlcohol(@Body('userId') userId: number, @Param('alcoholId') alcoholId: number) {
+    //     return this.authService.likeAlcohol(userId, alcoholId);
+    // }
 
     // 구글 로그인 페이지로 리다이렉션 할 api
     @Get('/google')
@@ -68,8 +77,9 @@ export class AuthController {
     }
 
     // 카카오 로그인 후 콜백 url로 오는 요청 처리하는 api
-    @Redirect('http://depth-itw.s3-website.ap-northeast-2.amazonaws.com/', 301)
-    @Get('kakao/callback')
+    // @Redirect('http://depth-itw.s3-website.ap-northeast-2.amazonaws.com/', 301)
+    // @Get('kakao/callback')
+    @Get('http://depth-itw.s3-website.ap-northeast-2.amazonaws.com/')
     @UseGuards(AuthGuard('kakao'))
     kakaoAuthRedirect(@Req() req) {// req.user로 유저 프로필 값 가져옴  Promise<{accessToken: string}>
         // console.log("카카오 로그인 종료");
@@ -80,7 +90,7 @@ export class AuthController {
     
         const accessToken = this.authService.kakaoLogin(req)
 
-        return `http://depth-itw.s3-website.ap-northeast-2.amazonaws.com/${accessToken}` ; // redirection 할 때는 accessToken으로 보내줘야함.
+        return accessToken ; // redirection 할 때는 accessToken으로 보내줘야함.
     }
 
     // 개발 / 관리자 사용 용도 : 등록된 유저 정보 가져오기

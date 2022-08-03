@@ -36,8 +36,6 @@ export class ReviewService {
       await this.s3Repository.save(uploadFiles);
       const url = (location);
 
-      console.log({ url });
-
       const alcohol = await this.alcoholRepository.findOne(alcohol_id);
       const user = await this.userRepository.findOne(user_id);
       return this.reviewRepository.createReview(createReviewDto, user, alcohol, url);
@@ -47,13 +45,10 @@ export class ReviewService {
   }
 
   async getAllReview(alcohol_id: number): Promise<Review[]> {
-
     const query = this.reviewRepository.createQueryBuilder('review'); // 쿼리 사용
-
     query.where('review.alcoholId = :alcoholId', { alcoholId: alcohol_id });
-
     const reviews = await query.getMany(); // 전부 가져옴. getOne()은 하나
-
+  
     return reviews;
   }
 
