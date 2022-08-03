@@ -22,13 +22,7 @@ export class ReviewController {
   constructor(private readonly reviewService: ReviewService) { }
 
   @Post('/user') // 해당 유저가 작성한 모든 리뷰 조회
-  @ApiBody({
-    schema: {
-      properties: {
-        userId: { type: "number" }
-      }
-    }
-  })
+  @ApiBody({schema: {properties: {userId: { type: "number" }}}})
   @ApiOperation({ summary: '유저가 작성한 리뷰 조회 API', description: '유저가 작성한 리뷰 조회' })
   @ApiCreatedResponse({ description: '유저 id body으로 받음' })
   getUsersReview(@Body('user') user: number): Promise<Review[]> {
@@ -51,14 +45,12 @@ export class ReviewController {
     }),
   }))
   async createReview(@Body() createReviewDto: CreateReviewDto, @Body('user') user: number, @Param() alcohol: number, @UploadedFiles() files: Express.Multer.File[], @Req() request, @Res() response) {
-    
     let location;
+    
     if (request.files[0] == undefined) {
       console.log("no image file.");
       location = null;
-    }
-    else
-    {
+    }else{
       console.log('image file exist.');
       location = request.files[0];
     }

@@ -1,37 +1,61 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { User } from 'src/auth/entities/user.entity';
+import { UserRepository } from 'src/auth/user.repository';
+import { LikeDto } from 'src/DTO/like.dto';
 import { Alcohol } from 'src/Entity/Alcohol/alcohol.entity';
 import { AlcoholRepository } from 'src/Repository/alcohol.repository';
+import { LikeRepository } from 'src/Repository/like.repository';
 
 @Injectable()
 export class IntroductionAlcoholService {
 
     constructor(
         @InjectRepository(AlcoholRepository)
+        @InjectRepository(LikeRepository)
+        @InjectRepository(UserRepository)
         private alcoholRepository: AlcoholRepository,
+        private likeRepository: LikeRepository,
+        private userRepository: UserRepository,
     ) { }
 
-    // 술 리스트 조회
+    // 술 리스트 전체 조회
     async getAlcoholList(filter: string): Promise<Alcohol[]> {
         if (filter == 'ASC') {
             return await this.alcoholRepository.find({
-                order: {
-                    star: "ASC"
-                }
-            });
+                order: {star: "ASC"}});
         }
         else if (filter == 'DESC') {
             return await this.alcoholRepository.find({
-                order: {
-                    star: "DESC"
-                }
-            });
+                order: {star: "DESC"}});
         }
         return await this.alcoholRepository.find();
     }
 
-    // 술 카테고리 별 리스트 조회
-    async getAlcoholListByCategory(id: number, filter: string): Promise<Alcohol[]> {
+    /*
+    * @Body LikeDto{userId:string, alcoholId:number}
+    * @Method Post
+    * @Date 22/08/01
+    * @Description 술 리스트 전체 
+    * @Return LikeDto 
+    */
+
+   async userLikedAlcohol(userEmail: string, alcoholId: number) {
+
+        const user = await this.userRepository.findOne({
+            where: {
+                email: userEmail['userEmail']
+            }
+        });
+        console.log(alcoholId);
+        const alcohol = await this.alcoholRepository.findOne(alcoholId);
+    return this.likeRepository.saveUserLikedAlcohol(user, alcohol);
+   }   
+   
+   /*
+   * @Description:술 카테고리 별 리스트 조회
+   */
+   async getAlcoholListByCategory(id: number, filter: string): Promise<Alcohol[]> {
         if (filter == 'ASC') {
             return await this.alcoholRepository.find({
                 order: {

@@ -52,31 +52,31 @@ export class slotMachineService {
 
   // 분위기에 해당되는 도수 범위 설정 메서드
   async getMoodRecommendation(mood: string) {
-    let AlcoholByVolumeMoreThan = 0;
-    let AlcoholByVolumeLessThan = 10;
+    let AlcoholByVolumeMoreThan = 0.0;
+    let AlcoholByVolumeLessThan = 10.0;
 
     if ((mood == 'joy') || (mood == 'excited')) {
       // 그대로
     }
 
     else if ((mood == 'sad') || (mood == 'gloom') || (mood == 'drink')) {
-      AlcoholByVolumeMoreThan = 5;
-      AlcoholByVolumeLessThan = 15;
+      AlcoholByVolumeMoreThan = 5.0;
+      AlcoholByVolumeLessThan = 15.0;
     }
 
     else if (mood == 'flutter') {
-      AlcoholByVolumeMoreThan = 10;
-      AlcoholByVolumeLessThan = 20;
+      AlcoholByVolumeMoreThan = 10.0;
+      AlcoholByVolumeLessThan = 20.0;
     }
     
     else if (mood == 'sentimental') {
-      AlcoholByVolumeMoreThan = 20;
-      AlcoholByVolumeLessThan = 40;
+      AlcoholByVolumeMoreThan = 20.0;
+      AlcoholByVolumeLessThan = 40.0;
     }
     
     else if (mood == 'anger') {
-      AlcoholByVolumeMoreThan = 30;
-      AlcoholByVolumeLessThan = 50;
+      AlcoholByVolumeMoreThan = 30.0;
+      AlcoholByVolumeLessThan = 50.0;
     }
     
     return [AlcoholByVolumeMoreThan, AlcoholByVolumeLessThan];
