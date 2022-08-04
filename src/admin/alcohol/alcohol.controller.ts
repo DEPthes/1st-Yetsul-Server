@@ -1,5 +1,5 @@
 import { Controller, Get, Post, Body, Param } from '@nestjs/common';
-import { ApiCreatedResponse, ApiOperation } from '@nestjs/swagger';
+import { ApiCreatedResponse, ApiOperation, ApiExcludeEndpoint } from '@nestjs/swagger';
 import { AlcoholService } from './alcohol.service';
 import { Alcohol } from '../../Entity/Alcohol/alcohol.entity';
 
@@ -9,6 +9,7 @@ export class AlcoholController {
     constructor(private readonly alcoholService: AlcoholService) { }
 
     // 개별 술 조회
+    @ApiExcludeEndpoint()
     @Get('/alcohol/:id')
     @ApiOperation({ summary: 'id로 술 조회 API', description: 'id로 술 조회. /alcohol/1' })
     @ApiCreatedResponse({ description: 'id로 술 조회', type: Alcohol })
@@ -17,6 +18,7 @@ export class AlcoholController {
     }
 
     // 술 카테고리 별 리스트 조회
+    @ApiExcludeEndpoint()
     @Post('/list/:category')
     @ApiOperation({ summary: '술 카테고리 별 리스트 조회 API', description: '술 카테고리 별 리스트 조회' })
     @ApiCreatedResponse({ description: '술 카테고리 별 리스트 조회', type: Alcohol })
@@ -25,6 +27,7 @@ export class AlcoholController {
     }
 
     // 술 리스트 조회
+    @ApiExcludeEndpoint()
     @Post('/list')
     @ApiOperation({ summary: '술 리스트 조회 API', description: '술 리스트 조회' })
     @ApiCreatedResponse({ description: '술 리스트 조회', type: Alcohol })
