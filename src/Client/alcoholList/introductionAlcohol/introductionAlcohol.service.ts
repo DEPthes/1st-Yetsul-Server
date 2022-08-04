@@ -68,12 +68,27 @@ export class IntroductionAlcoholService {
         });
     }
 
-    // 술 조회
+    // id로 술 조회
     async getAlcoholById(id: number): Promise<Alcohol> {
         const found = await this.alcoholRepository.findOne(id);
 
         if (!found) {
             throw new NotFoundException(`Cant't find question with id ${id}`);
+        }
+
+        return found;
+    }
+
+    // 이름으로 술 조회
+    async getAlcoholByName(alcoholName: string): Promise<Alcohol> {
+        const found = await this.alcoholRepository.findOne({
+            where: {
+                AlcoholName: alcoholName
+            }
+        });
+
+        if (!found) {
+            throw new NotFoundException(`Cant't find alcohol with name ${alcoholName}.`);
         }
 
         return found;
