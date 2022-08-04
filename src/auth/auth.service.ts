@@ -76,7 +76,7 @@ export class AuthService {
         }
 
         return {
-            message: 'User Info from Naver',
+            message: 'User Info from Naver', 
             user: req.user
         }
     }
