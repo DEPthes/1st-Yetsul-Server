@@ -76,10 +76,17 @@ export class AuthController {
 
     }
 
+    @Get('/hello')
+    hello(@Req() req){
+        console.log("req")
+    }
+
+
     // 카카오 로그인 후 콜백 url로 오는 요청 처리하는 api
     // @Redirect('http://depth-itw.s3-website.ap-northeast-2.amazonaws.com/', 301)
-    // @Get('kakao/callback')
-    @Get('http://depth-itw.s3-website.ap-northeast-2.amazonaws.com/')
+    @Redirect('https://depth-server.herokuapp.com/auth/hello', 301)
+    @Get('kakao/callback')
+    // @Get('http://depth-itw.s3-website.ap-northeast-2.amazonaws.com/')
     @UseGuards(AuthGuard('kakao'))
     kakaoAuthRedirect(@Req() req) {// req.user로 유저 프로필 값 가져옴  Promise<{accessToken: string}>
         // console.log("카카오 로그인 종료");
