@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, Req, UploadedFiles } from '@nestjs/common';
+import { BadRequestException, Injectable, UploadedFiles } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AlcoholRepository } from 'src/Repository/alcohol.repository';
 import { S3 } from 'src/Entity/s3.entity';
@@ -14,7 +14,6 @@ export class AuthService {
         @InjectRepository(AlcoholRepository)
         @InjectRepository(S3Repository)
         private userRepository: UserRepository,
-        private alcoholRepository: AlcoholRepository,
         private s3Repository: S3Repository
     ) { }
 
@@ -46,13 +45,16 @@ export class AuthService {
         const email = req.user.email;
         const profileImg = req.user.picture;
         const nickname = email.split('@')[0];
-
+        console.log('nickname is ', nickname);
 
         const user = await this.userRepository.findOne({ email });
 
         if (!user) {
             this.userRepository.createUser(email, profileImg, nickname);
         }
+
+        console.log("서비스에서 찍은 request입니다.(구글)");
+        console.log(req.user.accessToken);
 
         return {
             message: 'User Info from Google',
@@ -89,7 +91,7 @@ export class AuthService {
         const email = req.user.email;
         const profileImg = req.user.picture;
         const nickname = email.split('@')[0];
-        console.log('nickname is ', nickname);
+        console.log('nickname is', nickname);
 
         const user = await this.userRepository.findOne({ email });
 
@@ -97,17 +99,20 @@ export class AuthService {
             this.userRepository.createUser(email, profileImg, nickname);
         }
         
-        console.log("서비스에서 찍은 request입니다. ");
-        // console.log(req);
-        // console.log(req.user.accessToken);
+        console.log("서비스에서 찍은 request입니다.(카카오)");
 
-        return req.user.accessToken;
+        // return req.user.accessToken;
+        return {
+            message: 'User Info from Kakao',
+            user: req.user
+        }
     }
 
     async getUsersInfo() {
         return await this.userRepository.find();
     }
 
+    // 프로필 수정
     async editUser(id: number, nickname: string, @UploadedFiles() files: Express.Multer.File[], location: string) {
 
         try {

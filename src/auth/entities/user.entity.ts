@@ -1,8 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { Alcohol } from "src/Entity/Alcohol/alcohol.entity";
 import { Like } from "src/Entity/Alcohol/like.entity";
 import { Review } from "src/Entity/Alcohol/review.entity";
-import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn, Unique } from "typeorm";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn, Unique } from "typeorm";
 
 @Entity('User')
 @Unique(['email'])
@@ -26,6 +25,7 @@ export class User {
     @OneToMany(type => Review, review => review.user, { eager: true }) // 1:N relationship
     reviews: Review[]; // 유저에 보드라는 컬럼 넣음. 여러개 넣을 수 있으니까 배열로
 
+    // 찜하기
     @OneToMany(type => Like, like => like.user, { eager: false })
     like: Like[];
 

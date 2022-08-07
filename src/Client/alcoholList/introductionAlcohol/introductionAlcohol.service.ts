@@ -1,6 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from 'src/auth/entities/user.entity';
 import { UserRepository } from 'src/auth/user.repository';
 import { Alcohol } from 'src/Entity/Alcohol/alcohol.entity';
 import { AlcoholRepository } from 'src/Repository/alcohol.repository';
@@ -22,31 +21,35 @@ export class IntroductionAlcoholService {
     async getAlcoholList(filter: string): Promise<Alcohol[]> {
         if (filter == 'ASC') {
             return await this.alcoholRepository.find({
-                order: {star: "ASC"}});
+                order: { star: "ASC" }
+            });
         }
         else if (filter == 'DESC') {
             return await this.alcoholRepository.find({
-                order: {star: "DESC"}});
+                order: { star: "DESC" }
+            });
         }
         return await this.alcoholRepository.find();
     }
 
-   async userLikedAlcohol(userEmail: string, alcoholId: number) {
+    // 찜하기
+    async userLikedAlcohol(userEmail: string, alcoholId: number) {
 
         const user = await this.userRepository.findOne({
             where: {
-                email: userEmail['userEmail']
+                email: userEmail
             }
         });
-        console.log(alcoholId);
+        console.log(user.email);
+        console.log(user.nickname);
         const alcohol = await this.alcoholRepository.findOne(alcoholId);
-    return this.likeRepository.saveUserLikedAlcohol(user, alcohol);
-   }   
-   
-   /*
-   * @Description:술 카테고리 별 리스트 조회
-   */
-   async getAlcoholListByCategory(id: number, filter: string): Promise<Alcohol[]> {
+        return this.likeRepository.saveUserLikedAlcohol(user, alcohol);
+    }
+
+    /*
+    * @Description:술 카테고리 별 리스트 조회
+    */
+    async getAlcoholListByCategory(id: number, filter: string): Promise<Alcohol[]> {
         if (filter == 'ASC') {
             return await this.alcoholRepository.find({
                 order: {

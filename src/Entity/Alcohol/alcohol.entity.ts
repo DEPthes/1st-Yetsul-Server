@@ -1,7 +1,5 @@
-//import { Review } from "src/review/entities/review.entity";
 import { ApiProperty } from "@nestjs/swagger";
-import { User } from "src/auth/entities/user.entity";
-import { BaseEntity, Column, Entity, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Like } from "./like.entity";
 import { Review } from "./review.entity";
 
@@ -27,8 +25,6 @@ export class Alcohol extends BaseEntity {
     @ApiProperty({description: "술 가격"})
     @Column({nullable: true})
     price: number;
-    
-   
     
     @ApiProperty({description: "술 달달함의 여부"})
     @Column({nullable: true})
@@ -70,7 +66,8 @@ export class Alcohol extends BaseEntity {
     @ApiProperty({description: "해당 술 이미지 url"})
     @Column({nullable: true})
     alcoholImage: string;
-    
+
+    // 찜하기
     @OneToMany(type =>Like, like => like.alcohol, {eager: false})
     like: Like[];
 

@@ -1,7 +1,5 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
-import { ApiBody, ApiCreatedResponse, ApiExcludeEndpoint, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { User } from 'src/auth/entities/user.entity';
+import { Controller, Get, Post, Body, Param } from '@nestjs/common';
+import { ApiBody, ApiCreatedResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Alcohol } from 'src/Entity/Alcohol/alcohol.entity';
 import { Like } from 'src/Entity/Alcohol/like.entity';
 import { IntroductionAlcoholService } from './introductionAlcohol.service';
@@ -35,17 +33,13 @@ export class IntroductionAlcoholController {
         return this.alcoholService.getAlcoholById(id);
     }
 
+    // 술 찜하기
     @ApiOperation({ summary: "술 리스트 - 찜하기 API", description: "accessToken을 가지고 있을 때, 유저 id와 술 id를 프론트에서 주면 DB에 좋아요 저장함." })
     @ApiCreatedResponse({ description: '술 리스트 - 조회', type: Like })
     @Post('/description/:id')
-    LikeAlcohol(@Body() userEmail: string, @Param('id') alcoholId: number) {
-        // console.log(userEmail, alcoholId);
+    LikeAlcohol(@Body('userEmail') userEmail: string, @Param('id') alcoholId: number) {
         return this.alcoholService.userLikedAlcohol(userEmail, alcoholId);
     }
-
-
-
-
 
     // 술 카테고리 별 리스트 조회
     @Post('/list/:category')
@@ -55,7 +49,7 @@ export class IntroductionAlcoholController {
         return this.alcoholService.getAlcoholListByCategory(category, filter);
     }
 
-    // 술 리스트 조회
+    // 술 전체 리스트 조회
     @Post('/list')
     @ApiOperation({ summary: '술 리스트 조회 API', description: '술 리스트 조회' })
     @ApiCreatedResponse({ description: '술 리스트 조회', type: Alcohol })
