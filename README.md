@@ -1,6 +1,9 @@
 # BackEnd-ITW
 ITW는 Information of Traditional Wine의 약자로, 2030 MZ 세대들에게 전통주를 소개하는 서비스입니다 
 
+Front Server url: http://depth-itw.s3-website.ap-northeast-2.amazonaws.com/
+
+
 ### 기획 내용
 
 ##### [스프레드시트] 기능정의서, 해시태그 리스트: https://docs.google.com/spreadsheets/d/1Vc_XdLf2807tBSTKlZu0bfvFpixXZ1BRoxDkNca3IF0/edit#gid=0
