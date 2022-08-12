@@ -14,7 +14,7 @@ export class Review extends BaseEntity {
     content: string;
 
     // 별점
-    @Column("decimal", {nullable: true})
+    @Column({nullable: true})
     star: number;
 
     @Column({ nullable: true })

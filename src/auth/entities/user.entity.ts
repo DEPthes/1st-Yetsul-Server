@@ -10,6 +10,10 @@ export class User {
     @ApiProperty({ description: "유저 id" })
     id: number;
 
+    // @ApiProperty({ description: "providerId" })
+    // @Column({ nullable: true })
+    // providerId: number;
+
     @ApiProperty({ description: "이메일" })
     @Column()
     email: string;

@@ -4,18 +4,30 @@ import { AlcoholRepository } from 'src/Repository/alcohol.repository';
 import { S3 } from 'src/Entity/s3.entity';
 import { S3Repository } from 'src/Repository/s3.repository';
 import { UserRepository } from './user.repository';
+import { User } from './entities/user.entity';
+import { JwtService } from '@nestjs/jwt';
+import { HttpService } from "@nestjs/axios";
+import { firstValueFrom } from 'rxjs';
+import axios from 'axios';
 
+interface JwtPayload {
+    sub;
+    email: string;
+}
 
 @Injectable()
 export class AuthService {
-
+    private http: HttpService;
     constructor(
         @InjectRepository(UserRepository)
         @InjectRepository(AlcoholRepository)
         @InjectRepository(S3Repository)
         private userRepository: UserRepository,
-        private s3Repository: S3Repository
-    ) { }
+        private s3Repository: S3Repository,
+        private jwtService: JwtService
+    ) {
+        this.http = new HttpService();
+    }
 
     // // 찜하기
     // async likeAlcohol(userId: number, alcoholId: number) {
@@ -36,6 +48,113 @@ export class AuthService {
 
     //     return await this.userRepository.save(user);
     // }
+
+
+
+    // 0811 ==========================================================
+
+    // findByProviderIdOrSave in UserService
+    async findByProviderIdOrSave(googleUser) {
+        const { providerId, provider, email, name } = googleUser;
+
+        const user = await this.userRepository.findOne({ where: { providerId } });
+
+        if (user) {
+            return user;
+        }
+
+        const newUser = new User();
+        newUser.email = email;
+
+        return await this.userRepository.save(newUser);
+    }
+
+    getToken(payload: JwtPayload) {
+        const accessToken = this.jwtService.sign(payload, {
+            expiresIn: '2h',
+            secret: process.env.JWT_SECRET,
+        });
+
+        const refreshToken = this.jwtService.sign(payload, {
+            expiresIn: '7d',
+            secret: process.env.JWT_SECRET,
+        });
+
+        return { accessToken, refreshToken };
+    }
+
+    // 파라미터로 로그인해서 나온 액세스 토큰 넣어서 사용자 정보 확인하기.
+    // https://hou27.tistory.com/entry/카카오로-로그인하기-JWT-토큰-발급-OAuth // 이거 참고함.
+    // https://velog.io/@dldmswjd322/Nest-카카오-로그인-API-사용하기
+    // https://velog.io/@nara7875/Node.js-kakao-login-api-가져오기 // 이것도 내일 한번 보기.
+    // 토큰으로 사용자 정보 뽑아내기. 카카오
+    async getUserInfoWithTokenKakao(token: string) {
+        const user_info = await axios.get('https://kapi.kakao.com/v2/user/me', {
+              headers: {
+                Authorization: `Bearer ${token}`
+              },
+            })
+        //   console.log('user_info is', user_info);
+        //   console.log('kakao_account is', user_info.data.kakao_account);
+          if (this.userRepository.find({ where: { email: user_info.data.kakao_account.email } })) {
+            console.log(`사용자 이메일이 ${user_info.data.kakao_account.email}인 유저입니다.`);
+          } else {
+            console.log(`해당 이메일의 유저가 존재하지 않습니다.`);
+          }
+    }
+
+    // 토큰으로 사용자 정보 뽑아내기. 구글
+    async getUserInfoWithTokenGoogle(token: string) {
+        const user_info = await axios.get(`https://www.googleapis.com/oauth2/v3/userinfo?access_token=${token}`);
+        console.log('(구글) 액세스 토큰을 이용해 가져온 사용자 이메일: ', user_info.data.email);
+    }
+
+    // 토큰으로 사용자 정보 뽑아내기. 네이버
+    async getUserInfoWithTokenNaver(token: string) {
+        const user_info = await axios.get(`https://openapi.naver.com/v1/nid/me`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            },
+        })
+
+        console.log('(네이버) 액세스 토큰을 이용해 가져온 사용자 이메일: ', user_info.data.response.email);
+    }
+
+    // 토큰으로 로그아웃 하기. 카카오
+    // 참고 링크: https://12ahn22.tistory.com/33
+    async kakaoLogout(token: string) {
+        const user_info = await axios.get(`https://kapi.kakao.com/v1/user/unlink`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            },
+        })
+
+        console.log('카카오 로그 아웃 완료');
+    }
+
+    // 토큰으로 로그아웃 하기. 구글
+    // https://developers.google.com/identity/protocols/oauth2/openid-connect?hl=en
+    async googleLogout(token: string) {
+        // const user_info = await axios.get(`https://oauth2.googleapis.com/revoke`, {
+        //     headers: {
+        //         Authorization: `Bearer ${token}`
+        //     },
+        // })
+
+        // const user_info = await axios.get(`https://oauth2.googleapis.com/revoke?access_token=${token}`);
+        const user_info = await axios.get(`https://accounts.google.com/o/oauth2/revoke?access_token=${token}`);
+
+        console.log('구글 로그 아웃 완료');
+    }
+
+    // ==============================
+
+
+
+
+
+
+
 
     async googleLogin(req) {
         if (!req.user) {
@@ -78,12 +197,12 @@ export class AuthService {
         }
 
         return {
-            message: 'User Info from Naver', 
+            message: 'User Info from Naver',
             user: req.user
         }
     }
 
-    async kakaoLogin(req) { 
+    async kakaoLogin(req) {
         if (!req.user) {
             return 'No user from Kakao'
         }
@@ -91,15 +210,16 @@ export class AuthService {
         const email = req.user.email;
         const profileImg = req.user.picture;
         const nickname = email.split('@')[0];
-        console.log('nickname is', nickname);
+        console.log('(서비스) nickname is', nickname);
 
         const user = await this.userRepository.findOne({ email });
 
         if (!user) {
             this.userRepository.createUser(email, profileImg, nickname);
         }
-        
+
         console.log("서비스에서 찍은 request입니다.(카카오)");
+        
 
         // return req.user.accessToken;
         return {
@@ -131,4 +251,6 @@ export class AuthService {
             throw new BadRequestException(err.message);
         }
     }
+
+    
 }

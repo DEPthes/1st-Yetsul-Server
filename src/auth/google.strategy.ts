@@ -25,4 +25,15 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
         console.log(profile);
         done(null, user); // 첫번째 인수는 에러 발생 시 사용, 두번째는 저장할 데이터
     }
+
+    // async validate(accessToken: string, refreshToken: string, profile: any): Promise<any> {
+    //     const {name, emails, photos} = profile;
+    //     console.log(profile);
+    //     return {
+    //         provider: 'google',
+    //         name: name.givenName,
+    //         email: emails[0].value,
+    //         picture: photos[0].value || 'https://depthes.s3.ap-northeast-2.amazonaws.com/1659277489924-%EB%94%94%ED%8F%B4%ED%8A%B8%EC%9D%B4%EB%AF%B8%EC%A7%80.png',
+    //       };
+    // }
 }

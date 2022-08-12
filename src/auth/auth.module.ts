@@ -9,9 +9,11 @@ import { JwtStrategy } from './jwt.strategy';
 import { KakaoStrategy } from './kakao.strategy';
 import { NaverStrategy } from './naver.strategy';
 import { UserRepository } from './user.repository';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
+    JwtModule.register({}),
     TypeOrmModule.forFeature([UserRepository, AlcoholRepository, S3Repository])
   ],
   controllers: [AuthController],

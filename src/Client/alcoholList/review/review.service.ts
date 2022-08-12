@@ -7,6 +7,7 @@ import { Review } from '../../../Entity/Alcohol/review.entity';
 import { ReviewRepository } from '../../../Repository/review.repository';
 import { S3Repository } from '../../../Repository/s3.repository';
 import { UserRepository } from 'src/auth/user.repository';
+import { find } from 'rxjs';
 
 @Injectable()
 export class ReviewService {
@@ -62,4 +63,12 @@ export class ReviewService {
 
     return reviews;
   }
+
+  // async calcualateStar(id)  {
+  //   // id = 5;
+  //   const arr = find(where: alid: 5); // 배열에 별점들ㅇ ㅣ다 저장됨
+  //   const 합;
+  //   const answer = 합 / arr.count() // 8/3
+  //   return answer;
+  // }
 }

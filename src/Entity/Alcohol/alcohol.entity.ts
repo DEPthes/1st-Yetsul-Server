@@ -54,7 +54,7 @@ export class Alcohol extends BaseEntity {
     @Column({nullable: true})
     description: string;
     
-    // 별점
+    // 별점은 소수점 있어야 함. 별점들의 평균이므로
     @ApiProperty({description: "해당 술에 대한 별점"})
     @Column({nullable: true})
     star: number;
