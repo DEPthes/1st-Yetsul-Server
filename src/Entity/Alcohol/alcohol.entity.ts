@@ -56,7 +56,7 @@ export class Alcohol extends BaseEntity {
     
     // 별점은 소수점 있어야 함. 별점들의 평균이므로
     @ApiProperty({description: "해당 술에 대한 별점"})
-    @Column({nullable: true})
+    @Column('numeric', {nullable: true})
     star: number;
 
     @ApiProperty({description: "술 도수 정도"})
@@ -71,8 +71,10 @@ export class Alcohol extends BaseEntity {
     @OneToMany(type =>Like, like => like.alcohol, {eager: false})
     like: Like[];
 
-    @OneToMany(type => Review, review => review.alcohol, {eager: true}) // 1:N relationship
-    reviews: Review[] // 유저에 보드라는 컬럼 넣음. 여러개 넣을 수 있으니까 배열로
+    // 리뷰
+    // eager: true로 하면 개별 술 조회 시 리뷰도 같이 딸려 나옴
+    @OneToMany(type => Review, review => review.alcohol, {eager: false}) // 1:N relationship
+    reviews: Review[] // 유저에 리뷰라는 컬럼 넣음. 여러개 넣을 수 있으니까 배열로
 
     // @ManyToMany(() => User, (user) => user.alcohols)
     // user: User[];

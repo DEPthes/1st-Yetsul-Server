@@ -49,11 +49,14 @@ export class IntroductionAlcoholService {
     /*
     * @Description:술 카테고리 별 리스트 조회
     */
-    async getAlcoholListByCategory(id: number, filter: string): Promise<Alcohol[]> {
+    async getAlcoholListByCategory(category: number, filter: string): Promise<Alcohol[]> {
         if (filter == 'ASC') {
             return await this.alcoholRepository.find({
                 order: {
                     star: "ASC"
+                },
+                where: {
+                    category: category
                 }
             });
         }
@@ -61,39 +64,55 @@ export class IntroductionAlcoholService {
             return await this.alcoholRepository.find({
                 order: {
                     star: "DESC"
+                },
+                where: {
+                    category: category
                 }
             });
         }
-        return await this.alcoholRepository.find({
-            where: {
-                category: id
-            }
-        });
     }
 
     // id로 술 조회
-    async getAlcoholById(id: number): Promise<Alcohol> {
-        const found = await this.alcoholRepository.findOne(id);
+    async getAlcoholById(id: number) {
+        const alcohol = await this.alcoholRepository.findOne(id);
 
-        if (!found) {
+        if (!alcohol) {
             throw new NotFoundException(`Cant't find question with id ${id}`);
         }
 
-        return found;
+        // 해당 술 찜 몇명이 했는지
+        const query = this.likeRepository.createQueryBuilder('like'); // 쿼리 사용
+        query.where('like.alcoholId = :alcoholId', { alcoholId: id });
+        const likes = await query.getMany(); // 전부 가져옴. getOne()은 하나
+
+        const likeCount = likes.length; // 해당 술에 달린 리뷰 수 카운트
+
+        return { alcohol, likeCount };
     }
 
     // 이름으로 술 조회
-    async getAlcoholByName(alcoholName: string): Promise<Alcohol> {
-        const found = await this.alcoholRepository.findOne({
+    async getAlcoholByName(alcoholName: string) {
+        const alcohol = await this.alcoholRepository.findOne({
             where: {
                 AlcoholName: alcoholName
             }
         });
 
-        if (!found) {
+        if (!alcohol) {
             throw new NotFoundException(`Cant't find alcohol with name ${alcoholName}.`);
         }
 
-        return found;
+
+        const alcoholId = alcohol.id;
+
+
+        // 해당 술 찜 몇명이 했는지
+        const query = this.likeRepository.createQueryBuilder('like'); // 쿼리 사용
+        query.where('like.alcoholId = :alcoholId', { alcoholId: alcoholId });
+        const likes = await query.getMany(); // 전부 가져옴. getOne()은 하나
+
+        const likeCount = likes.length; // 해당 술에 달린 리뷰 수 카운트
+
+        return { alcohol, likeCount };
     }
 }

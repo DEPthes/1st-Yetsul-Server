@@ -21,7 +21,7 @@ export class IntroductionAlcoholController {
     })
     @ApiOperation({ summary: '이름으로 술 조회 API', description: '이름으로 술 조회' })
     @ApiCreatedResponse({ description: '이름으로 술 조회', type: Alcohol })
-    getAlcoholByName(@Body('alcoholName') alcoholName: string): Promise<Alcohol> {
+    getAlcoholByName(@Body('alcoholName') alcoholName: string) {
         return this.alcoholService.getAlcoholByName(alcoholName);
     }
 
@@ -29,7 +29,7 @@ export class IntroductionAlcoholController {
     @Get('/description/:id')
     @ApiOperation({ summary: 'id로 술 조회 API', description: 'id로 술 조회.' })
     @ApiCreatedResponse({ description: 'id로 술 조회', type: Alcohol })
-    getAlcoholById(@Param('id') id: number): Promise<Alcohol> {
+    getAlcoholById(@Param('id') id: number) {
         return this.alcoholService.getAlcoholById(id);
     }
 

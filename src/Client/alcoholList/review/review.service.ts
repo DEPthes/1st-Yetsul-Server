@@ -49,7 +49,14 @@ export class ReviewService {
     const query = this.reviewRepository.createQueryBuilder('review'); // 쿼리 사용
     query.where('review.alcoholId = :alcoholId', { alcoholId: alcohol_id });
     const reviews = await query.getMany(); // 전부 가져옴. getOne()은 하나
-  
+
+    // No entity column "alcoholId" was found.
+    // const reviews = await this.reviewRepository.find({
+    //   where: {
+    //     alcoholId: alcohol_id
+    //   }
+    // });
+
     return reviews;
   }
 
@@ -70,5 +77,52 @@ export class ReviewService {
   //   const 합;
   //   const answer = 합 / arr.count() // 8/3
   //   return answer;
+
   // }
+
+  async count(id: number) {
+    const count = await this.alcoholRepository.count({
+      where: {
+        id: id
+      }
+    });
+  }
+
+  // 해당 술에 대한 리뷰 조회 상세 페이지 (술 정보, 리뷰들, 전체 리뷰수, 평점 비율)
+  async getAllReview2(alcohol_id: number) {
+
+    const alcohol = await this.alcoholRepository.findOne({
+      where: {
+        id: alcohol_id
+      }
+    });
+
+    const query = this.reviewRepository.createQueryBuilder('review'); // 쿼리 사용
+    query.where('review.alcoholId = :alcoholId', { alcoholId: alcohol_id });
+    const reviews = await query.getMany(); // 전부 가져옴. getOne()은 하나
+
+    const totalReviewCount = reviews.length; // 해당 술에 달린 리뷰 수 카운트
+
+    // 각 별점 갯수
+    const starCountArray = [];
+    let sum = 0;
+    for (let i = 0; i < 5; i++) {
+      starCountArray[i] = await query
+        .where('review.alcoholId = :alcoholId', { alcoholId: alcohol_id })
+        .andWhere('review.star = :star', { star: i+1 })
+        .getCount();
+
+        sum += starCountArray[i];
+    }
+
+    // 별점 비율
+    const starPercentArray = [];
+
+    // 퍼센티지 구하기. 우선 합 구하고(sum), 개별/sum
+    for (let i = 0; i < 5; i++) {
+      starPercentArray[i] = starCountArray[i]/sum;
+    }
+
+    return { alcohol, totalReviewCount, starPercentArray, reviews };
+  }
 }

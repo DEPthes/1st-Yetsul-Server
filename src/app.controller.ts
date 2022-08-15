@@ -5,9 +5,8 @@ import { AppService } from './app.service';
 export class AppController {
   constructor(private readonly appService: AppService) { }
 
-  @Get('/:token')
-  root(@Param('token') token: string) {
-    return token;
+  @Get('/')
+  root() {
+    return 'main page';
   }
-
 }

@@ -123,12 +123,11 @@ export class AuthService {
     // 토큰으로 로그아웃 하기. 카카오
     // 참고 링크: https://12ahn22.tistory.com/33
     async kakaoLogout(token: string) {
-        const user_info = await axios.get(`https://kapi.kakao.com/v1/user/unlink`, {
+        const user_info = await axios.get(`https://kapi.kakao.com/v1/user/unlink`, { // logout
             headers: {
                 Authorization: `Bearer ${token}`
             },
         })
-
         console.log('카카오 로그 아웃 완료');
     }
 
@@ -142,7 +141,8 @@ export class AuthService {
         // })
 
         // const user_info = await axios.get(`https://oauth2.googleapis.com/revoke?access_token=${token}`);
-        const user_info = await axios.get(`https://accounts.google.com/o/oauth2/revoke?access_token=${token}`);
+        // const user_info = await axios.get(`https://accounts.google.com/o/oauth2/revoke?access_token=${token}`);
+        const user_info = await axios.get(`https://oauth2.googleapis.com/revoke?token=${token}`);
 
         console.log('구글 로그 아웃 완료');
     }
@@ -233,7 +233,7 @@ export class AuthService {
     }
 
     // 프로필 수정
-    async editUser(id: number, nickname: string, @UploadedFiles() files: Express.Multer.File[], location: string) {
+    async editUser(email: string, nickname: string, @UploadedFiles() files: Express.Multer.File[], location: string) {
 
         try {
             const uploadFiles = [];
@@ -246,7 +246,7 @@ export class AuthService {
             await this.s3Repository.save(uploadFiles);
             const url = (location);
 
-            return this.userRepository.editUser(id, nickname, url)
+            return this.userRepository.editUser(email, nickname, url)
         } catch (err) {
             throw new BadRequestException(err.message);
         }

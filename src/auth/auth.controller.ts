@@ -26,6 +26,12 @@ AWS.config.update({
 export class AuthController {
     constructor(private authService: AuthService) { }
 
+    @Get()
+    // @UseGuards(AuthGuard('kakao'))
+    root() {
+        return 'main page';
+    }
+
     // 구글 로그인 페이지로 리다이렉션 할 api
     @Get('/google')
     @ApiOperation({ summary: '구글 로그인', description: '구글 로그인' })
@@ -90,7 +96,8 @@ export class AuthController {
 
     // 파라미터로 로그인해서 나온 액세스 토큰 넣어서 사용자 정보 확인하기. 카카오
     @Get('/kaka/:token')
-    kaka(@Param('token') token: string) { // 커스텀 데코레이터
+    kaka(@Param('token') token: string, @Res() res) { // 커스텀 데코레이터
+        res.send('res.send("여기에 send 할 것 넣기??")');
         return this.authService.getUserInfoWithTokenKakao(token);
     }
 
@@ -108,7 +115,8 @@ export class AuthController {
 
     // 카카오 로그아웃
     @Get('/aa/:token')
-    kakaoLogout(@Param('token') token: string) {
+    kakaoLogout(@Param('token') token: string, @Res() res) {
+        // res.cookie('cookie', '', {maxAge: 0});
         return this.authService.kakaoLogout(token);
     }
 
@@ -117,10 +125,16 @@ export class AuthController {
     googleLogout(@Param('token') token: string) {
         return this.authService.googleLogout(token);
     }
-    
+
+    // 구글 로그아웃2
+    @Get('cc/:token')
+    googleLogout2(@Param('token') token: string, @Req() req, @Res() res) {
+        req.logout();
+    }
 
 
-// ==========================================================
+
+    // ==========================================================
 
 
 
@@ -139,7 +153,7 @@ export class AuthController {
     @UseGuards(AuthGuard('naver'))
     naverAuthRedirect(@Req() req, @Res() res) { // req.user로 유저 프로필 값 가져옴
         console.log('네이버 액세스 토큰: ', req.user.accessToken);
-        res.redirect('/' + req.user.accessToken);
+        // res.redirect('/' + req.user.accessToken);
         return this.authService.naverLogin(req);
     }
 
@@ -177,8 +191,13 @@ export class AuthController {
 
         // 토큰을 param에 넣은 주소로 리다이렉트.
         // 이 주소를 프론트 주소로 바꾸면 됨.
-        res.redirect('/' + req.user.accessToken);
-        return this.authService.kakaoLogin(req);
+        // res.redirect('/auth/');
+
+        this.authService.kakaoLogin(req);
+        // res.send(req.user.accessToken);
+        res.cookie('accessToken', req.user.accessToken);
+        // res.cookie(req.user.accessToken);
+        res.redirect('/auth/');
     }
 
     // 개발 / 관리자 사용 용도 : 등록된 유저 정보 가져오기
@@ -201,7 +220,7 @@ export class AuthController {
             }
         }),
     }))
-    editUser(@Body('id') id: number, @Body('nickname') nickname: string, @UploadedFiles() files: Express.Multer.File[], @Req() request) {
+    editUser(@Body('email') email: string, @Body('nickname') nickname: string, @UploadedFiles() files: Express.Multer.File[], @Req() request) {
         // const location = request.files[0];
 
         let location;
@@ -214,7 +233,7 @@ export class AuthController {
             location = request.files[0];
         }
 
-        return this.authService.editUser(id, nickname, files, location);
+        return this.authService.editUser(email, nickname, files, location);
     }
 
     // @Get('/test')

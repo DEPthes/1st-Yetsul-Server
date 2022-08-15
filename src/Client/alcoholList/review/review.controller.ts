@@ -59,10 +59,19 @@ export class ReviewController {
     response.send(uploadedReview);
   }
 
-  @Get('/:id') // 해당 술에 대한 모든 리뷰 조회
+  // 해당 술에 대한 모든 리뷰 조회 (리뷰만)
+  @Get('/:id')
   @ApiOperation({ summary: '해당 술에 대한 모든 리뷰 조회 API', description: '해당 술에 대한 모든 리뷰 조회 /review/1' })
   @ApiCreatedResponse({ description: '술 id param으로 받음', type: Alcohol })
   getAllReview(@Param('id') alcohol_id: number): Promise<Review[]> {
     return this.reviewService.getAllReview(alcohol_id);
+  }
+
+  // 해당 술에 대한 리뷰 조회 상세 페이지 (술 정보, 리뷰들, 전체 리뷰수, 평점 비율)
+  @Get('/:id/spec')
+  @ApiOperation({ summary: '해당 술에 대한 모든 리뷰 조회 API', description: '해당 술에 대한 모든 리뷰 조회 /review/1' })
+  @ApiCreatedResponse({ description: '술 id param으로 받음', type: Alcohol })
+  getAllReview2(@Param('id') alcohol_id: number) {
+    return this.reviewService.getAllReview2(alcohol_id);
   }
 }
