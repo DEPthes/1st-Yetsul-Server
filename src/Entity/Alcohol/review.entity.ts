@@ -28,6 +28,10 @@ export class Review extends BaseEntity {
     @Column({nullable: true})
     like: number;
 
+    // 자동으로 만들어 지는데 직접 추가하면 find 시 userId도 나옴.
+    @Column({nullable: true})
+    userId: number;
+
     @ManyToOne(type => Alcohol, alcohol => alcohol.reviews, {eager: false}) // N:1 relationship
     alcohol: Alcohol; // 술 컬럼
 
