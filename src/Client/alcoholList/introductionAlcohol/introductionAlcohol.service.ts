@@ -43,6 +43,9 @@ export class IntroductionAlcoholService {
         console.log(user.email);
         console.log(user.nickname);
         const alcohol = await this.alcoholRepository.findOne(alcoholId);
+
+        this.alcoholRepository.likeCount(alcoholId);
+
         return this.likeRepository.saveUserLikedAlcohol(user, alcohol);
     }
 
@@ -85,9 +88,9 @@ export class IntroductionAlcoholService {
         query.where('like.alcoholId = :alcoholId', { alcoholId: id });
         const likes = await query.getMany(); // 전부 가져옴. getOne()은 하나
 
-        const likeCount = likes.length; // 해당 술에 달린 리뷰 수 카운트
+        // const likeCount = likes.length; // 해당 술에 달린 리뷰 수 카운트
 
-        return { alcohol, likeCount };
+        return alcohol;
     }
 
     // 이름으로 술 조회
@@ -103,16 +106,16 @@ export class IntroductionAlcoholService {
         }
 
 
-        const alcoholId = alcohol.id;
+        // const alcoholId = alcohol.id;
 
 
-        // 해당 술 찜 몇명이 했는지
-        const query = this.likeRepository.createQueryBuilder('like'); // 쿼리 사용
-        query.where('like.alcoholId = :alcoholId', { alcoholId: alcoholId });
-        const likes = await query.getMany(); // 전부 가져옴. getOne()은 하나
+        // // 해당 술 찜 몇명이 했는지
+        // const query = this.likeRepository.createQueryBuilder('like'); // 쿼리 사용
+        // query.where('like.alcoholId = :alcoholId', { alcoholId: alcoholId });
+        // const likes = await query.getMany(); // 전부 가져옴. getOne()은 하나
 
-        const likeCount = likes.length; // 해당 술에 달린 리뷰 수 카운트
+        // const likeCount = likes.length; // 해당 술에 달린 리뷰 수 카운트
 
-        return { alcohol, likeCount };
+        return alcohol;
     }
 }

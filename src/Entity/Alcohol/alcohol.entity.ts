@@ -67,6 +67,10 @@ export class Alcohol extends BaseEntity {
     @Column({nullable: true})
     alcoholImage: string;
 
+    @ApiProperty({description: "찜 횟수"})
+    @Column({nullable: true})
+    likeCount: number;
+
     // 찜하기
     @OneToMany(type =>Like, like => like.alcohol, {eager: false})
     like: Like[];
