@@ -44,7 +44,7 @@ export class ReviewController {
       }
     }),
   }))
-  async createReview(@Body() createReviewDto: CreateReviewDto, @Body('user') user: number, @Param() alcohol: number, @UploadedFiles() files: Express.Multer.File[], @Req() request, @Res() response) {
+  async createReview(@Body() createReviewDto: CreateReviewDto, @Body('user') user: number, @Param('id') alcohol: number, @UploadedFiles() files: Express.Multer.File[], @Req() request, @Res() response) {
     let location;
     
     if (request.files[0] == undefined) {

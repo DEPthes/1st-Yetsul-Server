@@ -24,7 +24,7 @@ export class ReviewService {
   ) { }
 
   // 해당 술에 대한 리뷰 작성
-  async createReview(createReviewDto: CreateReviewDto, user_id: number, alcohol_id: number, files: Express.Multer.File[], location: string): Promise<Review> {
+  async createReview(createReviewDto: CreateReviewDto, user_id: number, alcohol_id: number, files: Express.Multer.File[], location: string) {
 
     try {
       const uploadFiles = [];
@@ -39,7 +39,32 @@ export class ReviewService {
 
       const alcohol = await this.alcoholRepository.findOne(alcohol_id);
       const user = await this.userRepository.findOne(user_id);
-      return this.reviewRepository.createReview(createReviewDto, user, alcohol, url);
+
+      // const starSum = (await this.alcoholRepository.findOne(alcohol_id)).star + createReviewDto.star;
+      
+      const originalStar = (await this.alcoholRepository.findOne(alcohol_id)).star + '';
+      console.log('originalStar is ', parseFloat(originalStar));
+      const reviewStar = createReviewDto.star + '';
+      console.log('reviewStar is ', parseFloat(reviewStar));
+      
+
+
+      await this.reviewRepository.createReview(createReviewDto, user, alcohol, url);
+
+      const query = await this.reviewRepository.createQueryBuilder('review'); // 쿼리 사용
+      query.where('review.alcoholId = :alcoholId', { alcoholId: alcohol_id });
+      const reviews = await query.getMany();
+      
+      const totalReviewCount = reviews.length; // 해당 술에 달린 리뷰 수 카운트
+      const starSum = parseFloat(originalStar)*(totalReviewCount-1) + parseFloat(reviewStar);
+      console.log('totalReviewCount is ', totalReviewCount);
+      console.log('starSum is ', starSum);
+      const avgStar = starSum / totalReviewCount;
+      console.log('avgStar is ', avgStar);
+      console.log('====');
+
+      alcohol.star = avgStar;
+      await this.alcoholRepository.save(alcohol);
     } catch (error) {
       throw new BadRequestException(error.message);
     }
@@ -59,7 +84,7 @@ export class ReviewService {
 
     const str = JSON.stringify(reviews);
     const obj = JSON.parse(str);
-    console.log(obj);
+    // console.log(obj);
 
     for (const key in reviews) {
 
@@ -122,7 +147,7 @@ export class ReviewService {
 
     const str = JSON.stringify(reviews);
     const reviewsWithUserInfo = JSON.parse(str);
-    console.log(reviewsWithUserInfo);
+    // console.log(reviewsWithUserInfo);
 
     for (const key in reviews) {
 
@@ -135,14 +160,14 @@ export class ReviewService {
 
     // 각 별점 갯수
     const starCountArray = [];
-    let sum = 0;
+    let starPointSum = 0;
     for (let i = 0; i < 5; i++) {
       starCountArray[i] = await query
         .where('review.alcoholId = :alcoholId', { alcoholId: alcohol_id })
         .andWhere('review.star = :star', { star: i + 1 })
         .getCount();
 
-      sum += starCountArray[i];
+        starPointSum += (starCountArray[i] * (i+1));
     }
 
     // 별점 비율
@@ -150,7 +175,7 @@ export class ReviewService {
 
     // 퍼센티지 구하기. 우선 합 구하고(sum), 개별/sum
     for (let i = 0; i < 5; i++) {
-      starPercentArray[i] = starCountArray[i] / sum;
+      starPercentArray[i] = starCountArray[i] / totalReviewCount;
     }
 
     return { alcohol, totalReviewCount, starPercentArray, reviewsWithUserInfo };
