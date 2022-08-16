@@ -9,6 +9,7 @@ import { JwtService } from '@nestjs/jwt';
 import { HttpService } from "@nestjs/axios";
 import { firstValueFrom } from 'rxjs';
 import axios from 'axios';
+import { LikeRepository } from 'src/Repository/like.repository';
 
 interface JwtPayload {
     sub;
@@ -20,10 +21,13 @@ export class AuthService {
     private http: HttpService;
     constructor(
         @InjectRepository(UserRepository)
-        @InjectRepository(AlcoholRepository)
         @InjectRepository(S3Repository)
+        @InjectRepository(LikeRepository)
+        @InjectRepository(AlcoholRepository)
         private userRepository: UserRepository,
         private s3Repository: S3Repository,
+        private likeRepository: LikeRepository,
+        private alcoholRepository: AlcoholRepository,
         private jwtService: JwtService
     ) {
         this.http = new HttpService();
@@ -90,17 +94,17 @@ export class AuthService {
     // 토큰으로 사용자 정보 뽑아내기. 카카오
     async getUserInfoWithTokenKakao(token: string) {
         const user_info = await axios.get('https://kapi.kakao.com/v2/user/me', {
-              headers: {
+            headers: {
                 Authorization: `Bearer ${token}`
-              },
-            })
+            },
+        })
         //   console.log('user_info is', user_info);
         //   console.log('kakao_account is', user_info.data.kakao_account);
-          if (this.userRepository.find({ where: { email: user_info.data.kakao_account.email } })) {
+        if (this.userRepository.find({ where: { email: user_info.data.kakao_account.email } })) {
             console.log(`사용자 이메일이 ${user_info.data.kakao_account.email}인 유저입니다.`);
-          } else {
+        } else {
             console.log(`해당 이메일의 유저가 존재하지 않습니다.`);
-          }
+        }
     }
 
     // 토큰으로 사용자 정보 뽑아내기. 구글
@@ -219,7 +223,7 @@ export class AuthService {
         }
 
         console.log("서비스에서 찍은 request입니다.(카카오)");
-        
+
 
         // return req.user.accessToken;
         return {
@@ -252,5 +256,27 @@ export class AuthService {
         }
     }
 
-    
+    // 내가 찜한 술 목록
+    async myLikeAlcoholList(id: number) {
+
+        const query = this.likeRepository.createQueryBuilder('like'); // 쿼리 사용
+
+        query.where('like.userId = :userId', { userId: id });
+
+        const likes = await query.getMany();
+
+        let alcoholList = [];
+        for (const key in likes) {
+            let alcoholId = likes[key].alcoholId;
+            let alcohol = await this.alcoholRepository.find({
+                where: {
+                    id: alcoholId
+                }
+            });
+            alcoholList.push(alcohol);
+        }
+        
+
+        return alcoholList;
+    }
 }

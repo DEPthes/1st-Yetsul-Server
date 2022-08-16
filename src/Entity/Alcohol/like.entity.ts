@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { BaseEntity, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity, Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Alcohol } from "src/Entity/Alcohol/alcohol.entity";
 import { User } from "src/auth/entities/user.entity";
 
@@ -9,6 +9,12 @@ export class Like extends BaseEntity {
     @ApiProperty({description: "리뷰 pk 값"})
     @PrimaryGeneratedColumn() 
     readonly id: number;
+
+    @Column({nullable: true})
+    alcoholId: number;
+
+    @Column({nullable: true})
+    userId: number;
 
     @ManyToOne(type => Alcohol, {eager: false}) // N:1 relationship
     alcohol: Alcohol;

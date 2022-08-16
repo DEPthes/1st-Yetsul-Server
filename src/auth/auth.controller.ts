@@ -236,6 +236,12 @@ export class AuthController {
         return this.authService.editUser(email, nickname, files, location);
     }
 
+    // 내가 찜한 술 목록
+    @Post('/myLikeAlcoholList')
+    myLikeAlcoholList(@Body('id') id: number) {
+        return this.authService.myLikeAlcoholList(id);
+    }
+
     // @Get('/test')
     // @UseGuards(AuthGuard('kakao')) // validate에서 리턴되는 값이 들어감. req안에 유저 객체 넣기 위해 추가해야 함.
     // test(@Req() req) { // 커스텀 데코레이터

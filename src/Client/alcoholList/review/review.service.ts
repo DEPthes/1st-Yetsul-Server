@@ -88,7 +88,6 @@ export class ReviewService {
 
     const str = JSON.stringify(reviews);
     const obj = JSON.parse(str);
-    console.log(obj);
 
     for (const key in reviews) {
 

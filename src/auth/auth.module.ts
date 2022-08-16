@@ -10,11 +10,12 @@ import { KakaoStrategy } from './kakao.strategy';
 import { NaverStrategy } from './naver.strategy';
 import { UserRepository } from './user.repository';
 import { JwtModule } from '@nestjs/jwt';
+import { LikeRepository } from 'src/Repository/like.repository';
 
 @Module({
   imports: [
     JwtModule.register({}),
-    TypeOrmModule.forFeature([UserRepository, AlcoholRepository, S3Repository])
+    TypeOrmModule.forFeature([UserRepository, AlcoholRepository, S3Repository, LikeRepository])
   ],
   controllers: [AuthController],
   providers: [AuthService, GoogleStrategy, NaverStrategy, KakaoStrategy, JwtStrategy],
