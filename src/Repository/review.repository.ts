@@ -23,7 +23,8 @@ export class ReviewRepository extends Repository<Review> {
                 user,
                 star,
                 alcohol,
-                reviewImgUrl
+                reviewImgUrl,
+                like: 0
             })
 
             return this.save(review); // db에 저장. typeorm 메소드

@@ -45,7 +45,7 @@ export class ReviewService {
     }
   }
 
-  async getAllReview(alcohol_id: number): Promise<Review[]> {
+  async getAllReview(alcohol_id: number) {
     const query = this.reviewRepository.createQueryBuilder('review'); // 쿼리 사용
     query.where('review.alcoholId = :alcoholId', { alcoholId: alcohol_id });
     const reviews = await query.getMany(); // 전부 가져옴. getOne()은 하나
@@ -57,7 +57,25 @@ export class ReviewService {
     //   }
     // });
 
-    return reviews;
+    const str = JSON.stringify(reviews);
+    const obj = JSON.parse(str);
+    console.log(obj);
+
+    for (const key in reviews) {
+
+      let userId = reviews[key].userId;
+      let profileImg = await this.getProfileImgById(userId);
+      obj[key].profileImg = profileImg;
+    }
+
+    return obj;
+  }
+
+  async getProfileImgById(id): Promise<String> {
+    const user = this.userRepository.findOne(id);
+    const profileImg = (await user).profileImg;
+
+    return profileImg;
   }
 
   async getUsersReview(user: number): Promise<Review[]> {
@@ -68,17 +86,19 @@ export class ReviewService {
 
     const reviews = await query.getMany(); // 전부 가져옴. getOne()은 하나
 
-    return reviews;
+    const str = JSON.stringify(reviews);
+    const obj = JSON.parse(str);
+    console.log(obj);
+
+    for (const key in reviews) {
+
+      let userId = reviews[key].userId;
+      let profileImg = await this.getProfileImgById(userId);
+      obj[key].profileImg = profileImg;
+    }
+
+    return obj;
   }
-
-  // async calcualateStar(id)  {
-  //   // id = 5;
-  //   const arr = find(where: alid: 5); // 배열에 별점들ㅇ ㅣ다 저장됨
-  //   const 합;
-  //   const answer = 합 / arr.count() // 8/3
-  //   return answer;
-
-  // }
 
   async count(id: number) {
     const count = await this.alcoholRepository.count({
@@ -101,6 +121,17 @@ export class ReviewService {
     query.where('review.alcoholId = :alcoholId', { alcoholId: alcohol_id });
     const reviews = await query.getMany(); // 전부 가져옴. getOne()은 하나
 
+    const str = JSON.stringify(reviews);
+    const reviewsWithUserInfo = JSON.parse(str);
+    console.log(reviewsWithUserInfo);
+
+    for (const key in reviews) {
+
+      let userId = reviews[key].userId;
+      let profileImg = await this.getProfileImgById(userId);
+      reviewsWithUserInfo[key].profileImg = profileImg;
+    }
+
     const totalReviewCount = reviews.length; // 해당 술에 달린 리뷰 수 카운트
 
     // 각 별점 갯수
@@ -109,10 +140,10 @@ export class ReviewService {
     for (let i = 0; i < 5; i++) {
       starCountArray[i] = await query
         .where('review.alcoholId = :alcoholId', { alcoholId: alcohol_id })
-        .andWhere('review.star = :star', { star: i+1 })
+        .andWhere('review.star = :star', { star: i + 1 })
         .getCount();
 
-        sum += starCountArray[i];
+      sum += starCountArray[i];
     }
 
     // 별점 비율
@@ -120,9 +151,9 @@ export class ReviewService {
 
     // 퍼센티지 구하기. 우선 합 구하고(sum), 개별/sum
     for (let i = 0; i < 5; i++) {
-      starPercentArray[i] = starCountArray[i]/sum;
+      starPercentArray[i] = starCountArray[i] / sum;
     }
 
-    return { alcohol, totalReviewCount, starPercentArray, reviews };
+    return { alcohol, totalReviewCount, starPercentArray, reviewsWithUserInfo };
   }
 }
