@@ -41,12 +41,12 @@ export class ReviewService {
       const user = await this.userRepository.findOne(user_id);
 
       // const starSum = (await this.alcoholRepository.findOne(alcohol_id)).star + createReviewDto.star;
-      
+
       const originalStar = (await this.alcoholRepository.findOne(alcohol_id)).star + '';
       console.log('originalStar is ', parseFloat(originalStar));
       const reviewStar = createReviewDto.star + '';
       console.log('reviewStar is ', parseFloat(reviewStar));
-      
+
 
 
       await this.reviewRepository.createReview(createReviewDto, user, alcohol, url);
@@ -54,9 +54,9 @@ export class ReviewService {
       const query = await this.reviewRepository.createQueryBuilder('review'); // 쿼리 사용
       query.where('review.alcoholId = :alcoholId', { alcoholId: alcohol_id });
       const reviews = await query.getMany();
-      
+
       const totalReviewCount = reviews.length; // 해당 술에 달린 리뷰 수 카운트
-      const starSum = parseFloat(originalStar)*(totalReviewCount-1) + parseFloat(reviewStar);
+      const starSum = parseFloat(originalStar) * (totalReviewCount - 1) + parseFloat(reviewStar);
       console.log('totalReviewCount is ', totalReviewCount);
       console.log('starSum is ', starSum);
       const avgStar = starSum / totalReviewCount;
@@ -70,6 +70,7 @@ export class ReviewService {
     }
   }
 
+  // 해당 술에 대한 모든 리뷰 조회 (리뷰만)
   async getAllReview(alcohol_id: number) {
     const query = this.reviewRepository.createQueryBuilder('review'); // 쿼리 사용
     query.where('review.alcoholId = :alcoholId', { alcoholId: alcohol_id });
@@ -90,7 +91,9 @@ export class ReviewService {
 
       let userId = reviews[key].userId;
       let profileImg = await this.getProfileImgById(userId);
+      let nickname = await this.getNicknameById(userId);
       obj[key].profileImg = profileImg;
+      obj[key].nickname = nickname;
     }
 
     return obj;
@@ -101,6 +104,13 @@ export class ReviewService {
     const profileImg = (await user).profileImg;
 
     return profileImg;
+  }
+
+  async getNicknameById(id): Promise<String> {
+    const user = this.userRepository.findOne(id);
+    const nickname = (await user).nickname;
+
+    return nickname;
   }
 
   async getUsersReview(user: number): Promise<Review[]> {
@@ -118,7 +128,9 @@ export class ReviewService {
 
       let userId = reviews[key].userId;
       let profileImg = await this.getProfileImgById(userId);
+      let nickname = await this.getNicknameById(userId);
       obj[key].profileImg = profileImg;
+      obj[key].nickname = nickname;
     }
 
     return obj;
@@ -153,7 +165,9 @@ export class ReviewService {
 
       let userId = reviews[key].userId;
       let profileImg = await this.getProfileImgById(userId);
+      let nickname = await this.getNicknameById(userId);
       reviewsWithUserInfo[key].profileImg = profileImg;
+      reviewsWithUserInfo[key].nickname = nickname;
     }
 
     const totalReviewCount = reviews.length; // 해당 술에 달린 리뷰 수 카운트
@@ -167,7 +181,7 @@ export class ReviewService {
         .andWhere('review.star = :star', { star: i + 1 })
         .getCount();
 
-        starPointSum += (starCountArray[i] * (i+1));
+      starPointSum += (starCountArray[i] * (i + 1));
     }
 
     // 별점 비율
@@ -179,5 +193,29 @@ export class ReviewService {
     }
 
     return { alcohol, totalReviewCount, starPercentArray, reviewsWithUserInfo };
+  }
+
+  // 리뷰 하나 상세 조회
+  async getOneReview(alcoholId: number, reviewId: number) {
+    // return this.reviewRepository.findOne(reviewId);
+    const query = this.reviewRepository.createQueryBuilder('review'); // 쿼리 사용
+    query.where('review.id = :reviewId', { reviewId: reviewId });
+    const review = await query.getOne();
+
+    const str = JSON.stringify(review);
+    const obj = JSON.parse(str);
+
+    let userId = review.userId;
+    let profileImg = await this.getProfileImgById(userId);
+    let nickname = await this.getNicknameById(userId);
+    obj.profileImg = profileImg;
+    obj.nickname = nickname;
+
+    return obj;
+  }
+
+  // 리뷰 좋아요
+  async reviewLike(alcoholId: number, reviewId: number) {
+    this.reviewRepository.likeCount(reviewId);
   }
 }

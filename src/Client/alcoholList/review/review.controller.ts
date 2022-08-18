@@ -67,6 +67,22 @@ export class ReviewController {
     return this.reviewService.getAllReview(alcohol_id);
   }
 
+  // 리뷰 하나 상세 조회
+  @Get('/:alcoholId/review/:reviewId')
+  @ApiOperation({ summary: '리뷰 하나 상세 조회 API', description: '리뷰 하나 상세 조회' })
+  getOneReview(@Param('alcoholId') alcoholId: number, @Param('reviewId') reviewId: number) {
+    return this.reviewService.getOneReview(alcoholId, reviewId);
+  }
+
+
+  // 리뷰 좋아요
+  @Post('/:alcoholId/review/:reviewId')
+  @ApiOperation({ summary: '리뷰 좋아요 API', description: '리뷰 좋아요' })
+  reviewLike(@Param('alcoholId') alcoholId: number, @Param('reviewId') reviewId: number) {
+    return this.reviewService.reviewLike(alcoholId, reviewId);
+  }
+  
+
   // 해당 술에 대한 리뷰 조회 상세 페이지 (술 정보, 리뷰들, 전체 리뷰수, 평점 비율)
   @Get('/:id/spec')
   @ApiOperation({ summary: '해당 술에 대한 모든 리뷰 조회 API', description: '해당 술에 대한 모든 리뷰 조회 /review/1' })

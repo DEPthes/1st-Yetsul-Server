@@ -34,8 +34,9 @@ export class IntroductionAlcoholController {
     }
 
     // 술 찜하기
-    @ApiOperation({ summary: "술 리스트 - 찜하기 API", description: "accessToken을 가지고 있을 때, 유저 id와 술 id를 프론트에서 주면 DB에 좋아요 저장함." })
-    @ApiCreatedResponse({ description: '술 리스트 - 조회', type: Like })
+    // accessToken을 가지고 있을 때, 유저 id와 술 id를 프론트에서 주면 DB에 좋아요 저장함. -> ?
+    @ApiOperation({ summary: "찜하기 API", description: "찜하기" })
+    @ApiCreatedResponse({ description: '찜하기', type: Like })
     @Post('/description/:id')
     LikeAlcohol(@Body('userEmail') userEmail: string, @Param('id') alcoholId: number) {
         return this.alcoholService.userLikedAlcohol(userEmail, alcoholId);

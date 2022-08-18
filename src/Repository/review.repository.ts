@@ -34,4 +34,14 @@ export class ReviewRepository extends Repository<Review> {
             throw error;
         }
     }
+
+    // 리뷰에 좋아요 누를때마다 좋아요 수 1 증가
+     async likeCount(reviewId: number) {
+        const reviewToUpdate = await this.findOne(reviewId);
+        reviewToUpdate.like += 1;
+
+        await this.save(reviewToUpdate);
+
+        return reviewToUpdate;
+    }
 }
