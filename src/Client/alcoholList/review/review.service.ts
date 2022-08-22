@@ -86,7 +86,7 @@ export class ReviewService {
     // });
 
     const str = JSON.stringify(reviews);
-    const obj = JSON.parse(str);
+    let obj = JSON.parse(str);
     // console.log(obj);
 
     for (const key in reviews) {
@@ -97,6 +97,10 @@ export class ReviewService {
       obj[key].profileImg = profileImg;
       obj[key].nickname = nickname;
     }
+
+    obj = obj.sort(function(a, b) {
+      return a.id - b.id;
+    })
 
     return obj;
   }
@@ -124,7 +128,7 @@ export class ReviewService {
     const reviews = await query.getMany(); // 전부 가져옴. getOne()은 하나
 
     const str = JSON.stringify(reviews);
-    const obj = JSON.parse(str);
+    let obj = JSON.parse(str);
 
     for (const key in reviews) {
 
@@ -134,6 +138,10 @@ export class ReviewService {
       obj[key].profileImg = profileImg;
       obj[key].nickname = nickname;
     }
+
+    obj = obj.sort(function(a, b) {
+      return a.id - b.id;
+    })
 
     return obj;
   }
@@ -160,7 +168,7 @@ export class ReviewService {
     const reviews = await query.getMany(); // 전부 가져옴. getOne()은 하나
 
     const str = JSON.stringify(reviews);
-    const reviewsWithUserInfo = JSON.parse(str);
+    let reviewsWithUserInfo = JSON.parse(str);
     // console.log(reviewsWithUserInfo);
 
     for (const key in reviews) {
@@ -171,6 +179,10 @@ export class ReviewService {
       reviewsWithUserInfo[key].profileImg = profileImg;
       reviewsWithUserInfo[key].nickname = nickname;
     }
+
+    reviewsWithUserInfo = reviewsWithUserInfo.sort(function(a, b) {
+      return a.id - b.id;
+    })
 
     const totalReviewCount = reviews.length; // 해당 술에 달린 리뷰 수 카운트
 
