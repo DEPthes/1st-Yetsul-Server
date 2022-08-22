@@ -8,7 +8,7 @@ import { TicketboxService } from './ticketbox.service';
 export class TicketboxController {
     constructor(private ticketboxService: TicketboxService) { }
 
-    @Post('/test')
+    @Get('/test')
     @ApiBody({ type: QuestionAndSelectionDto })
     @ApiOperation({ summary: '답과 선택지 조회 API', description: '답과 그에 대응하는 선택지 조회.' })
     getTest(@Body() questionAndSelectionDto: QuestionAndSelectionDto): Promise<any> {

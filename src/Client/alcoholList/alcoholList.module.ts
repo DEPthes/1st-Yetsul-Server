@@ -9,10 +9,11 @@ import { UserRepository } from 'src/auth/user.repository';
 import { IntroductionAlcoholController } from './introductionAlcohol/introductionAlcohol.controller';
 import { IntroductionAlcoholService } from './introductionAlcohol/introductionAlcohol.service';
 import { LikeRepository } from 'src/Repository/like.repository';
+import { ReviewLikeRepository } from 'src/Repository/reviewLike.repository';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([ReviewRepository, UserRepository, AlcoholRepository, S3Repository, LikeRepository]),
+    TypeOrmModule.forFeature([ReviewRepository, UserRepository, AlcoholRepository, S3Repository, LikeRepository, ReviewLikeRepository]),
   ],
   controllers: [ReviewController, IntroductionAlcoholController],
   providers: [ReviewService, IntroductionAlcoholService]

@@ -7,7 +7,7 @@ import { Review } from '../../../Entity/Alcohol/review.entity';
 import { ReviewRepository } from '../../../Repository/review.repository';
 import { S3Repository } from '../../../Repository/s3.repository';
 import { UserRepository } from 'src/auth/user.repository';
-import { find } from 'rxjs';
+import { ReviewLikeRepository } from 'src/Repository/reviewLike.repository';
 
 @Injectable()
 export class ReviewService {
@@ -17,10 +17,12 @@ export class ReviewService {
     @InjectRepository(UserRepository)
     @InjectRepository(AlcoholRepository)
     @InjectRepository(S3Repository)
+    @InjectRepository(ReviewLikeRepository)
     private reviewRepository: ReviewRepository,
     private userRepository: UserRepository,
     private alcoholRepository: AlcoholRepository,
-    private s3Repository: S3Repository
+    private s3Repository: S3Repository,
+    private reviewLikeRepository: ReviewLikeRepository
   ) { }
 
   // 해당 술에 대한 리뷰 작성
@@ -215,7 +217,13 @@ export class ReviewService {
   }
 
   // 리뷰 좋아요
-  async reviewLike(alcoholId: number, reviewId: number) {
+  async reviewLike(alcoholId: number, reviewId: number, userId: number) {
     this.reviewRepository.likeCount(reviewId);
+
+    const user = await this.userRepository.findOne(userId);
+
+    const review = await this.reviewRepository.findOne(reviewId);
+
+    return this.reviewLikeRepository.saveReviewLike(user, review);
   }
 }

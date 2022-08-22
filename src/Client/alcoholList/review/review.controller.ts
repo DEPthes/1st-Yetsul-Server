@@ -78,8 +78,8 @@ export class ReviewController {
   // 리뷰 좋아요
   @Post('/:alcoholId/review/:reviewId')
   @ApiOperation({ summary: '리뷰 좋아요 API', description: '리뷰 좋아요' })
-  reviewLike(@Param('alcoholId') alcoholId: number, @Param('reviewId') reviewId: number) {
-    return this.reviewService.reviewLike(alcoholId, reviewId);
+  reviewLike(@Param('alcoholId') alcoholId: number, @Param('reviewId') reviewId: number, @Body('userId') userId: number) {
+    return this.reviewService.reviewLike(alcoholId, reviewId, userId);
   }
   
 
