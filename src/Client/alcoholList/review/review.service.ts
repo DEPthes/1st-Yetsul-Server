@@ -25,19 +25,69 @@ export class ReviewService {
     private reviewLikeRepository: ReviewLikeRepository
   ) { }
 
+  // // 해당 술에 대한 리뷰 작성
+  // async createReview(createReviewDto: CreateReviewDto, user_id: number, alcohol_id: number, files: Express.Multer.File[], location) {
+
+  //   try {
+  //     const uploadFiles = [];
+  //     for (const element of files) {
+  //       const file = new S3();
+  //       file.originalName = element.originalname;
+  //       uploadFiles.push(file);
+  //     }
+
+  //     await this.s3Repository.save(uploadFiles);
+  //     const url = (location);
+
+  //     const alcohol = await this.alcoholRepository.findOne(alcohol_id);
+  //     const user = await this.userRepository.findOne(user_id);
+
+  //     // const starSum = (await this.alcoholRepository.findOne(alcohol_id)).star + createReviewDto.star;
+
+  //     const originalStar = (await this.alcoholRepository.findOne(alcohol_id)).star + '';
+  //     console.log('originalStar is ', parseFloat(originalStar));
+  //     const reviewStar = createReviewDto.star + '';
+  //     console.log('reviewStar is ', parseFloat(reviewStar));
+
+
+
+  //     await this.reviewRepository.createReview(createReviewDto, user, alcohol, url);
+
+  //     const query = await this.reviewRepository.createQueryBuilder('review'); // 쿼리 사용
+  //     query.where('review.alcoholId = :alcoholId', { alcoholId: alcohol_id });
+  //     const reviews = await query.getMany();
+
+  //     const totalReviewCount = reviews.length; // 해당 술에 달린 리뷰 수 카운트
+  //     const starSum = parseFloat(originalStar) * (totalReviewCount - 1) + parseFloat(reviewStar);
+  //     console.log('totalReviewCount is ', totalReviewCount);
+  //     console.log('starSum is ', starSum);
+  //     const avgStar = starSum / totalReviewCount;
+  //     console.log('avgStar is ', avgStar);
+  //     console.log('====');
+
+  //     alcohol.star = avgStar;
+  //     await this.alcoholRepository.save(alcohol);
+  //   } catch (error) {
+  //     throw new BadRequestException(error.message);
+  //   }
+  // }
+
   // 해당 술에 대한 리뷰 작성
-  async createReview(createReviewDto: CreateReviewDto, user_id: number, alcohol_id: number, files: Express.Multer.File[], location: string) {
+  async createReview(createReviewDto: CreateReviewDto, user_id: number, alcohol_id: number, files: Express.Multer.File[], location) {
 
     try {
       const uploadFiles = [];
-      for (const element of files) {
+      const url = [];
+      for (const element in files) {
         const file = new S3();
-        file.originalName = element.originalname;
+        file.originalName = files[element].originalname;
+        file.url = location[element].location;
+        url.push(file.url);
         uploadFiles.push(file);
       }
 
       await this.s3Repository.save(uploadFiles);
-      const url = (location);
+      // const url = (location);
 
       const alcohol = await this.alcoholRepository.findOne(alcohol_id);
       const user = await this.userRepository.findOne(user_id);
@@ -50,8 +100,10 @@ export class ReviewService {
       console.log('reviewStar is ', parseFloat(reviewStar));
 
 
+      console.log('리뷰서비스: url: ', url);
 
-      await this.reviewRepository.createReview(createReviewDto, user, alcohol, url);
+
+      const result = await this.reviewRepository.createReview(createReviewDto, user, alcohol, url);
 
       const query = await this.reviewRepository.createQueryBuilder('review'); // 쿼리 사용
       query.where('review.alcoholId = :alcoholId', { alcoholId: alcohol_id });
@@ -67,6 +119,7 @@ export class ReviewService {
 
       alcohol.star = avgStar;
       await this.alcoholRepository.save(alcohol);
+      return result;
     } catch (error) {
       throw new BadRequestException(error.message);
     }

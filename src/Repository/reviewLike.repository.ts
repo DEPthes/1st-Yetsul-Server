@@ -18,13 +18,18 @@ export class ReviewLikeRepository extends Repository<ReviewLike> {
         //         reviewId: review.id
         //     }
         // }));
-        if (await this.findOne({
+        const thisReview = await this.findOne({
             where: {
                 userId: user.id,
                 reviewId: review.id
             }
-        })) {
-            return '이미 추천한 리뷰입니다.';
+        })
+        if (thisReview) { // 이미 추천 했다면 -> 한번 더 누르면 삭제 되도록.
+            await this.delete({
+                userId: user.id,
+                reviewId: review.id
+            })
+            return '리뷰 좋아요 취소';
         }
 
         return this.save(result);

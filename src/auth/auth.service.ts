@@ -194,10 +194,13 @@ export class AuthService {
         const nickname = email.split('@')[0];
         console.log('(서비스) nickname is', nickname);
 
-        const user = await this.userRepository.findOne({ email });
+        const user = await this.userRepository.findOne({ email }); // 디비에서 email을 가진 사람 찾는 코드
 
-        if (!user) {
+
+        if (!user) { // 안담겨있다 -> 신규 유저
             this.userRepository.createUser(email, profileImg, nickname);
+        } else { // 이미 있는 경우
+            console.log('이미 있음');
         }
 
         console.log("서비스에서 찍은 request입니다.(카카오)");
