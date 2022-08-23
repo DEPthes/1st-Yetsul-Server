@@ -184,6 +184,7 @@ export class AuthController {
 
     // 카카오 로그인 후 콜백 url로 오는 요청 처리하는 api
     @Get('kakao/callback')
+    @Redirect('http://localhost:3000/')
     @UseGuards(AuthGuard('kakao'))
     kakaoAuthRedirect(@Req() req, @Res() res) { // req.user로 유저 프로필 값 가져옴
         console.log('토큰: ', req.user.accessToken); // 토큰을 갖고 리다이렉션 하면 됨.
@@ -197,7 +198,7 @@ export class AuthController {
         // res.send(req.user.accessToken);
         res.cookie('accessToken', req.user.accessToken);
         // res.cookie(req.user.accessToken);
-        res.redirect('/auth/');
+        // res.redirect('/auth/');
     }
 
     // 개발 / 관리자 사용 용도 : 등록된 유저 정보 가져오기
