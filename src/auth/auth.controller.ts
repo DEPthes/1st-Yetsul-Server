@@ -196,7 +196,7 @@ export class AuthController {
 
         this.authService.kakaoLogin(req);
         // res.send(req.user.accessToken);
-        res.cookie('accessToken', req.user.accessToken);
+        res.cookie('accessToken', req.user.accessToken, {secure: true}); // key, value, option
         // res.cookie(req.user.accessToken);
         // res.redirect('/auth/');
     }
