@@ -202,6 +202,7 @@ export class AuthController {
 
         this.authService.kakaoLogin(req);
         // res.send(req.user.accessToken); // 중간 콜백 화면에 보여지고 리다이렉트 안됨.
+        // res.cookie('accessToken', req.user.accessToken); // key, value, option
         res.cookie('accessToken', req.user.accessToken, {secure: true, sameSite: 'None'}); // key, value, option
         // res.redirect('/auth/');
     }

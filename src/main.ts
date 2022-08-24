@@ -1,9 +1,10 @@
 import { NestFactory } from '@nestjs/core';
+import { NestExpressApplication } from '@nestjs/platform-express';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
-    const app = await NestFactory.create(AppModule, {cors:true});
+    const app = await NestFactory.create<NestExpressApplication>(AppModule, {cors:true});
 
     const config = new DocumentBuilder()
         .setTitle("옛술의 전당 BackEnd API")
@@ -30,6 +31,8 @@ async function bootstrap() {
         methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
         credentials: true,
     });
+    app.enable('trust proxy');
+    app.set('trust proxy', 1);
     await app.listen(process.env.PORT || 3000);
 }
 bootstrap();
