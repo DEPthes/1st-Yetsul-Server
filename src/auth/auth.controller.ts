@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Patch, Req, UseGuards, UseInterceptors, UploadedFiles, Res, Post, ValidationPipe, Param } from '@nestjs/common';
+import { Body, Controller, Get, Patch, Req, UseGuards, UseInterceptors, UploadedFiles, Res, Post, ValidationPipe, Param, Redirect, Query } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiCreatedResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
@@ -30,6 +30,15 @@ export class AuthController {
     // @UseGuards(AuthGuard('kakao'))
     root() {
         return 'main page';
+
+    }
+
+    @Get('docs')
+    @Redirect('https://docs.nestjs.com', 302)
+    getDocs(@Query('version') version) {
+        if (version && version === '5') {
+            return { url: 'https://docs.nestjs.com/v5/' };
+        }
     }
 
     // 구글 로그인 페이지로 리다이렉션 할 api
@@ -184,6 +193,7 @@ export class AuthController {
 
     // 카카오 로그인 후 콜백 url로 오는 요청 처리하는 api
     @Get('kakao/callback')
+    @Redirect('http://localhost:3000/')
     @UseGuards(AuthGuard('kakao'))
     kakaoAuthRedirect(@Req() req, @Res() res) { // req.user로 유저 프로필 값 가져옴
         console.log('토큰: ', req.user.accessToken); // 토큰을 갖고 리다이렉션 하면 됨.
@@ -195,9 +205,10 @@ export class AuthController {
 
         this.authService.kakaoLogin(req);
         // res.send(req.user.accessToken);
-        res.cookie('accessToken', req.user.accessToken);
+        // res.cookie('accessToken', req.user.accessToken, {secure: true}); // key, value, option
+        res.cookie('accessToken', req.user.accessToken); // key, value, option
         // res.cookie(req.user.accessToken);
-        res.redirect('/auth/');
+        // res.redirect('/auth/');
     }
 
     // 개발 / 관리자 사용 용도 : 등록된 유저 정보 가져오기

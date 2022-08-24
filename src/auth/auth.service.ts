@@ -249,15 +249,10 @@ export class AuthService {
         let alcoholList = [];
         for (const key in likes) {
             let alcoholId = likes[key].alcoholId;
-            let alcohol = await this.alcoholRepository.find({
-                where: {
-                    id: alcoholId
-                }
-            });
+            let alcohol = await this.alcoholRepository.findOne(alcoholId);
             alcoholList.push(alcohol);
         }
         
-
         return alcoholList;
     }
 }
