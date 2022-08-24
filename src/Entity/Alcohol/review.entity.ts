@@ -32,6 +32,9 @@ export class Review extends BaseEntity {
     @Column({nullable: true})
     userId: number;
 
+    @Column({nullable: true})
+    alcoholId: number;
+
     @ManyToOne(type => Alcohol, alcohol => alcohol.reviews, {eager: false}) // N:1 relationship
     alcohol: Alcohol; // 술 컬럼
 
