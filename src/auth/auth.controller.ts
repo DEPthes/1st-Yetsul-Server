@@ -195,7 +195,8 @@ export class AuthController {
 
     // 카카오 로그인 후 콜백 url로 오는 요청 처리하는 api
     @Get('kakao/callback')
-    @Redirect('http://localhost:3000/')
+    // @Redirect('http://localhost:3000/')
+    @Redirect('https://m.naver.com/')
     @UseGuards(AuthGuard('kakao'))
     kakaoAuthRedirect(@Req() req, @Res() res) { // req.user로 유저 프로필 값 가져옴
         console.log('토큰: ', req.user.accessToken); // 토큰을 갖고 리다이렉션 하면 됨.
