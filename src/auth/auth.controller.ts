@@ -1,4 +1,6 @@
+
 import { Body, Controller, Get, Patch, Req, UseGuards, UseInterceptors, UploadedFiles, Res, Post, ValidationPipe, Param, Redirect, Query } from '@nestjs/common';
+
 import { AuthGuard } from '@nestjs/passport';
 import { ApiCreatedResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
@@ -205,7 +207,6 @@ export class AuthController {
 
         this.authService.kakaoLogin(req);
         // res.send(req.user.accessToken);
-        // res.cookie('accessToken', req.user.accessToken, {secure: true}); // key, value, option
         res.cookie('accessToken', req.user.accessToken); // key, value, option
         // res.cookie(req.user.accessToken);
         // res.redirect('/auth/');
