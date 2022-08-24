@@ -199,16 +199,10 @@ export class AuthController {
     @UseGuards(AuthGuard('kakao'))
     kakaoAuthRedirect(@Req() req, @Res() res) { // req.user로 유저 프로필 값 가져옴
         console.log('토큰: ', req.user.accessToken); // 토큰을 갖고 리다이렉션 하면 됨.
-        // console.log('res: ', res); // 여기에 accessToken 들어있긴 함..
-
-        // 토큰을 param에 넣은 주소로 리다이렉트.
-        // 이 주소를 프론트 주소로 바꾸면 됨.
-        // res.redirect('/auth/');
 
         this.authService.kakaoLogin(req);
-        // res.send(req.user.accessToken);
-        res.cookie('accessToken', req.user.accessToken); // key, value, option
-        // res.cookie(req.user.accessToken);
+        // res.send(req.user.accessToken); // 중간 콜백 화면에 보여지고 리다이렉트 안됨.
+        res.cookie('accessToken', req.user.accessToken, {secure: true, sameSite: 'None'}); // key, value, option
         // res.redirect('/auth/');
     }
 
