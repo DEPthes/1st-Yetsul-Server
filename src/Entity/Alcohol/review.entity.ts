@@ -17,8 +17,8 @@ export class Review extends BaseEntity {
     @Column({nullable: true})
     star: number;
 
-    @Column({ nullable: true })
-    reviewImgUrl: string;
+    @Column("text", {array: true, nullable: true})
+    reviewImgUrl: string[];
 
     // 작성 시간
     @CreateDateColumn() 
