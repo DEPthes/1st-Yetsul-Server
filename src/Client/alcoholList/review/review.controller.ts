@@ -60,7 +60,7 @@ export class ReviewController {
   //   response.send(uploadedReview);
   // }
 
-  @Post('/:id') // 해당 술에 대한 리뷰 작성
+  @Post('/:id') // 해당 술에 대한 리뷰 작성 (이미지 파일 두개 이상 등록 가능)
   @ApiOperation({ summary: '해당 술에 대한 리뷰 작성 API', description: '해당 술에 대한 리뷰 작성. /review/1' })
   @ApiCreatedResponse({ description: '술 id param으로 받음, 사용자는 body로', type: Alcohol })
   @UseInterceptors(FilesInterceptor("file", 10, {

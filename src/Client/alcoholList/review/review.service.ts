@@ -77,47 +77,47 @@ export class ReviewService {
 
     try {
       const uploadFiles = [];
-      const url = [];
-      for (const element in files) {
+      const url = []; // 이미지 url을 배열로, 사진 여러장 담을 수 있도록
+      for (const element in files) { // 파일 개수만큼 반복 돌리면서 url 넣기
         const file = new S3();
         file.originalName = files[element].originalname;
         file.url = location[element].location;
-        url.push(file.url);
-        uploadFiles.push(file);
+        url.push(file.url); // url 배열에 넣기
+        uploadFiles.push(file); // S3 레포지토리에 저장 할 파일
       }
 
-      await this.s3Repository.save(uploadFiles);
+      await this.s3Repository.save(uploadFiles); // 파일 저장
       // const url = (location);
 
-      const alcohol = await this.alcoholRepository.findOne(alcohol_id);
-      const user = await this.userRepository.findOne(user_id);
+      const alcohol = await this.alcoholRepository.findOne(alcohol_id); // 리뷰 작성 술
+      const user = await this.userRepository.findOne(user_id); // 리뷰 작성자
 
       // const starSum = (await this.alcoholRepository.findOne(alcohol_id)).star + createReviewDto.star;
 
-      const originalStar = (await this.alcoholRepository.findOne(alcohol_id)).star + '';
+      const originalStar = (await this.alcoholRepository.findOne(alcohol_id)).star + ''; // 리뷰 달기 전 술의 평균 별점
       console.log('originalStar is ', parseFloat(originalStar));
-      const reviewStar = createReviewDto.star + '';
+      const reviewStar = createReviewDto.star + ''; // 리뷰에 준 별점
       console.log('reviewStar is ', parseFloat(reviewStar));
 
 
       console.log('리뷰서비스: url: ', url);
 
 
-      const result = await this.reviewRepository.createReview(createReviewDto, user, alcohol, url);
+      const result = await this.reviewRepository.createReview(createReviewDto, user, alcohol, url); // 리뷰 레파지토리에 저장
 
       const query = await this.reviewRepository.createQueryBuilder('review'); // 쿼리 사용
       query.where('review.alcoholId = :alcoholId', { alcoholId: alcohol_id });
-      const reviews = await query.getMany();
+      const reviews = await query.getMany(); // 해당 술에 달린 전체 리뷰 가져오기
 
-      const totalReviewCount = reviews.length; // 해당 술에 달린 리뷰 수 카운트
+      const totalReviewCount = reviews.length; // 해당 술에 달린 전체 리뷰 수 카운트
       const starSum = parseFloat(originalStar) * (totalReviewCount - 1) + parseFloat(reviewStar);
       console.log('totalReviewCount is ', totalReviewCount);
       console.log('starSum is ', starSum);
       const avgStar = starSum / totalReviewCount;
-      console.log('avgStar is ', avgStar);
+      console.log('avgStar is ', avgStar); // 해당 술의 최종 평균 별점
       console.log('====');
 
-      alcohol.star = avgStar;
+      alcohol.star = avgStar; // 술 별점 변경
       await this.alcoholRepository.save(alcohol);
       return result;
     } catch (error) {

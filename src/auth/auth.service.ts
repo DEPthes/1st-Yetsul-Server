@@ -111,6 +111,7 @@ export class AuthService {
             },
         })
         console.log('카카오 로그 아웃 완료');
+        return '로그아웃 완료';
     }
 
     // 토큰으로 로그아웃 하기. 구글

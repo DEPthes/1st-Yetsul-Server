@@ -128,7 +128,9 @@ export class AuthController {
     @Get('/aa/:token')
     kakaoLogout(@Param('token') token: string, @Res() res) {
         // res.cookie('cookie', '', {maxAge: 0});
-        return this.authService.kakaoLogout(token);
+        this.authService.kakaoLogout(token);
+        res.redirect('/');
+        
     }
 
     // 구글 로그아웃
@@ -190,22 +192,34 @@ export class AuthController {
     @ApiCreatedResponse({ description: '카카오 로그인' })
     @UseGuards(AuthGuard('kakao')) // AuthGuard에 kakao 전달하면 Strategy 작성 시 작성한 명칭 찾아서 적용한다
     async kakaoAuth(@Req() req) {
-
+        console.log('3333'); //// 둘다 안찍힘
     }
 
     // 카카오 로그인 후 콜백 url로 오는 요청 처리하는 api
     @Get('kakao/callback')
     // @Redirect('http://localhost:3000/')
+    // @Redirect('https://depth-server.herokuapp.com')
     // @Redirect('http://depth-itw.s3-website.ap-northeast-2.amazonaws.com/')
     @UseGuards(AuthGuard('kakao'))
-    kakaoAuthRedirect(@Req() req, @Res() res) { // req.user로 유저 프로필 값 가져옴
+    async kakaoAuthRedirect(@Req() req, @Res() res) { // req.user로 유저 프로필 값 가져옴
         console.log('토큰: ', req.user.accessToken); // 토큰을 갖고 리다이렉션 하면 됨.
-
+        console.log('111'); ////
         this.authService.kakaoLogin(req);
+        console.log('2222'); ////
         // res.send(req.user.accessToken); // 중간 콜백 화면에 보여지고 리다이렉트 안됨.
-        // res.cookie('accessToken', req.user.accessToken); // key, value, option
-        res.cookie('accessToken', req.user.accessToken, {secure: true, sameSite: 'None'}); // key, value, option
-        res.redirect('/');
+        // res.write(req.user.accessToken);
+        res.cookie('accessToken', req.user.accessToken); // key, value, option
+
+        // res.cookie('accessToken', req.user.accessToken, {httpOnly: true, secure: true, sameSite: 'None'}); // key, value, option
+        // res.redirect(302, 'https://depth-server.herokuapp.com'+'/' + req.user.accessToken); //  // 이렇게 안하고 @Redirect 하면 쿠키가 리다이렉션 한 주소에 안담기는 듯 ?
+        // res.redirect(200, '/'); // 200-> OK. Redirecting to /. 302은 바로
+        res.redirect('/kakaologin'); // 바로 리다이렉트
+        
+        console.log('res.url: ', await res.url);
+        console.log('req.url: ', await req.url);
+        
+
+        
     }
 
     @Get('/xx')
