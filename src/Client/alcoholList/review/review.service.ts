@@ -125,6 +125,112 @@ export class ReviewService {
     }
   }
 
+  // 임시 리뷰를 저장
+  async postTempReview(reviewId: number) {
+    // 해당 리뷰를 가져옴
+    // const review = this.reviewRepository.findOne(reviewId);
+
+    // 가져오고 난 후 수정하기.
+    const review = this.reviewRepository.update(reviewId, {
+
+    })
+  }
+
+  // // 리뷰 업데이트
+  // // 지금 업데이트는 되는데 술 star 계산해야 함.
+  // // ㄴ 완료, 사진만 하면 됨.
+  // async updateReview(reviewId: number, createReviewDto: CreateReviewDto) {
+  //   try {
+  //     const review = this.reviewRepository.findOne(reviewId);
+  //     const alcohol = await this.alcoholRepository.findOne((await review).alcoholId); // 리뷰 작성 술
+  //     const user = await this.userRepository.findOne((await review).userId); // 리뷰 작성자
+
+
+  //     const originalStar = (alcohol.star + ''); // 리뷰 달기 전 술의 평균 별점
+  //     console.log('originalStar is ', parseFloat(originalStar));
+  //     const reviewStar = createReviewDto.star + ''; // 리뷰에 준 별점
+  //     console.log('reviewStar is ', parseFloat(reviewStar));
+
+  //     // 리뷰 수정
+  //     await this.reviewRepository.updateReview(reviewId, createReviewDto, user, alcohol, ['noImage']);
+
+  //     const updatedReview = this.reviewRepository.findOne(reviewId);
+
+  //     const query = await this.reviewRepository.createQueryBuilder('review'); // 쿼리 사용
+  //     query.where('review.alcoholId = :alcoholId', { alcoholId: (await review).alcoholId });
+  //     const reviews = await query.getMany(); // 해당 술에 달린 전체 리뷰 가져오기
+
+  //     const totalReviewCount = reviews.length; // 해당 술에 달린 전체 리뷰 수 카운트
+  //     const starSum = parseFloat(originalStar) * (totalReviewCount) - (await review).star + parseFloat(reviewStar);
+  //     console.log('totalReviewCount is ', totalReviewCount);
+  //     console.log('starSum is ', starSum);
+  //     const avgStar = starSum / totalReviewCount;
+  //     console.log('avgStar is ', avgStar); // 해당 술의 최종 평균 별점
+  //     console.log('====');
+
+  //     alcohol.star = avgStar; // 술 별점 변경
+  //     await this.alcoholRepository.save(alcohol);
+  //     return updatedReview;
+  //   } catch (error) {
+  //     throw new BadRequestException(error.message);
+  //   }
+  // }
+
+  // 리뷰 업데이트
+  // 지금 업데이트는 되는데 술 star 계산해야 함.
+  // ㄴ 완료, 사진만 하면 됨.
+  async updateReview(reviewId: number, createReviewDto: CreateReviewDto, files: Express.Multer.File[], location) {
+    try {
+
+      const uploadFiles = []; // 새로 업로드한 파일들
+      const url = []; // 이미지 url을 배열로, 사진 여러장 담을 수 있도록
+      for (const element in files) { // 파일 개수만큼 반복 돌리면서 url 넣기
+        const file = new S3();
+        file.originalName = files[element].originalname;
+        file.url = location[element].location;
+        url.push(file.url); // url 배열에 넣기
+        uploadFiles.push(file); // S3 레포지토리에 저장 할 파일
+      }
+
+      await this.s3Repository.save(uploadFiles); // 새로 추가한 파일 저장
+
+      const review = this.reviewRepository.findOne(reviewId);
+      const alcohol = await this.alcoholRepository.findOne((await review).alcoholId); // 리뷰 작성 술
+      const user = await this.userRepository.findOne((await review).userId); // 리뷰 작성자
+
+
+      const originalStar = (alcohol.star + ''); // 리뷰 달기 전 술의 평균 별점
+      console.log('originalStar is ', parseFloat(originalStar));
+      const reviewStar = createReviewDto.star + ''; // 리뷰에 준 별점
+      console.log('reviewStar is ', parseFloat(reviewStar));
+
+      // 리뷰 수정
+      // 여기다가 새로 업로드한 파일 추가해야 함. createReview 참고
+      await this.reviewRepository.updateReview(reviewId, createReviewDto, user, alcohol, url);
+
+      const updatedReview = this.reviewRepository.findOne(reviewId);
+
+      const query = await this.reviewRepository.createQueryBuilder('review'); // 쿼리 사용
+      query.where('review.alcoholId = :alcoholId', { alcoholId: (await review).alcoholId });
+      const reviews = await query.getMany(); // 해당 술에 달린 전체 리뷰 가져오기
+
+      const totalReviewCount = reviews.length; // 해당 술에 달린 전체 리뷰 수 카운트
+      const starSum = parseFloat(originalStar) * (totalReviewCount) - (await review).star + parseFloat(reviewStar);
+      console.log('totalReviewCount is ', totalReviewCount);
+      console.log('starSum is ', starSum);
+      const avgStar = starSum / totalReviewCount;
+      console.log('avgStar is ', avgStar); // 해당 술의 최종 평균 별점
+      console.log('====');
+
+      alcohol.star = avgStar; // 술 별점 변경
+      await this.alcoholRepository.save(alcohol);
+      return updatedReview;
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+  }
+
+
   // 해당 술에 대한 모든 리뷰 조회 (리뷰만)
   async getAllReview(alcohol_id: number) {
     const query = this.reviewRepository.createQueryBuilder('review'); // 쿼리 사용
@@ -151,7 +257,7 @@ export class ReviewService {
       obj[key].nickname = nickname;
     }
 
-    obj = obj.sort(function(a, b) {
+    obj = obj.sort(function (a, b) {
       return a.id - b.id;
     })
 
@@ -192,7 +298,7 @@ export class ReviewService {
       obj[key].nickname = nickname;
     }
 
-    obj = obj.sort(function(a, b) {
+    obj = obj.sort(function (a, b) {
       return a.id - b.id;
     })
 
@@ -233,7 +339,7 @@ export class ReviewService {
       reviewsWithUserInfo[key].nickname = nickname;
     }
 
-    reviewsWithUserInfo = reviewsWithUserInfo.sort(function(a, b) {
+    reviewsWithUserInfo = reviewsWithUserInfo.sort(function (a, b) {
       return a.id - b.id;
     })
 
@@ -268,6 +374,9 @@ export class ReviewService {
     const query = this.reviewRepository.createQueryBuilder('review'); // 쿼리 사용
     query.where('review.id = :reviewId', { reviewId: reviewId });
     const review = await query.getOne();
+
+    review.viewCount += 1;
+    this.reviewRepository.save(review);
 
     const str = JSON.stringify(review);
     const obj = JSON.parse(str);
