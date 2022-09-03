@@ -79,13 +79,12 @@ export class IntroductionAlcoholService {
         if (existLike) { // 이미 존재한다면 삭제
             console.log('이미 있는 값');
             await this.alcoholRepository.likeCountMinus(alcoholId); // 술 엔티티에 찜 카운트 감소시킴
-            return await this.likeRepository.delete(existLike);
+            await this.likeRepository.delete(existLike);
+        } else { // 찜 한적 없다면
+
+            await this.alcoholRepository.likeCount(alcoholId); // 술 엔티티에 찜 카운트 증가시킴
+            await this.likeRepository.saveUserLikedAlcohol(user, alcohol);
         }
-
-        await this.alcoholRepository.likeCount(alcoholId); // 술 엔티티에 찜 카운트 증가시킴
-
-        await this.likeRepository.saveUserLikedAlcohol(user, alcohol);
-
         return await this.alcoholRepository.findOne(alcoholId);
     }
 
