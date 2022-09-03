@@ -56,7 +56,7 @@ export class Alcohol extends BaseEntity {
     
     // 별점은 소수점 있어야 함. 별점들의 평균이므로
     @ApiProperty({description: "해당 술에 대한 별점"})
-    @Column('numeric', {nullable: true})
+    @Column('numeric', {default: 0, nullable: true})
     star: number;
 
     @ApiProperty({description: "술 도수 정도"})
@@ -68,7 +68,7 @@ export class Alcohol extends BaseEntity {
     alcoholImage: string;
 
     @ApiProperty({description: "찜 횟수"})
-    @Column({nullable: true})
+    @Column({default: 0, nullable: true})
     likeCount: number;
 
     // 찜하기

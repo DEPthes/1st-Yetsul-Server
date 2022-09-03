@@ -33,6 +33,12 @@ export class IntroductionAlcoholController {
         return this.alcoholService.getAlcoholById(id);
     }
 
+    // 사용자가 술 찜했는지 확인하기
+    @Post('/description/:id/likeornot')
+    likeOrNot(@Body('userEmail') userEmail: string, @Param('id') alcoholId: number) {
+        return this.alcoholService.likeOrNot(userEmail, alcoholId);
+    }
+
     // 술 찜하기
     // accessToken을 가지고 있을 때, 유저 id와 술 id를 프론트에서 주면 DB에 좋아요 저장함. -> ?
     @ApiOperation({ summary: "찜하기 API", description: "찜하기" })

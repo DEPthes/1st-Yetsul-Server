@@ -36,7 +36,7 @@ export class ReviewRepository extends Repository<Review> {
     // }
 
     // 리뷰 작성
-    async createReview(createReviewDto: CreateReviewDto, user: User, alcohol: Alcohol, url): Promise<Review> {
+    async createReview(createReviewDto: CreateReviewDto, user: User, alcohol: Alcohol, url, thisReviewStatus): Promise<Review> {
         try {
 
             let reviewImgUrl;
@@ -55,7 +55,7 @@ export class ReviewRepository extends Repository<Review> {
                 alcohol,
                 reviewImgUrl,
                 like: 0,
-                reviewStatus: reviewStatus.SAVED // 기본은 saved ?
+                reviewStatus: thisReviewStatus // 기본은 saved ?
             })
 
             return this.save(review); // db에 저장. typeorm 메소드
@@ -72,11 +72,17 @@ export class ReviewRepository extends Repository<Review> {
 
             const originalReview = await this.findOne(reviewId); // 원래 리뷰
             let reviewImgUrl;
-            if (url == null)
-                reviewImgUrl = '';
+            if (url == null) {
+                reviewImgUrl = [];
+            }
             else {
                 reviewImgUrl = url;
             }
+
+            console.log('repository// url is ', url);
+            console.log('repository// reviewImgUrl is ', reviewImgUrl);
+            console.log('repository// originalReview.reviewImgUrl is ', originalReview.reviewImgUrl);
+            
 
             const { title, content, star } = createReviewDto;
 
@@ -84,10 +90,21 @@ export class ReviewRepository extends Repository<Review> {
                 title: title || originalReview.title, // 이렇게 하는거 아닌거 같은데..
                 content: content || originalReview.content,
                 star: star || originalReview.star,
+                reviewImgUrl: originalReview.reviewImgUrl.concat(reviewImgUrl)
             })
         } catch (error) {
             throw error;
         }
+    }
+
+    // 리뷰 수정 중 이미지 삭제
+    async updateDeleteImg(reviewId: number, imgIdx: number) {
+        const review = await this.findOne(reviewId);
+        let imgUrl = review.reviewImgUrl; // 이미지 url 배열
+        imgUrl.splice(imgIdx, 1); // 특정 인덱스 원소 삭제
+        review.reviewImgUrl = imgUrl;
+        this.save(review);
+        return imgUrl; // 남은 이미지 url
     }
 
     // 리뷰에 좋아요 누를때마다 좋아요 수 1 증가

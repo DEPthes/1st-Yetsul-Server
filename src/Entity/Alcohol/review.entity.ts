@@ -45,7 +45,7 @@ export class Review extends BaseEntity {
     alcoholId: number;
 
     // 상태 저장 플래그 --> 이거 dto에서 enum으로 바꿔야 함. 나중에 우선 하고 수정하기
-    @Column({default: reviewStatus.SAVED})
+    @Column({default: reviewStatus.SAVED, nullable: true})
     reviewStatus: reviewStatus;
 
     // 조회 수
