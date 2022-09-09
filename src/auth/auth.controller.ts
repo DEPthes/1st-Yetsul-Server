@@ -213,7 +213,9 @@ export class AuthController {
         // res.cookie('accessToken', req.user.accessToken, {httpOnly: true, secure: true, sameSite: 'None'}); // key, value, option
         // res.redirect(302, 'https://depth-server.herokuapp.com'+'/' + req.user.accessToken); //  // 이렇게 안하고 @Redirect 하면 쿠키가 리다이렉션 한 주소에 안담기는 듯 ?
         // res.redirect(200, '/'); // 200-> OK. Redirecting to /. 302은 바로
-        res.redirect('/kakaologin'); // 바로 리다이렉트
+        //res.redirect('/kakaologin'); // 바로 리다이렉트
+
+        res.redirect(302, 'http://localhost:3000/kakaologin');
         
         console.log('res.url: ', await res.url);
         console.log('req.url: ', await req.url);
