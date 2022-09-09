@@ -227,8 +227,8 @@ export class ReviewController {
   }
 
   // 10. 임시 저장 리뷰 하나 누르면 수정하기 누른것처럼 하면 됨 -> 수정하기로 리다이렉트 ??
-  // 지금 여기서 바디에 데이터 넣어서 리다이렉트 하는데
-  // 폼으로 바로 리다이렉트 해서 거기서 데이터 넣어야 하는데
+  // 지금은 여기서 바디에 데이터 넣어서 리다이렉트 하는데
+  // 폼으로 바로 리다이렉트 해서 거기서 데이터 넣어야 함 (스프링에선 폼으로 리다이렉트함)
   @Post('/user/temporary/:reviewId')
   @ApiOperation({ summary: '임시 저장 리뷰 하나 누르면 API', description: '임시 저장 리뷰 하나 누르면' })
   @ApiCreatedResponse({ description: '임시 저장 리뷰 하나 누르면 수정하기로 리다이렉트?' })
