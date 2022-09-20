@@ -10,6 +10,8 @@ import { HttpService } from "@nestjs/axios";
 import { firstValueFrom } from 'rxjs';
 import axios from 'axios';
 import { LikeRepository } from 'src/Repository/like.repository';
+import qs from 'qs';
+import fetch from "node-fetch";
 
 interface JwtPayload {
     sub;
@@ -31,6 +33,18 @@ export class AuthService {
         private jwtService: JwtService
     ) {
         this.http = new HttpService();
+    }
+
+    // jwt 토큰 생성
+    async createJwt(email) {
+        try {
+            const payload = { email }; // 중요한 정보는 x
+            const accessToken = await this.jwtService.sign(payload);
+            console.log('accessToken is ', accessToken);
+            return accessToken;
+        } catch {
+            console.log(console.error());
+        };
     }
 
     // 0811 ==========================================================
@@ -70,7 +84,7 @@ export class AuthService {
     // https://velog.io/@dldmswjd322/Nest-카카오-로그인-API-사용하기
     // https://velog.io/@nara7875/Node.js-kakao-login-api-가져오기 // 이것도 내일 한번 보기.
     // 토큰으로 사용자 정보 뽑아내기. 카카오
-    async getUserInfoWithTokenKakao(token: string) {
+    async getUserInfoWithTokenKakao(token: string): Promise<string> {
         const user_info = await axios.get('https://kapi.kakao.com/v2/user/me', {
             headers: {
                 Authorization: `Bearer ${token}`
@@ -80,8 +94,10 @@ export class AuthService {
         //   console.log('kakao_account is', user_info.data.kakao_account);
         if (this.userRepository.find({ where: { email: user_info.data.kakao_account.email } })) {
             console.log(`사용자 이메일이 ${user_info.data.kakao_account.email}인 유저입니다.`);
+            return user_info.data.kakao_account.email;
         } else {
             console.log(`해당 이메일의 유저가 존재하지 않습니다.`);
+            return `해당 이메일의 유저가 존재하지 않습니다.`;
         }
     }
 
@@ -253,7 +269,45 @@ export class AuthService {
             let alcohol = await this.alcoholRepository.findOne(alcoholId);
             alcoholList.push(alcohol);
         }
-        
+
         return alcoholList;
+    }
+
+    // =============================2
+
+    async getUserInfo2(access_token: string) {
+        //console.log(access_token);
+        return await fetch('https://kapi.kakao.com/v2/user/me',
+            {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${access_token}`
+                }
+            }).then(res => res.json());
+    }
+
+    async getToken2(token: string, client_id: string, redirect_uri: string): Promise<any> {
+        return await fetch("https://kauth.kakao.com/oauth/token", {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: qs.stringify({
+                grant_type: 'authorization_code',
+                client_id: client_id,
+                redirect_uri: redirect_uri,
+                code: token
+            })
+        }).then(res => res.json());
+    }
+
+    async logoutToken2(access_token: string) {
+        const respone = await fetch("https://kapi.kakao.com/v1/user/unlink",
+            {
+                method: 'POST',
+                headers: {
+                    "Content-Type": 'application/x-www-form-urlencoded',
+                    'Authorization': `Bearer ${access_token}`
+                }
+            }).then(res => res.json());
+        console.log(respone);
     }
 }

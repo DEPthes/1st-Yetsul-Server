@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, UseInterceptors, UploadedFiles, Req, Res, Query, Delete, Patch } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, UseInterceptors, UploadedFiles, Req, Res, Query, Delete, Patch, UseGuards } from '@nestjs/common';
 import { ReviewService } from './review.service';
 import { CreateReviewDto } from '../../../DTO/review.dto';
 import { Review } from '../../../Entity/Alcohol/review.entity';
@@ -8,6 +8,10 @@ import * as AWS from 'aws-sdk';
 import * as multerS3 from 'multer-s3';
 import 'dotenv/config';
 import { FilesInterceptor } from '@nestjs/platform-express';
+import { AuthGuard } from '@nestjs/passport';
+import { GetUser } from 'src/auth/getUser.decorator';
+import { User } from 'src/auth/entities/user.entity';
+
 
 const s3 = new AWS.S3();
 AWS.config.update({
@@ -34,30 +38,96 @@ AWS.config.update({
 @ApiTags("리뷰 페이지")
 @Controller('review')
 export class ReviewController {
-  constructor(private readonly reviewService: ReviewService) { }
+  constructor(
+    private readonly reviewService: ReviewService
+  ) { }
 
-   // 1. 해당 유저가 작성한 모든 리뷰 조회
-   // 지금은 SAVED, TEMPORARY 둘 다 나오는데 이걸 SAVED만 나오게 수정.
+  // // 1. 해당 유저가 작성한 모든 리뷰 조회
+  // // 지금은 SAVED, TEMPORARY 둘 다 나오는데 이걸 SAVED만 나오게 수정.
+  // @Post('/user')
+  // @ApiBody({ schema: { properties: { userId: { type: "number" } } } })
+  // @ApiOperation({ summary: '유저가 작성한 리뷰 조회 API', description: '유저가 작성한 리뷰 조회' })
+  // @ApiCreatedResponse({ description: '유저 id body으로 받음' })
+  // getUsersReview(@Body('user') user: number): Promise<Review[]> {
+  //   return this.reviewService.getUsersReview(user);
+  // }
+
+  // 1-2. 해당 유저가 작성한 모든 리뷰 조회 (토큰으로)
+  // 지금은 SAVED, TEMPORARY 둘 다 나오는데 이걸 SAVED만 나오게 수정.
+  @UseGuards(AuthGuard())
   @Post('/user')
-  @ApiBody({schema: {properties: {userId: { type: "number" }}}})
+  @ApiBody({ schema: { properties: { userId: { type: "number" } } } })
   @ApiOperation({ summary: '유저가 작성한 리뷰 조회 API', description: '유저가 작성한 리뷰 조회' })
   @ApiCreatedResponse({ description: '유저 id body으로 받음' })
-  getUsersReview(@Body('user') user: number): Promise<Review[]> {
-    return this.reviewService.getUsersReview(user);
+  getUsersReview(@GetUser() user: User): Promise<Review[]> {
+
+    const userId = user.id;
+
+    return this.reviewService.getUsersReview(userId);
   }
 
-  // 2. 해당 유저가 임시 저장한 리뷰 조회
+  // // 2. 해당 유저가 임시 저장한 리뷰 조회
+  // // 사용자의 전체 리뷰에서 TEMPORARY 리뷰만 나오게 하면 됨.
+  // @Post('/user/temporary')
+  // @ApiBody({ schema: { properties: { userId: { type: "number" } } } })
+  // @ApiOperation({ summary: '유저가 임시 저장한 리뷰 조회 API', description: '유저가 임시 저장한 리뷰 조회' })
+  // @ApiCreatedResponse({ description: '유저 id body으로 받음' })
+  // getUsersTemporaryReview(@Body('user') user: number): Promise<Review[]> {
+  //   return this.reviewService.getUsersTemporaryReview(user);
+  // }
+
+  // 2-2. 해당 유저가 임시 저장한 리뷰 조회 (토큰으로)
   // 사용자의 전체 리뷰에서 TEMPORARY 리뷰만 나오게 하면 됨.
+  @UseGuards(AuthGuard())
   @Post('/user/temporary')
-  @ApiBody({schema: {properties: {userId: { type: "number" }}}})
+  @ApiBody({ schema: { properties: { userId: { type: "number" } } } })
   @ApiOperation({ summary: '유저가 임시 저장한 리뷰 조회 API', description: '유저가 임시 저장한 리뷰 조회' })
   @ApiCreatedResponse({ description: '유저 id body으로 받음' })
-  getUsersTemporaryReview(@Body('user') user: number): Promise<Review[]> {
-    return this.reviewService.getUsersTemporaryReview(user);
+  getUsersTemporaryReview(@GetUser() user: User): Promise<Review[]> {
+
+    const userId = user.id;
+
+    return this.reviewService.getUsersTemporaryReview(userId);
   }
 
-  // 3. 해당 술에 대한 리뷰 작성 (이미지 파일 두개 이상 등록 가능)
-  @Post('/:id')
+  // // 3. 해당 술에 대한 리뷰 작성 (이미지 파일 두개 이상 등록 가능)
+  // @Post('/:id')
+  // @ApiOperation({ summary: '해당 술에 대한 리뷰 작성 API', description: '해당 술에 대한 리뷰 작성. /review/1' })
+  // @ApiCreatedResponse({ description: '술 id param으로 받음, 사용자는 body로', type: Alcohol })
+  // @UseInterceptors(FilesInterceptor("file", 10, {
+  //   storage: multerS3({
+  //     s3: s3,
+  //     bucket: process.env.AWS_S3_BUCKET_NAME,
+  //     contentType: multerS3.AUTO_CONTENT_TYPE,
+  //     accessKeyId: process.env.AWS_ACCESS_KEY,
+  //     acl: 'public-read',
+  //     key: function (req, file, cb) {
+  //       cb(null, `${Date.now().toString()}-${file.originalname}`);
+  //     }
+  //   }),
+  //   limits: {} // 이게 아마 제한 거는 거인듯, 예제에선 10장
+  // }))
+  // async createReview(@Body() createReviewDto: CreateReviewDto, @Body('user') user: number, @Param('id') alcohol: number, @UploadedFiles() files: Express.Multer.File[], @Req() request, @Res() response) {
+  //   let location;
+
+  //   if (request.files == undefined) {
+  //     console.log("no image file.");
+  //     location = null;
+  //   }else{
+  //     console.log('image file exist.');
+  //     location = request.files;
+  //   }
+
+  //   const uploadedReview = await this.reviewService.createReview(createReviewDto, user, alcohol, files, location);
+
+  //   response.send(uploadedReview);
+  //   return uploadedReview;
+
+  // }
+
+  // 3-2. 해당 술에 대한 리뷰 작성 (프런트에서 userId 넣는 대신 jwt 토큰 넣으면, 백에서 userId 토큰에서 뽑아서 넣으면 됨 ?)
+  @UseGuards(AuthGuard())
+  @Post('/withtoken/:id')
   @ApiOperation({ summary: '해당 술에 대한 리뷰 작성 API', description: '해당 술에 대한 리뷰 작성. /review/1' })
   @ApiCreatedResponse({ description: '술 id param으로 받음, 사용자는 body로', type: Alcohol })
   @UseInterceptors(FilesInterceptor("file", 10, {
@@ -73,41 +143,80 @@ export class ReviewController {
     }),
     limits: {} // 이게 아마 제한 거는 거인듯, 예제에선 10장
   }))
-  async createReview(@Body() createReviewDto: CreateReviewDto, @Body('user') user: number, @Param('id') alcohol: number, @UploadedFiles() files: Express.Multer.File[], @Req() request, @Res() response) {
+  async createReview2(@Body() createReviewDto: CreateReviewDto, @GetUser() user: User, @Param('id') alcohol: number, @UploadedFiles() files: Express.Multer.File[], @Req() request, @Res() response) {
     let location;
-    
+
     if (request.files == undefined) {
       console.log("no image file.");
       location = null;
-    }else{
+    } else {
       console.log('image file exist.');
       location = request.files;
     }
-    
-    const uploadedReview = await this.reviewService.createReview(createReviewDto, user, alcohol, files, location);
+
+    // const userId = 1; // 원래는 userId(숫자) 넣어야 함.
+    const userId = user.id;
+
+    const uploadedReview = await this.reviewService.createReview(createReviewDto, userId, alcohol, files, location);
 
     response.send(uploadedReview);
     return uploadedReview;
 
   }
 
-  /* 
-  4. 리뷰 임시 저장 ????
-  -> 리뷰 수정처럼.
-  임시 저장 디비를 만들어야 하나
-  게시물 자체의 플래그를 만들어도 됨 -> 상태값
-  -> 리뷰 dto에 상태 플래그 만들어야 함. 저장/임시저장 (save/temporary)
-  -> 임시 저장 플래그 달고있는 리뷰 아이디 파라미터로 받고 그 리뷰를 수정하자.
-  -> post로 할 지 아니면 patch로 할 지는 생각해보기.
+  // /* 
+  // 4. 리뷰 임시 저장 ????
+  // -> 리뷰 수정처럼.
+  // 임시 저장 디비를 만들어야 하나
+  // 게시물 자체의 플래그를 만들어도 됨 -> 상태값
+  // -> 리뷰 dto에 상태 플래그 만들어야 함. 저장/임시저장 (save/temporary)
+  // -> 임시 저장 플래그 달고있는 리뷰 아이디 파라미터로 받고 그 리뷰를 수정하자.
+  // -> post로 할 지 아니면 patch로 할 지는 생각해보기.
 
-  리뷰 작성할 때처럼 form으로 제목, 내용, 사진 받아야 함.
-  ㄴ 이것도 post랑 똑같이 해야하나.. 
+  // 리뷰 작성할 때처럼 form으로 제목, 내용, 사진 받아야 함.
+  // ㄴ 이것도 post랑 똑같이 해야하나.. 
 
-  -> 그냥 리뷰 작성이랑 똑같이 하고 status만 temporary로 설정해주면 됨.
-  -> 근데 이거 둘 코드 한줄 빼고는 똑같아서 합칠 수 있을거 같은데
-   */
+  // -> 그냥 리뷰 작성이랑 똑같이 하고 status만 temporary로 설정해주면 됨.
+  // -> 근데 이거 둘 코드 한줄 빼고는 똑같아서 합칠 수 있을거 같은데
+  //  */
+  // @Post('/:reviewId/temporary')
+  // @ApiOperation({summary: '리뷰 임시저장 기능, 임시저장으로 저장한 리뷰는 temporary 플래그 달고 있어야 함.'})
+  // @ApiCreatedResponse({ description: '술 id param으로 받음, 사용자는 body로', type: Alcohol })
+  // @UseInterceptors(FilesInterceptor("file", 10, {
+  //   storage: multerS3({
+  //     s3: s3,
+  //     bucket: process.env.AWS_S3_BUCKET_NAME,
+  //     contentType: multerS3.AUTO_CONTENT_TYPE,
+  //     accessKeyId: process.env.AWS_ACCESS_KEY,
+  //     acl: 'public-read',
+  //     key: function (req, file, cb) {
+  //       cb(null, `${Date.now().toString()}-${file.originalname}`);
+  //     }
+  //   }),
+  //   limits: {} // 이게 아마 제한 거는 거인듯, 예제에선 10장
+  // }))
+  // async postTemporaryReview(@Body() createReviewDto: CreateReviewDto, @Body('user') user: number, @Param('id') alcohol: number, @UploadedFiles() files: Express.Multer.File[], @Req() request, @Res() response) {
+  //   let location;
+
+  //   if (request.files == undefined) {
+  //     console.log("no image file.");
+  //     location = null;
+  //   }else{
+  //     console.log('image file exist.');
+  //     location = request.files;
+  //   }
+
+  //   const uploadedReview = await this.reviewService.postTemporaryReview(createReviewDto, user, alcohol, files, location);
+
+  //   response.send(uploadedReview);
+  //   return uploadedReview;
+  // }
+
+
+  // 4-2. 리뷰 임시 저장 (토큰으로)
+  @UseGuards(AuthGuard())
   @Post('/:reviewId/temporary')
-  @ApiOperation({summary: '리뷰 임시저장 기능, 임시저장으로 저장한 리뷰는 temporary 플래그 달고 있어야 함.'})
+  @ApiOperation({ summary: '리뷰 임시저장 기능, 임시저장으로 저장한 리뷰는 temporary 플래그 달고 있어야 함.' })
   @ApiCreatedResponse({ description: '술 id param으로 받음, 사용자는 body로', type: Alcohol })
   @UseInterceptors(FilesInterceptor("file", 10, {
     storage: multerS3({
@@ -122,18 +231,20 @@ export class ReviewController {
     }),
     limits: {} // 이게 아마 제한 거는 거인듯, 예제에선 10장
   }))
-  async postTemporaryReview(@Body() createReviewDto: CreateReviewDto, @Body('user') user: number, @Param('id') alcohol: number, @UploadedFiles() files: Express.Multer.File[], @Req() request, @Res() response) {
+  async postTemporaryReview2(@Body() createReviewDto: CreateReviewDto, @GetUser() user: User, @Param('id') alcohol: number, @UploadedFiles() files: Express.Multer.File[], @Req() request, @Res() response) {
     let location;
-    
+
     if (request.files == undefined) {
       console.log("no image file.");
       location = null;
-    }else{
+    } else {
       console.log('image file exist.');
       location = request.files;
     }
-    
-    const uploadedReview = await this.reviewService.postTemporaryReview(createReviewDto, user, alcohol, files, location);
+
+    const userId = user.id;
+
+    const uploadedReview = await this.reviewService.postTemporaryReview(createReviewDto, userId, alcohol, files, location);
 
     response.send(uploadedReview);
     return uploadedReview;
@@ -170,7 +281,7 @@ export class ReviewController {
     if (request.files.length == 0) {
       console.log("파일 새로 추가 안함.");
       location = null;
-    }else{
+    } else {
       console.log('image file exist.');
       location = request.files;
     }
@@ -246,12 +357,25 @@ export class ReviewController {
     return this.reviewService.deleteOneReview(alcoholId, reviewId);
   }
 
-  // 12. 리뷰 좋아요
+  // // 12. 리뷰 좋아요
+  // @Post('')
+  // @ApiOperation({ summary: '리뷰 좋아요 API', description: '리뷰 좋아요' })
+  // reviewLike(@Query('alcoholId') alcoholId, @Query('reviewId') reviewId, @Body('userId') userId: number) {
+  //   alcoholId = parseInt(alcoholId);
+  //   reviewId = parseInt(reviewId);
+  //   return this.reviewService.reviewLike(alcoholId, reviewId, userId);
+  // }
+
+  // 12-2. 리뷰 좋아요 (토큰으로)
+  @UseGuards(AuthGuard())
   @Post('')
   @ApiOperation({ summary: '리뷰 좋아요 API', description: '리뷰 좋아요' })
-  reviewLike(@Query('alcoholId') alcoholId, @Query('reviewId') reviewId, @Body('userId') userId: number) {
+  reviewLike2(@Query('alcoholId') alcoholId, @Query('reviewId') reviewId, @GetUser() user: User) {
     alcoholId = parseInt(alcoholId);
     reviewId = parseInt(reviewId);
+
+    const userId = user.id;
+
     return this.reviewService.reviewLike(alcoholId, reviewId, userId);
   }
 }

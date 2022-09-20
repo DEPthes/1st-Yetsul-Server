@@ -32,12 +32,35 @@ export class IntroductionAlcoholService {
         return await this.alcoholRepository.find();
     }
 
-    // 사용자가 술 찜했는지 확인하기
-    async likeOrNot(userEmail: string, alcoholId: number) {
+    // // 사용자가 술 찜했는지 확인하기 (사용자 정보 이메일로 받음)
+    // async likeOrNot(userEmail: string, alcoholId: number) {
+
+    //     const user = await this.userRepository.findOne({ // 사용자
+    //         where: {
+    //             email: userEmail
+    //         }
+    //     });
+
+    //     const existLike = await this.likeRepository.findOne({
+    //         where: {
+    //             alcoholId: alcoholId,
+    //             userId: user.id
+    //         }
+    //     });
+
+    //     if (existLike) {
+    //         return 'LIKE';
+    //     } else {
+    //         return 'NOT';
+    //     }
+    // }
+
+    // 사용자가 술 찜했는지 확인하기 (사용자 정보 아이디로 받음 - 토큰)
+    async likeOrNot(userId: number, alcoholId: number) {
 
         const user = await this.userRepository.findOne({ // 사용자
             where: {
-                email: userEmail
+                id: userId
             }
         });
 
@@ -55,12 +78,45 @@ export class IntroductionAlcoholService {
         }
     }
 
-    // 찜하기
-    async userLikedAlcohol(userEmail: string, alcoholId: number) {
+    // // 찜하기 (이메일로)
+    // async userLikedAlcohol(userEmail: string, alcoholId: number) {
+
+    //     const user = await this.userRepository.findOne({ // 사용자
+    //         where: {
+    //             email: userEmail
+    //         }
+    //     });
+
+    //     const alcohol = await this.alcoholRepository.findOne(alcoholId);
+
+
+    //     const existLike = await this.likeRepository.findOne({
+    //         where: {
+    //             alcoholId: alcoholId,
+    //             userId: user.id
+    //         }
+    //     });
+
+    //     console.log(existLike);
+
+    //     if (existLike) { // 이미 존재한다면 삭제
+    //         console.log('이미 있는 값');
+    //         await this.alcoholRepository.likeCountMinus(alcoholId); // 술 엔티티에 찜 카운트 감소시킴
+    //         await this.likeRepository.delete(existLike);
+    //     } else { // 찜 한적 없다면
+
+    //         await this.alcoholRepository.likeCount(alcoholId); // 술 엔티티에 찜 카운트 증가시킴
+    //         await this.likeRepository.saveUserLikedAlcohol(user, alcohol);
+    //     }
+    //     return await this.alcoholRepository.findOne(alcoholId);
+    // }
+
+    // 찜하기 (아이디로, 토큰)
+    async userLikedAlcohol(userId: number, alcoholId: number) {
 
         const user = await this.userRepository.findOne({ // 사용자
             where: {
-                email: userEmail
+                id: userId
             }
         });
 

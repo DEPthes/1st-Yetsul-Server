@@ -1,0 +1,2 @@
+jwt:
+  secret: 'Secret1234'
