@@ -346,7 +346,38 @@ export class AuthController {
         return this.authService.getUsersInfo();
     }
 
-    // 프로필 수정
+    // // 프로필 수정 (이메일)
+    // @Patch('/edituser')
+    // @UseInterceptors(FilesInterceptor("file", 10, {
+    //     storage: multerS3({
+    //         s3: s3,
+    //         bucket: process.env.AWS_S3_BUCKET_NAME,
+    //         contentType: multerS3.AUTO_CONTENT_TYPE,
+    //         accessKeyId: process.env.AWS_ACCESS_KEY,
+    //         acl: 'public-read',
+    //         key: function (req, file, cb) {
+    //             cb(null, `${Date.now().toString()}-${file.originalname}`);
+    //         }
+    //     }),
+    // }))
+    // editUser(@Body('email') email: string, @Body('nickname') nickname: string, @UploadedFiles() files: Express.Multer.File[], @Req() request) {
+    //     // const location = request.files[0];
+
+    //     let location;
+    //     if (request.files[0] == undefined) {
+    //         console.log("no image file.");
+    //         location = null;
+    //     }
+    //     else {
+    //         console.log('image file exist.');
+    //         location = request.files[0];
+    //     }
+
+    //     return this.authService.editUser(email, nickname, files, location);
+    // }
+
+    // 프로필 수정 (토큰으로)
+    @UseGuards(AuthGuard())
     @Patch('/edituser')
     @UseInterceptors(FilesInterceptor("file", 10, {
         storage: multerS3({
@@ -360,7 +391,7 @@ export class AuthController {
             }
         }),
     }))
-    editUser(@Body('email') email: string, @Body('nickname') nickname: string, @UploadedFiles() files: Express.Multer.File[], @Req() request) {
+    editUser(@GetUser() user: User, @Body('nickname') nickname: string, @UploadedFiles() files: Express.Multer.File[], @Req() request) {
         // const location = request.files[0];
 
         let location;
@@ -373,7 +404,9 @@ export class AuthController {
             location = request.files[0];
         }
 
-        return this.authService.editUser(email, nickname, files, location);
+        const userId = user.id;
+
+        return this.authService.editUser(userId, nickname, files, location);
     }
 
     // // 내가 찜한 술 목록

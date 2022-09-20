@@ -234,8 +234,28 @@ export class AuthService {
         return await this.userRepository.find();
     }
 
-    // 프로필 수정
-    async editUser(email: string, nickname: string, @UploadedFiles() files: Express.Multer.File[], location: string) {
+    // // 프로필 수정 (이메일)
+    // async editUser(email: string, nickname: string, @UploadedFiles() files: Express.Multer.File[], location: string) {
+
+    //     try {
+    //         const uploadFiles = [];
+    //         for (const element of files) {
+    //             const file = new S3();
+    //             file.originalName = element.originalname;
+    //             uploadFiles.push(file);
+    //         }
+
+    //         await this.s3Repository.save(uploadFiles);
+    //         const url = (location);
+
+    //         return this.userRepository.editUser(email, nickname, url)
+    //     } catch (err) {
+    //         throw new BadRequestException(err.message);
+    //     }
+    // }
+
+    // 프로필 수정 (토큰으로, userId)
+    async editUser(userId: number, nickname: string, @UploadedFiles() files: Express.Multer.File[], location: string) {
 
         try {
             const uploadFiles = [];
@@ -248,7 +268,7 @@ export class AuthService {
             await this.s3Repository.save(uploadFiles);
             const url = (location);
 
-            return this.userRepository.editUser(email, nickname, url)
+            return this.userRepository.editUser(userId, nickname, url)
         } catch (err) {
             throw new BadRequestException(err.message);
         }
