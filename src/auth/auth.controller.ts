@@ -28,7 +28,7 @@ export class AuthController {
     }
 
     // 카카오 액세스 토큰 받고 사용자 확인 후 jwt 토큰 반환.
-    @Get('/login/:accesstoken')
+    @Get('/createjwttoken/:accesstoken')
     async getJwtToken(@Param('accesstoken') accesstoken: string) {
         const email = await this.authService.getUserInfoWithTokenKakao(accesstoken);
         return await this.authService.createJwt(email); // jwt 토큰 (jwt.io에 넣어보면 payload 나옴)
