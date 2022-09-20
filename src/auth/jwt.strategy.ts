@@ -1,29 +1,9 @@
-// import { Injectable } from "@nestjs/common";
-// import { PassportStrategy } from "@nestjs/passport";
-// import { ExtractJwt, Strategy } from "passport-jwt";
-// import { jwtConstants } from "./constants";
-
 import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { PassportStrategy } from "@nestjs/passport";
 import { InjectRepository } from "@nestjs/typeorm";
 import { UserRepository } from "./user.repository";
 import { ExtractJwt, Strategy } from "passport-jwt";
 import { User } from "./entities/user.entity";
-
-// @Injectable()
-// export class JwtStrategy extends PassportStrategy(Strategy) {
-//     constructor() {
-//         super({
-//             jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-//             ignoreExpiration: false,
-//             secretOrKey: jwtConstants.secret,
-//         });
-//     }
-
-//     async validate(payload: any) {
-//         return { userId: payload.sub, username: payload.username};
-//     }
-// }
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -32,7 +12,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         private userRepository: UserRepository
     ) {
         super({
-            secretOrKey: 'secret', // secretOrKey: 'Secret1234', // module 에서 쓴 비밀 키는 토큰 생성에 사용, 여기서는 토큰 유효한지 체크할 때 사용. 용도 다름.
+            secretOrKey: "Secret1234", // secretOrKey: 'Secret1234', // module 에서 쓴 비밀 키는 토큰 생성에 사용, 여기서는 토큰 유효한지 체크할 때 사용. 용도 다름.
             jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken() // 토큰 인증할 때 어디서 가져오는지.  bearertoken 타입으로 넘어옴.
         })
     }
