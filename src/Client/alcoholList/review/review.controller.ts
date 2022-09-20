@@ -127,7 +127,7 @@ export class ReviewController {
 
   // 3-2. 해당 술에 대한 리뷰 작성 (프런트에서 userId 넣는 대신 jwt 토큰 넣으면, 백에서 userId 토큰에서 뽑아서 넣으면 됨 ?)
   @UseGuards(AuthGuard())
-  @Post('/withtoken/:id')
+  @Post('/:id')
   @ApiOperation({ summary: '해당 술에 대한 리뷰 작성 API', description: '해당 술에 대한 리뷰 작성. /review/1' })
   @ApiCreatedResponse({ description: '술 id param으로 받음, 사용자는 body로', type: Alcohol })
   @UseInterceptors(FilesInterceptor("file", 10, {
