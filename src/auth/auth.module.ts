@@ -14,7 +14,7 @@ import { LikeRepository } from 'src/Repository/like.repository';
 import { PassportModule } from '@nestjs/passport';
 import * as config from 'config';
 
-const jwtConfig = config.get('jwt');
+// const jwtConfig = config.get('jwt');
 
 @Module({
   imports: [
