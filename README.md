@@ -28,14 +28,13 @@ Front Server url: http://depth-itw.s3-website.ap-northeast-2.amazonaws.com/
 
 FrameWork: NEST 
 
-ERD: https://www.erdcloud.com/d/KjuJbe3dYpjCsMHGJ
-
 DB: PostgreSQL
 
 AWS  - EC2,  RDS
 
-### ERD Image
-![옛술의 전당 (1)](https://user-images.githubusercontent.com/63040492/173785816-abd0438a-dc72-43a0-bf5f-876fcfa8e531.png)
+### ERD
+![yetErd](https://user-images.githubusercontent.com/86697585/191768435-1977117d-8b96-4444-9f90-6604eee6b8e6.png)
+
 
 ### 프로젝트 규칙
 
