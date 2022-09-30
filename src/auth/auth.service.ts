@@ -79,6 +79,8 @@ export class AuthService {
         return { accessToken, refreshToken };
     }
 
+    // 이떄 db에 저장하기
+
     // 파라미터로 로그인해서 나온 액세스 토큰 넣어서 사용자 정보 확인하기.
     // https://hou27.tistory.com/entry/카카오로-로그인하기-JWT-토큰-발급-OAuth // 이거 참고함.
     // https://velog.io/@dldmswjd322/Nest-카카오-로그인-API-사용하기
@@ -89,16 +91,36 @@ export class AuthService {
             headers: {
                 Authorization: `Bearer ${token}`
             },
-        })
-        //   console.log('user_info is', user_info);
-        //   console.log('kakao_account is', user_info.data.kakao_account);
-        if (this.userRepository.find({ where: { email: user_info.data.kakao_account.email } })) {
+        });
+        
+        console.log('user_info.data is', user_info.data.kakao_account);
+
+
+        // console.log('nickname is', user_info.data.properties.nickname);
+        // console.log('profile_image is', user_info.data.properties.nickname);
+        // console.log('user_info.data is', user_info.data.properties.nickname);
+
+        const email = user_info.data.kakao_account.email
+
+        const user = await this.userRepository.findOne({ email });
+
+        if (!user) { // 안담겨있다 -> 신규 유저
+            console.log(`해당 이메일의 유저가 존재하지 않습니다.`);
+            this.userRepository.createUser(user_info.data.kakao_account.email, user_info.data.kakao_account.profile.thumbnail_image_url, user_info.data.kakao_account.email.split('@')[0]);
+            return `해당 이메일의 유저가 존재하지 않습니다.`;
+        } else { // 이미 있는 경우
             console.log(`사용자 이메일이 ${user_info.data.kakao_account.email}인 유저입니다.`);
             return user_info.data.kakao_account.email;
-        } else {
-            console.log(`해당 이메일의 유저가 존재하지 않습니다.`);
-            return `해당 이메일의 유저가 존재하지 않습니다.`;
         }
+
+        // if (this.userRepository.find({ where: { email: user_info.data.kakao_account.email } })) {
+        //     console.log(`사용자 이메일이 ${user_info.data.kakao_account.email}인 유저입니다.`);
+        //     return user_info.data.kakao_account.email;
+        // } else { // 사용자 없는 경우 -> 첫 로그인
+        //     console.log(`해당 이메일의 유저가 존재하지 않습니다.`);
+        //     this.userRepository.createUser(user_info.data.kakao_account.email, user_info.data.kakao_account.profile.thumbnail_image_url, user_info.data.kakao_account.email.split('@')[0]);
+        //     return `해당 이메일의 유저가 존재하지 않습니다.`;
+        // }
     }
 
     // 토큰으로 사용자 정보 뽑아내기. 구글
@@ -215,7 +237,7 @@ export class AuthService {
 
 
         if (!user) { // 안담겨있다 -> 신규 유저
-            this.userRepository.createUser(email, profileImg, nickname);
+            //this.userRepository.createUser(email, profileImg, nickname);
         } else { // 이미 있는 경우
             console.log('이미 있음');
         }
