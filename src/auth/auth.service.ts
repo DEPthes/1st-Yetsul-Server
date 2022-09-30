@@ -230,8 +230,12 @@ export class AuthService {
         }
     }
 
-    async getUsersInfo() {
-        return await this.userRepository.find();
+    async getUsersInfo(userId: number) {
+        return await this.userRepository.find({
+            where: {
+                id: userId
+            }
+        });
     }
 
     // // 프로필 수정 (이메일)

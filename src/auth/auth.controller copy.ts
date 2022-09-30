@@ -21,6 +21,7 @@ export class AuthController {
     constructor(private authService: AuthService) { }
 
     @Get()
+    // @UseGuards(AuthGuard('kakao'))
     root() {
         return 'main page';
 
@@ -33,13 +34,12 @@ export class AuthController {
         return await this.authService.createJwt(email); // jwt 토큰 (jwt.io에 넣어보면 payload 나옴)
     }
 
-    // jwt 토큰으로 사용자 정보 가져오기
     // useGuard로 authorize
     // 이런식으로 찜하기, 리뷰 작성 등등 하면 됨.
     // @GetUser는 커스텀 데코레이터. 강의 코드 참고
     // https://jwt.io/
     @UseGuards(AuthGuard())
-    @Get('/getuserinfobyjwttokenkakao')
+    @Get('/getserinfobyjwttokenkakao')
     async getuser(@GetUser() user: User) {
         console.log('user is', user);
         console.log('authorized');
@@ -94,6 +94,49 @@ export class AuthController {
         console.log('req.url: ', await req.url);
     }
 
+    // 0811 ==========================================================
+
+    /* 새로운 구글
+    // jwt로 직접 액세스 토큰 만드는 방식.
+    // 참고한 주소: https://velog.io/@sinf/Nest.js에서-Goolge-Oauth-적용하기
+
+    // 구글 로그인 페이지로 리다이렉션 할 api
+    @Get('/google')
+    @ApiOperation({ summary: '구글 로그인', description: '구글 로그인' })
+    @ApiCreatedResponse({ description: '구글 로그인' })
+    @UseGuards(AuthGuard('google')) // AuthGuard에 google 전달하면 Strategy 작성 시 작성한 명칭 찾아서 적용한다
+    async googleAuth() {
+
+    }
+
+    // 구글 로그인 후 콜백 url로 오는 요청 처리하는 api
+    @Get('google/callback')
+    @UseGuards(AuthGuard('google'))
+    async googleAuthRedirect(@Req() req, @Res() res) { // req.user로 유저 프로필 값 가져옴
+        const user = await this.authService.findByProviderIdOrSave(req.user);
+
+        const payload: JwtPayload = { sub: user.id, email: user.email };
+
+        const { accessToken, refreshToken } = this.authService.getToken(payload);
+
+        res.cookie('access-token', accessToken); // @Res() res: Response 에서 Response 지우면 오류 안남.
+        res.cookie('refresh-token', refreshToken);
+
+        // await this.authService.updateHashedRefreshToken(user.id, refreshToken);
+        console.log('accessToken is ', accessToken);
+
+        res.redirect(process.env.DOMAIN); // http://localhost:3000/auth/test 이 주소로 리다이렉트 되면 network - headers - 헤더에 토큰 가져감? velog 참고
+    }
+
+    */
+
+    // 강의랑 똑같은 테스트. 계속 401 unauthorized 뜸.
+    @Get('/test')
+    @UseGuards(AuthGuard('jwt')) // req안에 유저 객체 넣기 위해 추가해야 함.
+    test(@GetUser() user: User) { // 커스텀 데코레이터
+        console.log(user);
+        return user;
+    }
 
     // 파라미터로 로그인해서 나온 액세스 토큰 넣어서 사용자 정보 확인하기. 카카오
     @Get('/kaka/:token')
@@ -159,6 +202,143 @@ export class AuthController {
         // res.redirect('/' + req.user.accessToken);
         return this.authService.naverLogin(req);
     }
+
+    // // 카카오 로그인 후 콜백 url로 오는 요청 처리하는 api
+    // // @Redirect('http://depth-itw.s3-website.ap-northeast-2.amazonaws.com/', 301)
+    // // @Redirect(`http://localhost:3000/auth/eeeee`, 301)
+    // // @Get('http://depth-itw.s3-website.ap-northeast-2.amazonaws.com/')
+    // @Get('kakao/callback')
+    // @UseGuards(AuthGuard('kakao'))
+    // kakaoAuthRedirect(@Req() req, @Res() res) {// req.user로 유저 프로필 값 가져옴  Promise<{accessToken: string}>
+    //     console.log("리퀘스트 유자어우어우어 무엇일까요?");
+    //     console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!', req.user.accessToken);
+
+    //     // return accessToken ; // redirection 할 때는 accessToken으로 보내줘야함.
+    //     return this.authService.kakaoLogin(req); // 토큰
+
+    //     // res.redirect('http://localhost:3000/auth/kakao/rrrr');
+    // }    
+
+    // ===============================================================
+    /*
+    @Get('/kakao2')
+    async getKakaoLogin(@Res() res, @Req() req) {
+        const kakao = {
+            clientID: process.env.kakao_RestApiKey,
+            clientSecret: process.env.kakao_clientSecret,
+            redirectUri: process.env.kakao_callbackURL,
+        };
+        const kakaoAuthURL = `https://kauth.kakao.com/oauth/authorize?client_id=${kakao.clientID}&redirect_uri=${kakao.redirectUri}&response_type=code&scope=profile_nickname,profile_image,account_email`;
+        res.redirect(kakaoAuthURL);
+    }
+
+    @Get('kakao/callback2')
+    async callback(@Res() res, @Req() req) {
+        const kakao = {
+            clientID: process.env.kakao_RestApiKey,
+            clientSecret: process.env.kakao_clientSecret,
+            redirectUri: process.env.kakao_callbackURL,
+        };
+        let token;
+        try {
+            token = await axios({
+                method: "POST",
+                url: "https://kauth.kakao.com/oauth/token",
+                headers: {
+                    "content-type": "application/x-www-form-urlencoded",
+                },
+                data: qs.stringify({
+                    grant_type: "authorization_code",
+                    client_id: kakao.clientID,
+                    client_secret: kakao.clientSecret,
+                    redirectUri: kakao.redirectUri,
+                    code: req.query.code,
+                }),
+            });
+        } catch (err) {
+            console.log('err is ', err);
+            // res.json(err.data);
+        }
+
+        let user;
+        try {
+            user = await axios({
+                method: "GET",
+                url: "https://kapi.kakao.com/v2/user/me",
+                headers: {
+                    // Authorization: `Bearer ${token.data.access_token}`,
+                },
+            });
+        } catch (err) {
+            // res.json(err.data);
+        }
+        console.log(user);
+
+        // var id = user.data.id;
+        // var user_name = user.data.properties.profile_nickname;
+        // const psword = "noPasswordHere";
+        // const query = "INSERT INTO users(id, psword) VALUES(?, ?);";
+
+        // db.query(query, [id, psword], function (err, rows, fields) {
+        //     if (err) console.log(err);
+        //     else {
+        //         console.log(rows);
+        //         res.send("회원가입이 완료되었습니다.");
+        //     }
+        // });
+
+        // req.session.kakao = user.data;
+
+        res.redirect("/");
+    }
+
+    @Get('/info')
+    async getInfo(@Res() res, @Req() req) {
+        let { nickname, profile_image } = req.session.kakao.properties;
+        console.log("nickname: ", nickname);
+        console.log("profile_image: ", profile_image);
+    }
+    */
+    // ===============================================================
+
+    // ===============================================================2
+
+    @Get('/kakao2')
+    loginKakao(@Res() res): void {
+        const kakao = {
+            clientID: process.env.kakao_RestApiKey,
+            clientSecret: process.env.kakao_clientSecret,
+            redirectUri: process.env.kakao_callbackURL,
+        };
+        const url = `https://kauth.kakao.com/oauth/authorize?client_id=${kakao.clientID}&redirect_uri=${kakao.redirectUri}&response_type=code`;
+        // const url = `https://kauth.kakao.com/oauth/authorize?client_id=${this.client_id}&redirect_uri=${this.redirect_uri}&response_type=code`;
+        return res.redirect(url);
+    }
+
+    @Get('/kakao/callback2')
+    async kakaocallback(@Query() access_code): Promise<any> {
+        const kakao = {
+            clientID: process.env.kakao_RestApiKey,
+            clientSecret: process.env.kakao_clientSecret,
+            redirectUri: process.env.kakao_callbackURL,
+        };
+        const token = access_code['code'];
+        const res = await this.authService.getToken2(token, kakao.clientID, kakao.redirectUri)
+        const userinfo = await this.authService.getUserInfo2(res.access_token);
+        // this.access_token = res.access_token;
+        console.log(userinfo);
+        return userinfo;
+    }
+
+    @Get('/kakaologout')
+    logoutKakao(@Res() res): void {
+        console.log(res);
+        // this.kakaoService.logoutToken(this.access_token);
+    }
+
+
+
+    // ===============================================================2
 
     // // 프로필 수정 (이메일)
     // @Patch('/edituser')
@@ -238,14 +418,4 @@ export class AuthController {
 
         return this.authService.myLikeAlcoholList(userId);
     }
-
-    @UseGuards(AuthGuard())
-    @Get('/user')
-    getUser(@GetUser() user: User) {
-
-        const userId = user.id;
-
-        return this.authService.getUsersInfo(userId);
-    }
-
 }
