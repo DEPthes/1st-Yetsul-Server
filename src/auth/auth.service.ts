@@ -231,11 +231,7 @@ export class AuthService {
     }
 
     async getUsersInfo(userId: number) {
-        return await this.userRepository.find({
-            where: {
-                id: userId
-            }
-        });
+        return await this.userRepository.findOne(userId);
     }
 
     // // 프로필 수정 (이메일)
