@@ -26,27 +26,36 @@ Front Server url: http://depth-itw.s3-website.ap-northeast-2.amazonaws.com/
 
 ### 개발 스택
 
-FrameWork: NEST 
-
-ERD: https://www.erdcloud.com/d/KjuJbe3dYpjCsMHGJ
+FrameWork: NEST
 
 DB: PostgreSQL
 
 AWS  - EC2,  RDS
 
-### ERD Image
-![옛술의 전당 (1)](https://user-images.githubusercontent.com/63040492/173785816-abd0438a-dc72-43a0-bf5f-876fcfa8e531.png)
+### ERD
+![yetErd](https://user-images.githubusercontent.com/86697585/191768435-1977117d-8b96-4444-9f90-6604eee6b8e6.png)
 
+  
 ### 프로젝트 규칙
 
-1.  모든 것은 문서화하기
-2.  코드 및 커밋 규칙 잘 지키기
-3. 모든 코드는 브런치 생성 후 머지하기
+- 문서화 하기
+- 코드, 커밋 규칙 준수하기
+- 모든 코드와 커밋은 따로 브런치 생성 후 머지하기
+- 커밋 메시지는 "[Type] message" 형식으로 작성하기
+  | **Type** | **Meaning** |
+  | -------- | ------|
+  | feat | 새로운 기능 |
+  | fix | 버그 수정 |
+  | build | 빌드 관련 파일 수정 |
+  | chore | 그 외 자잘한 수정 |
+  | style | 코드 스타일 또는 포맷 |
+  | docs | 문서 수정 |
+  | refactor| 코드 리팩토링 |
+  | !BREAKING CHANGE | 단절적 변경 |
 
 
 
-### ER 다이어그램 설계 
+### API 명세서
+https://satin-loganberry-da5.notion.site/125ae65a604c46e6a032ca388cb146f6?v=7a6de4d660a141bca38e2c6b8ec7dfe1
 
 
-
-### 도메인 다이어그램 설계
