@@ -5,7 +5,6 @@ import { AppService } from './app.service';
 import { typeORMConfig } from './config/typeorm.config';
 import { alcoholListModule } from './Client/alcoholList/alcoholList.module';
 import { AuthModule } from './auth/auth.module';
-import { UploadFileModule } from './upload-file/upload-file.module';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 
@@ -20,7 +19,7 @@ import { PassportModule } from '@nestjs/passport';
       }
     }),
     TypeOrmModule.forRoot(typeORMConfig), 
-    alcoholListModule, AuthModule, UploadFileModule],
+    alcoholListModule, AuthModule],
   controllers: [AppController],
   providers: [AppService],
 })
