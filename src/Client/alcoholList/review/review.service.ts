@@ -191,12 +191,6 @@ export class ReviewService {
     query.where('review.alcoholId = :alcoholId', { alcoholId: alcohol_id });
     const reviews = await query.getMany(); // 전부 가져옴. getOne()은 하나
 
-    // No entity column "alcoholId" was found.
-    // const reviews = await this.reviewRepository.find({
-    //   where: {
-    //     alcoholId: alcohol_id
-    //   }
-    // });
 
     const str = JSON.stringify(reviews);
     let obj = JSON.parse(str);

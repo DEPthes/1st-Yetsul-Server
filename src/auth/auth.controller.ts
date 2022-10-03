@@ -1,6 +1,5 @@
-import { Body, Controller, Get, Patch, Req, UseGuards, UseInterceptors, UploadedFiles, Res, Post, Param, Query } from '@nestjs/common';
+import { Body, Controller, Get, Patch, Req, UseGuards, UseInterceptors, UploadedFiles, Res, Post, Param } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiCreatedResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import * as multerS3 from 'multer-s3';
 import * as AWS from 'aws-sdk';
@@ -15,7 +14,6 @@ AWS.config.update({
     region: process.env.AWS_REGION
 });
 
-@ApiTags("auth")
 @Controller('auth')
 export class AuthController {
     constructor(private authService: AuthService) { }
@@ -47,28 +45,9 @@ export class AuthController {
         return user;
     }
 
-    // 구글 로그인 페이지로 리다이렉션 할 api
-    @Get('/google')
-    @ApiOperation({ summary: '구글 로그인', description: '구글 로그인' })
-    @ApiCreatedResponse({ description: '구글 로그인' })
-    @UseGuards(AuthGuard('google')) // AuthGuard에 google 전달하면 Strategy 작성 시 작성한 명칭 찾아서 적용한다
-    async googleAuth(@Req() req) {
-
-    }
-
-    // 구글 로그인 후 콜백 url로 오는 요청 처리하는 api
-    @Get('google/callback')
-    @UseGuards(AuthGuard('google'))
-    googleAuthRedirect(@Req() req, @Res() res) { // req.user로 유저 프로필 값 가져옴
-        console.log('구글 액세스 토큰: ', req.user.accessToken);
-        res.redirect('/' + req.user.accessToken);
-        return this.authService.googleLogin(req);
-    }
-
+    
     // 카카오 로그인
     @Get('/kakao')
-    @ApiOperation({ summary: '카카오 로그인', description: '카카오 로그인' })
-    @ApiCreatedResponse({ description: '카카오 로그인' })
     @UseGuards(AuthGuard('kakao')) // AuthGuard에 kakao 전달하면 Strategy 작성 시 작성한 명칭 찾아서 적용한다
     async kakaoAuth(@Req() req) {
     }
@@ -102,94 +81,6 @@ export class AuthController {
         return this.authService.getUserInfoWithTokenKakao(token);
     }
 
-    // 파라미터로 로그인해서 나온 액세스 토큰 넣어서 사용자 정보 확인하기. 구글
-    @Get('/googl/:token')
-    googl(@Param('token') token: string) { // 커스텀 데코레이터
-        return this.authService.getUserInfoWithTokenGoogle(token);
-    }
-
-    // 파라미터로 로그인해서 나온 액세스 토큰 넣어서 사용자 정보 확인하기. 네이버
-    @Get('/nave/:token')
-    nave(@Param('token') token: string) { // 커스텀 데코레이터
-        return this.authService.getUserInfoWithTokenNaver(token);
-    }
-
-    // 카카오 로그아웃
-    @Get('/aa/:token')
-    kakaoLogout(@Param('token') token: string, @Res() res) {
-        // res.cookie('cookie', '', {maxAge: 0});
-        this.authService.kakaoLogout(token);
-        res.redirect('/');
-
-    }
-
-    // 구글 로그아웃
-    @Get('bb/:token')
-    googleLogout(@Param('token') token: string) {
-        return this.authService.googleLogout(token);
-    }
-
-    // 구글 로그아웃2
-    @Get('cc/:token')
-    googleLogout2(@Param('token') token: string, @Req() req, @Res() res) {
-        req.logout();
-    }
-
-
-
-    // ==========================================================
-
-
-
-
-    // 네이버 로그인
-    @Get('/naver')
-    @ApiOperation({ summary: '네이버 로그인', description: '네이버 로그인' })
-    @ApiCreatedResponse({ description: '네이버 로그인' })
-    @UseGuards(AuthGuard('naver')) // AuthGuard에 naver 전달하면 Strategy 작성 시 작성한 명칭 찾아서 적용한다
-    async naverAuth(@Req() req) {
-
-    }
-
-    // 네이버 로그인 후 콜백 url로 오는 요청 처리하는 api
-    @Get('naver/callback')
-    @UseGuards(AuthGuard('naver'))
-    naverAuthRedirect(@Req() req, @Res() res) { // req.user로 유저 프로필 값 가져옴
-        console.log('네이버 액세스 토큰: ', req.user.accessToken);
-        // res.redirect('/' + req.user.accessToken);
-        return this.authService.naverLogin(req);
-    }
-
-    // // 프로필 수정 (이메일)
-    // @Patch('/edituser')
-    // @UseInterceptors(FilesInterceptor("file", 10, {
-    //     storage: multerS3({
-    //         s3: s3,
-    //         bucket: process.env.AWS_S3_BUCKET_NAME,
-    //         contentType: multerS3.AUTO_CONTENT_TYPE,
-    //         accessKeyId: process.env.AWS_ACCESS_KEY,
-    //         acl: 'public-read',
-    //         key: function (req, file, cb) {
-    //             cb(null, `${Date.now().toString()}-${file.originalname}`);
-    //         }
-    //     }),
-    // }))
-    // editUser(@Body('email') email: string, @Body('nickname') nickname: string, @UploadedFiles() files: Express.Multer.File[], @Req() request) {
-    //     // const location = request.files[0];
-
-    //     let location;
-    //     if (request.files[0] == undefined) {
-    //         console.log("no image file.");
-    //         location = null;
-    //     }
-    //     else {
-    //         console.log('image file exist.');
-    //         location = request.files[0];
-    //     }
-
-    //     return this.authService.editUser(email, nickname, files, location);
-    // }
-
     // 프로필 수정 (토큰으로)
     @UseGuards(AuthGuard())
     @Patch('/edituser')
@@ -222,12 +113,6 @@ export class AuthController {
 
         return this.authService.editUser(userId, nickname, files, location);
     }
-
-    // // 내가 찜한 술 목록
-    // @Post('/myLikeAlcoholList')
-    // myLikeAlcoholList(@Body('id') id: number) {
-    //     return this.authService.myLikeAlcoholList(id);
-    // }
 
     // 내가 찜한 술 목록 (토큰으로)
     @UseGuards(AuthGuard())

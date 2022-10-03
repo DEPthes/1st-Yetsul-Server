@@ -4,17 +4,13 @@ import { AlcoholRepository } from 'src/Repository/alcohol.repository';
 import { S3Repository } from 'src/Repository/s3.repository';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { GoogleStrategy } from './google.strategy';
 import { JwtStrategy } from './jwt.strategy';
 import { KakaoStrategy } from './kakao.strategy';
-import { NaverStrategy } from './naver.strategy';
 import { UserRepository } from './user.repository';
 import { JwtModule } from '@nestjs/jwt';
 import { LikeRepository } from 'src/Repository/like.repository';
 import { PassportModule } from '@nestjs/passport';
-import * as config from 'config';
 
-// const jwtConfig = config.get('jwt');
 
 @Module({
   imports: [
@@ -28,6 +24,6 @@ import * as config from 'config';
     TypeOrmModule.forFeature([UserRepository, AlcoholRepository, S3Repository, LikeRepository])
   ],
   controllers: [AuthController],
-  providers: [AuthService, GoogleStrategy, NaverStrategy, KakaoStrategy, JwtStrategy],
+  providers: [AuthService, KakaoStrategy, JwtStrategy],
 })
 export class AuthModule {}

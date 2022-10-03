@@ -1,12 +1,11 @@
-import { Injectable, NotFoundException, ParseBoolPipe } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { getConnection, LessThan, MoreThan } from "typeorm";
 import { QuestionRepository } from 'src/Repository/question.repository';
-import { AlcoholService } from 'src/admin/alcohol/alcohol.service';
 import { AlcoholRepository } from 'src/Repository/alcohol.repository';
 import { MovieRepository } from '../../Repository/movie.repository';
 import { QuestionAndSelectionDto } from '../../DTO/questionAndSelection.dto';
 import { SelectionRepository } from 'src/Repository/selection.repository';
+import { IntroductionAlcoholService } from '../alcoholList/introductionAlcohol/introductionAlcohol.service';
 
 @Injectable()
 export class TicketboxService {
@@ -19,7 +18,7 @@ export class TicketboxService {
         private selectionRepository: SelectionRepository,
         private alcoholRepository: AlcoholRepository,
         private movieRepository: MovieRepository,
-        private alcoholService: AlcoholService
+        private alcoholService: IntroductionAlcoholService
     ) { }
 
     /* Method

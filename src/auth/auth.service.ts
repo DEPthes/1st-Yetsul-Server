@@ -7,7 +7,6 @@ import { UserRepository } from './user.repository';
 import { User } from './entities/user.entity';
 import { JwtService } from '@nestjs/jwt';
 import { HttpService } from "@nestjs/axios";
-import { firstValueFrom } from 'rxjs';
 import axios from 'axios';
 import { LikeRepository } from 'src/Repository/like.repository';
 import qs from 'qs';
@@ -152,77 +151,7 @@ export class AuthService {
         return '로그아웃 완료';
     }
 
-    // 토큰으로 로그아웃 하기. 구글
-    // https://developers.google.com/identity/protocols/oauth2/openid-connect?hl=en
-    async googleLogout(token: string) {
-        // const user_info = await axios.get(`https://oauth2.googleapis.com/revoke`, {
-        //     headers: {
-        //         Authorization: `Bearer ${token}`
-        //     },
-        // })
-
-        // const user_info = await axios.get(`https://oauth2.googleapis.com/revoke?access_token=${token}`);
-        // const user_info = await axios.get(`https://accounts.google.com/o/oauth2/revoke?access_token=${token}`);
-        const user_info = await axios.get(`https://oauth2.googleapis.com/revoke?token=${token}`);
-
-        console.log('구글 로그 아웃 완료');
-    }
-
-    // ==============================
-
-
-
-
-
-
-
-
-    async googleLogin(req) {
-        if (!req.user) {
-            return 'No user from Google'
-        }
-
-        const email = req.user.email;
-        const profileImg = req.user.picture;
-        const nickname = email.split('@')[0];
-        console.log('nickname is ', nickname);
-
-        const user = await this.userRepository.findOne({ email });
-
-        if (!user) {
-            this.userRepository.createUser(email, profileImg, nickname);
-        }
-
-        console.log("서비스에서 찍은 request입니다.(구글)");
-        console.log(req.user.accessToken);
-
-        return {
-            message: 'User Info from Google',
-            user: req.user
-        }
-    }
-
-    async naverLogin(req) {
-        if (!req.user) {
-            return 'No user from Naver'
-        }
-
-        const email = req.user.email;
-        const profileImg = req.user.picture;
-        const nickname = email.split('@')[0];
-
-        const user = await this.userRepository.findOne({ email });
-
-        if (!user) {
-            this.userRepository.createUser(email, profileImg, nickname);
-        }
-
-        return {
-            message: 'User Info from Naver',
-            user: req.user
-        }
-    }
-
+    
     async kakaoLogin(req) {
         if (!req.user) {
             return 'No user from Kakao'

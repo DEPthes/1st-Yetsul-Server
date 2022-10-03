@@ -1,4 +1,3 @@
-import { ApiProperty } from "@nestjs/swagger";
 import { BaseEntity, Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { User } from "src/auth/entities/user.entity";
 import { Review } from "./review.entity";
@@ -7,7 +6,6 @@ import { Review } from "./review.entity";
 @Entity("ReviewLike")
 export class ReviewLike extends BaseEntity {
 
-    @ApiProperty({description: "리뷰 pk 값"})
     @PrimaryGeneratedColumn() 
     readonly id: number;
 

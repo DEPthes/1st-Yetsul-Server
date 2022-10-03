@@ -1,6 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { QuestionDto } from '../../DTO/question.dto';
 import { Question } from '../../Entity/box_office/question.entity';
 import { QuestionRepository } from '../../Repository/question.repository';
 

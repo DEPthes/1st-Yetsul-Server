@@ -1,9 +1,6 @@
-
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import axios, { AxiosInstance } from 'axios';
 import { AlcoholRepository } from 'src/Repository/alcohol.repository';
-import { LessThan, MoreThan } from 'typeorm';
 
 @Injectable()
 export class slotMachineService {

@@ -12,7 +12,6 @@ import { LikeRepository } from 'src/Repository/like.repository';
 import { ReviewLikeRepository } from 'src/Repository/reviewLike.repository';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
-import { AuthService } from 'src/auth/auth.service';
 
 @Module({
   imports: [

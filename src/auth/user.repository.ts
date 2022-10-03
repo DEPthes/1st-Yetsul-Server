@@ -10,30 +10,12 @@ export class UserRepository extends Repository<User> {
         await this.save(user);
     }
 
-    // // 이메일로
-    // async editUser(email, nickname, url) {
-    //     // const profileImg = url.location;
-    //     let profileImg;
-    //     if (url == null)
-    //         profileImg = '기본이미지';//'https://depthes.s3.ap-northeast-2.amazonaws.com/1659277489924-%EB%94%94%ED%8F%B4%ED%8A%B8%EC%9D%B4%EB%AF%B8%EC%A7%80.png';
-    //     else {
-    //         profileImg = url.location;
-    //     }
-
-    //     return this.update({
-    //         email: email
-    //     }, {
-    //         nickname,
-    //         profileImg
-    //     });
-    // }
-
     // userId로
     async editUser(userId, nickname, url) {
         // const profileImg = url.location;
         let profileImg;
         if (url == null)
-            profileImg = '기본이미지';//'https://depthes.s3.ap-northeast-2.amazonaws.com/1659277489924-%EB%94%94%ED%8F%B4%ED%8A%B8%EC%9D%B4%EB%AF%B8%EC%A7%80.png';
+            profileImg = 'https://depthes.s3.ap-northeast-2.amazonaws.com/1659277489924-%EB%94%94%ED%8F%B4%ED%8A%B8%EC%9D%B4%EB%AF%B8%EC%A7%80.png';//'https://depthes.s3.ap-northeast-2.amazonaws.com/1659277489924-%EB%94%94%ED%8F%B4%ED%8A%B8%EC%9D%B4%EB%AF%B8%EC%A7%80.png';
         else {
             profileImg = url.location;
         }
