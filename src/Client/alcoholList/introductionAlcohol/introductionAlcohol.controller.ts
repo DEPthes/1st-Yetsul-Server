@@ -3,7 +3,6 @@ import { AuthGuard } from '@nestjs/passport';
 import { User } from 'src/auth/entities/user.entity';
 import { GetUser } from 'src/auth/getUser.decorator';
 import { Alcohol } from 'src/Entity/Alcohol/alcohol.entity';
-import { Like } from 'src/Entity/Alcohol/like.entity';
 import { IntroductionAlcoholService } from './introductionAlcohol.service';
 
 @Controller('alcohol')
