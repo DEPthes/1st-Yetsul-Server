@@ -39,7 +39,7 @@ export class AuthService {
     async createJwt(email) {
         try {
             const payload = { email }; // 중요한 정보는 x
-            const accessToken = await this.jwtService.sign(payload);
+            const accessToken = await this.jwtService.sign(payload, {expiresIn: '1d'});
             console.log('accessToken is ', accessToken);
             return accessToken;
         } catch {
