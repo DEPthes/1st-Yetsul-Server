@@ -101,23 +101,12 @@ export class ReviewService {
 
       console.log('리뷰서비스: url: ', url);
 
-      const thisReviewStatus = reviewStatus.TEMPORARY;
+      const thisReviewStatus = reviewStatus.TEMPORARY; // 리뷰 status를 temp로 설정
       const result = await this.reviewRepository.createReview(createReviewDto, user, alcohol, url, thisReviewStatus); // 리뷰 레파지토리에 저장
       
       const query = await this.reviewRepository.createQueryBuilder('review'); // 쿼리 사용
       query.where('review.alcoholId = :alcoholId', { alcoholId: alcohol_id });
-      const reviews = await query.getMany(); // 해당 술에 달린 전체 리뷰 가져오기
-
-      const totalReviewCount = reviews.length; // 해당 술에 달린 전체 리뷰 수 카운트
-      const starSum = parseFloat(originalStar) * (totalReviewCount - 1) + parseFloat(reviewStar);
-      console.log('totalReviewCount is ', totalReviewCount);
-      console.log('starSum is ', starSum);
-      const avgStar = starSum / totalReviewCount;
-      console.log('avgStar is ', avgStar); // 해당 술의 최종 평균 별점
-      console.log('====');
-
-      alcohol.star = avgStar; // 술 별점 변경
-      await this.alcoholRepository.save(alcohol);
+      
       return result;
     } catch (error) {
       throw new BadRequestException(error.message);
