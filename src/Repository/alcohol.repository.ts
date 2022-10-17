@@ -1,6 +1,5 @@
 import { EntityRepository, Repository } from "typeorm";
 import { Alcohol } from "../Entity/Alcohol/alcohol.entity";
-import { AlcoholDto } from "../DTO/alcohol.dto";
 
 @EntityRepository(Alcohol)
 export class AlcoholRepository extends Repository<Alcohol> {
@@ -23,5 +22,13 @@ export class AlcoholRepository extends Repository<Alcohol> {
         await this.save(alcoholToUpdate);
 
         return alcoholToUpdate;
+    }
+
+    // 술 사진 저장
+    async putAlcoholImage(alcohol_id: number, url) {
+        console.log('url is ', url[0]);
+        this.update(alcohol_id, {
+            alcoholImage : url[0]
+        })
     }
 }

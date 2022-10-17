@@ -1,11 +1,21 @@
-import { Controller, Get, Post, Body, Param, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, UseGuards, UseInterceptors, UploadedFiles, Req, Res } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { FilesInterceptor } from '@nestjs/platform-express';
 import { ApiBody, ApiCreatedResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { User } from 'src/auth/entities/user.entity';
 import { GetUser } from 'src/auth/getUser.decorator';
 import { Alcohol } from 'src/Entity/Alcohol/alcohol.entity';
 import { Like } from 'src/Entity/Alcohol/like.entity';
 import { IntroductionAlcoholService } from './introductionAlcohol.service';
+import * as multerS3 from 'multer-s3';
+import * as AWS from 'aws-sdk';
+
+const s3 = new AWS.S3();
+AWS.config.update({
+  accessKeyId: process.env.AWS_ACCESS_KEY,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS,
+  region: process.env.AWS_REGION
+});
 
 @ApiTags("술 소개 페이지")
 @Controller('alcohol')
@@ -88,5 +98,37 @@ export class IntroductionAlcoholController {
     @ApiCreatedResponse({ description: '술 리스트 조회', type: Alcohol })
     getAlcoholList(@Body('filter') filter: string): Promise<Alcohol[]> {
         return this.alcoholService.getAlcoholList(filter);
+    }
+
+    // 술 사진 등록
+    @Post('/image/:id')
+    @UseInterceptors(FilesInterceptor("file", 10, {
+        storage: multerS3({
+            s3: s3,
+            bucket: process.env.AWS_S3_BUCKET_NAME,
+            contentType: multerS3.AUTO_CONTENT_TYPE,
+            accessKeyId: process.env.AWS_ACCESS_KEY,
+            acl: 'public-read',
+            key: function (req, file, cb) {
+                cb(null, `${Date.now().toString()}-${file.originalname}`);
+            }
+        }),
+        limits: {} // 이게 아마 제한 거는 거인듯, 예제에선 10장
+    }))
+    async putAlcoholImage(@Param('id') alcohol_id: number, @UploadedFiles() files: Express.Multer.File[], @Req() request, @Res() response) {
+        let location;
+
+        if (request.files == undefined) {
+            console.log("no image file.");
+            location = null;
+        } else {
+            console.log('image file exist.');
+            location = request.files;
+        }
+
+        const uploadedReview = await this.alcoholService.putAlcoholImage(alcohol_id, files, location);
+
+        response.send(uploadedReview);
+        return uploadedReview;
     }
 }
