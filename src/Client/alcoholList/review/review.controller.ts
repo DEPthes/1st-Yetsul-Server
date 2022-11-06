@@ -215,7 +215,7 @@ export class ReviewController {
 
   // 4-2. 리뷰 임시 저장 (토큰으로)
   @UseGuards(AuthGuard())
-  @Post('/:reviewId/temporary')
+  @Post('/:id/temporary')
   @ApiOperation({ summary: '리뷰 임시저장 기능, 임시저장으로 저장한 리뷰는 temporary 플래그 달고 있어야 함.' })
   @ApiCreatedResponse({ description: '술 id param으로 받음, 사용자는 body로', type: Alcohol })
   @UseInterceptors(FilesInterceptor("file", 10, {

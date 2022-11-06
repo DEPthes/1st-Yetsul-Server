@@ -93,6 +93,7 @@ export class ReviewService {
       const alcohol = await this.alcoholRepository.findOne(alcohol_id); // 리뷰 작성 술
       const user = await this.userRepository.findOne(user_id); // 리뷰 작성자
 
+
       const originalStar = (await this.alcoholRepository.findOne(alcohol_id)).star + ''; // 리뷰 달기 전 술의 평균 별점
       console.log('originalStar is ', parseFloat(originalStar));
       const reviewStar = createReviewDto.star + ''; // 리뷰에 준 별점
