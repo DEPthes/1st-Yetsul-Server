@@ -71,6 +71,11 @@ export class Alcohol extends BaseEntity {
     @Column({default: 0, nullable: true})
     likeCount: number;
 
+    // 이달의 술
+    @ApiProperty({description: "이달의 술"})
+    @Column({default: false, nullable: true})
+    alcoholOfMonth: boolean;
+
     // 찜하기
     @OneToMany(type =>Like, like => like.alcohol, {eager: false})
     like: Like[];
