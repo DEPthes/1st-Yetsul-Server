@@ -7,7 +7,8 @@ export const typeORMConfig : TypeOrmModuleOptions = {
     port: 5432,
     username: process.env.DB_USERNAME, // 'postgres',
     password: process.env.DB_PASSWORD, // 'depth2022',
-    database:  process.env.DB_DATABASE, // 'postgres',
+    // database:  process.env.DB_DATABASE, // 'postgres',
+    database:  'post2', // 'postgres',
     entities: [__dirname + '/../**/*.entity.{js, ts}'], // entities: [__dirname + '/../**/*.entity.{js, ts}', __dirname + '/../**/*.repository.{js, ts}'],
     synchronize: true,
 }
