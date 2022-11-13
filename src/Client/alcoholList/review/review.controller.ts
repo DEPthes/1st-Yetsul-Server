@@ -370,12 +370,12 @@ export class ReviewController {
   @UseGuards(AuthGuard())
   @Post('')
   @ApiOperation({ summary: '리뷰 좋아요 API', description: '리뷰 좋아요' })
-  reviewLike2(@Query('alcoholId') alcoholId, @Query('reviewId') reviewId, @GetUser() user: User) {
+  reviewLike2(@Query('alcoholId') alcoholId, @Query('reviewId') reviewId: string, @GetUser() user: User) {
     alcoholId = parseInt(alcoholId);
-    reviewId = parseInt(reviewId);
+    const reviewId2 = parseInt(reviewId);
 
     const userId = user.id;
 
-    return this.reviewService.reviewLike(alcoholId, reviewId, userId);
+    return this.reviewService.reviewLike(alcoholId, reviewId2, userId);
   }
 }

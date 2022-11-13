@@ -2,7 +2,7 @@ import { Alcohol } from "src/Entity/Alcohol/alcohol.entity";
 import { User } from "src/auth/entities/user.entity";
 import { EntityRepository, Repository } from "typeorm";
 import { CreateReviewDto } from "../DTO/review.dto";
-import { Review, reviewStatus } from "../Entity/Alcohol/review.entity";
+import { Review } from "src/Entity/Alcohol/review.entity";
 
 @EntityRepository(Review)
 export class ReviewRepository extends Repository<Review> {
@@ -108,9 +108,9 @@ export class ReviewRepository extends Repository<Review> {
     }
 
     // 리뷰에 좋아요 누를때마다 좋아요 수 1 증가
-    async likeCount(reviewId: number) {
+    async likeCount(reviewId: number, upDown) {
         const reviewToUpdate = await this.findOne(reviewId);
-        reviewToUpdate.like += 1;
+        reviewToUpdate.like += upDown;
 
         await this.save(reviewToUpdate);
 

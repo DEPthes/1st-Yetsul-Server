@@ -29,7 +29,8 @@ export class ReviewLikeRepository extends Repository<ReviewLike> {
                 userId: user.id,
                 reviewId: review.id
             })
-            return '리뷰 좋아요 취소';
+            // return '리뷰 좋아요 취소';
+            return -1;
         }
 
         return this.save(result);

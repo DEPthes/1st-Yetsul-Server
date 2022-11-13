@@ -374,12 +374,23 @@ export class ReviewService {
 
   // 리뷰 좋아요
   async reviewLike(alcoholId: number, reviewId: number, userId: number) {
-    this.reviewRepository.likeCount(reviewId);
+    // this.reviewRepository.likeCount(reviewId); // 이걸 여기서 하는게 아니라
 
     const user = await this.userRepository.findOne(userId);
 
-    const review = await this.reviewRepository.findOne(reviewId);
+    // const review = await this.reviewRepository.findOne(reviewId);
+    /////
+    const query = this.reviewRepository.createQueryBuilder('review'); // 쿼리 사용
+    query.where('review.id = :reviewId', { reviewId: reviewId });
+    const review = await query.getOne();
 
-    return this.reviewLikeRepository.saveReviewLike(user, review);
+    // return this.reviewLikeRepository.saveReviewLike(user, review); // 여기서 성공시 1 증가시키는걸로 해야겠는데?
+    const result = await this.reviewLikeRepository.saveReviewLike(user, review);
+    if (result == -1) {// 여기서 성공시 1 증가시키는걸로 해야겠는데?
+      this.reviewRepository.likeCount(reviewId, -1);
+    } else {
+      this.reviewRepository.likeCount(reviewId, 1);
+    }
+    return result;
   }
 }
