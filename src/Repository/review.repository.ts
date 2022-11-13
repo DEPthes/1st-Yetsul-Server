@@ -90,7 +90,8 @@ export class ReviewRepository extends Repository<Review> {
                 title: title || originalReview.title, // 이렇게 하는거 아닌거 같은데..
                 content: content || originalReview.content,
                 star: star || originalReview.star,
-                reviewImgUrl: originalReview.reviewImgUrl.concat(reviewImgUrl)
+                // reviewImgUrl: originalReview.reviewImgUrl.concat(reviewImgUrl) // 이어붙이기
+                reviewImgUrl: reviewImgUrl // 아예 파일 새로 저장
             })
         } catch (error) {
             throw error;

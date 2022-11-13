@@ -286,6 +286,7 @@ export class ReviewController {
       location = request.files;
     }
 
+    // const updatedReview = await this.reviewService.updateReview(reviewId, createReviewDto, files, location);
     const updatedReview = await this.reviewService.updateReview(reviewId, createReviewDto, files, location);
 
     response.send(updatedReview);
