@@ -178,7 +178,10 @@ export class ReviewService {
   // 해당 술에 대한 모든 리뷰 조회 (리뷰만)
   async getAllReview(alcohol_id: number) {
     const query = this.reviewRepository.createQueryBuilder('review'); // 쿼리 사용
-    query.where('review.alcoholId = :alcoholId', { alcoholId: alcohol_id });
+    query
+    .where('review.alcoholId = :alcoholId', { alcoholId: alcohol_id })
+    .andWhere('review.reviewStatus = :reviewStatus', { reviewStatus: reviewStatus.SAVED })
+
     const reviews = await query.getMany(); // 전부 가져옴. getOne()은 하나
 
     // No entity column "alcoholId" was found.
@@ -300,7 +303,9 @@ export class ReviewService {
     });
 
     const query = this.reviewRepository.createQueryBuilder('review'); // 쿼리 사용
-    query.where('review.alcoholId = :alcoholId', { alcoholId: alcohol_id });
+    query
+    .where('review.alcoholId = :alcoholId', { alcoholId: alcohol_id })
+    .andWhere('review.reviewStatus = :reviewStatus', { reviewStatus: reviewStatus.SAVED })
     const reviews = await query.getMany(); // 전부 가져옴. getOne()은 하나
 
     const str = JSON.stringify(reviews);
