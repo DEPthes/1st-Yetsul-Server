@@ -7,6 +7,8 @@ import { AlcoholRepository } from 'src/Repository/alcohol.repository';
 import { MovieRepository } from '../../Repository/movie.repository';
 import { QuestionAndSelectionDto } from '../../DTO/questionAndSelection.dto';
 import { SelectionRepository } from 'src/Repository/selection.repository';
+import { S3Repository } from 'src/Repository/s3.repository';
+import { S3 } from 'src/Entity/s3.entity';
 
 @Injectable()
 export class TicketboxService {
@@ -15,10 +17,12 @@ export class TicketboxService {
         @InjectRepository(SelectionRepository)
         @InjectRepository(AlcoholRepository)
         @InjectRepository(MovieRepository)
+        @InjectRepository(S3Repository)
         private questionRepository: QuestionRepository,
         private selectionRepository: SelectionRepository,
         private alcoholRepository: AlcoholRepository,
         private movieRepository: MovieRepository,
+        private s3Repository: S3Repository,
         private alcoholService: AlcoholService
     ) { }
 
@@ -360,5 +364,23 @@ export class TicketboxService {
         }
 
         return await this.movieRepository.find({ where: { id: start } });
+    }
+
+    // 영화 사진 등록
+    async putAlcoholImage(movie_id: number, files: Express.Multer.File[], location) {
+
+
+        const uploadFiles = [];
+        const url = []; // 이미지 url을 배열로, 사진 여러장 담을 수 있도록
+        for (const element in files) { // 파일 개수만큼 반복 돌리면서 url 넣기
+            const file = new S3();
+            file.originalName = files[element].originalname;
+            file.url = location[element].location;
+            url.push(file.url); // url 배열에 넣기
+            uploadFiles.push(file); // S3 레포지토리에 저장 할 파일
+        }
+
+        await this.s3Repository.save(uploadFiles); // 파일 저장
+        await this.movieRepository.putAlcoholImage(movie_id, url); // 알콜 레파지토리에 저장
     }
 }

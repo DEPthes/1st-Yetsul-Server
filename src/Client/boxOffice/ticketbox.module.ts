@@ -10,10 +10,11 @@ import { AlcoholRepository } from 'src/Repository/alcohol.repository';
 import { MovieRepository } from '../../Repository/movie.repository';
 import { AlcoholService } from 'src/admin/alcohol/alcohol.service';
 import { SelectionRepository } from 'src/Repository/selection.repository';
+import { S3Repository } from 'src/Repository/s3.repository';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([QuestionRepository, SelectionRepository, AlcoholRepository, MovieRepository])
+    TypeOrmModule.forFeature([QuestionRepository, SelectionRepository, AlcoholRepository, MovieRepository, S3Repository])
   ],
   controllers: [TicketboxController],
   providers: [TicketboxService, SelectionService, QuestionService, AlcoholService],

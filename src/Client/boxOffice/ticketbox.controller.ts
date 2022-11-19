@@ -1,7 +1,17 @@
-import { Controller, Get, Post, Body } from '@nestjs/common';
+import { Controller, Get, Post, Body, UseInterceptors, Param, UploadedFiles, Req, Res } from '@nestjs/common';
+import { FilesInterceptor } from '@nestjs/platform-express';
 import {ApiBody, ApiCreatedResponse, ApiExcludeEndpoint, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { QuestionAndSelectionDto } from '../../DTO/questionAndSelection.dto';
 import { TicketboxService } from './ticketbox.service';
+import * as multerS3 from 'multer-s3';
+import * as AWS from 'aws-sdk';
+
+const s3 = new AWS.S3();
+AWS.config.update({
+  accessKeyId: process.env.AWS_ACCESS_KEY,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS,
+  region: process.env.AWS_REGION
+});
 
 @ApiTags("매표소")
 @Controller("ticketbox")
@@ -38,6 +48,38 @@ export class TicketboxController {
     @ApiCreatedResponse({ description: '사용자의 선택지 param으로 받고 그에 해당하는 영화 반환' })
     getMovie(@Body('id') id: string): Promise<any> {
         return this.ticketboxService.getResultMovie(id);
+    }
+
+    // 영화 사진 등록
+    @Post('/movie/image/:id')
+    @UseInterceptors(FilesInterceptor("file", 10, {
+        storage: multerS3({
+            s3: s3,
+            bucket: process.env.AWS_S3_BUCKET_NAME,
+            contentType: multerS3.AUTO_CONTENT_TYPE,
+            accessKeyId: process.env.AWS_ACCESS_KEY,
+            acl: 'public-read',
+            key: function (req, file, cb) {
+                cb(null, `${Date.now().toString()}-${file.originalname}`);
+            }
+        }),
+        limits: {} // 이게 아마 제한 거는 거인듯, 예제에선 10장
+    }))
+    async putAlcoholImage(@Param('id') movie_id: number, @UploadedFiles() files: Express.Multer.File[], @Req() request, @Res() response) {
+        let location;
+
+        if (request.files == undefined) {
+            console.log("no image file.");
+            location = null;
+        } else {
+            console.log('image file exist.');
+            location = request.files;
+        }
+
+        const movieImage = await this.ticketboxService.putAlcoholImage(movie_id, files, location);
+
+        response.send(movieImage);
+        return movieImage;
     }
 
     // 전체 id만 나오는 !!
