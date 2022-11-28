@@ -104,10 +104,10 @@ export class ReviewService {
 
       const thisReviewStatus = reviewStatus.TEMPORARY; // 리뷰 status를 temp로 설정
       const result = await this.reviewRepository.createReview(createReviewDto, user, alcohol, url, thisReviewStatus); // 리뷰 레파지토리에 저장
-      
+
       const query = await this.reviewRepository.createQueryBuilder('review'); // 쿼리 사용
       query.where('review.alcoholId = :alcoholId', { alcoholId: alcohol_id });
-      
+
       return result;
     } catch (error) {
       throw new BadRequestException(error.message);
@@ -148,7 +148,7 @@ export class ReviewService {
       // 리뷰 수정
       // 여기다가 새로 업로드한 파일 추가해야 함. createReview 참고
       await this.reviewRepository.updateReview(reviewId, createReviewDto, user, alcohol, url);
-      
+
 
       const query = await this.reviewRepository.createQueryBuilder('review'); // 쿼리 사용
       query.where('review.alcoholId = :alcoholId', { alcoholId: (await review).alcoholId });
@@ -179,8 +179,8 @@ export class ReviewService {
   async getAllReview(alcohol_id: number) {
     const query = this.reviewRepository.createQueryBuilder('review'); // 쿼리 사용
     query
-    .where('review.alcoholId = :alcoholId', { alcoholId: alcohol_id })
-    .andWhere('review.reviewStatus = :reviewStatus', { reviewStatus: reviewStatus.SAVED })
+      .where('review.alcoholId = :alcoholId', { alcoholId: alcohol_id })
+      .andWhere('review.reviewStatus = :reviewStatus', { reviewStatus: reviewStatus.SAVED })
 
     const reviews = await query.getMany(); // 전부 가져옴. getOne()은 하나
 
@@ -232,7 +232,7 @@ export class ReviewService {
     const query = this.reviewRepository.createQueryBuilder('review'); // 쿼리 사용
 
     query.where('review.userId = :userId', { userId: user })
-    .andWhere('review.reviewStatus = :reviewStatus', { reviewStatus: reviewStatus.SAVED });
+      .andWhere('review.reviewStatus = :reviewStatus', { reviewStatus: reviewStatus.SAVED });
 
     const reviews = await query.getMany(); // 전부 가져옴. getOne()은 하나
 
@@ -262,7 +262,7 @@ export class ReviewService {
     const query = this.reviewRepository.createQueryBuilder('review'); // 쿼리 사용
 
     query.where('review.userId = :userId', { userId: user })
-    .andWhere('review.reviewStatus = :reviewStatus', { reviewStatus: reviewStatus.TEMPORARY });
+      .andWhere('review.reviewStatus = :reviewStatus', { reviewStatus: reviewStatus.TEMPORARY });
 
     const reviews = await query.getMany(); // 전부 가져옴. getOne()은 하나
 
@@ -304,8 +304,8 @@ export class ReviewService {
 
     const query = this.reviewRepository.createQueryBuilder('review'); // 쿼리 사용
     query
-    .where('review.alcoholId = :alcoholId', { alcoholId: alcohol_id })
-    .andWhere('review.reviewStatus = :reviewStatus', { reviewStatus: reviewStatus.SAVED })
+      .where('review.alcoholId = :alcoholId', { alcoholId: alcohol_id })
+      .andWhere('review.reviewStatus = :reviewStatus', { reviewStatus: reviewStatus.SAVED })
     const reviews = await query.getMany(); // 전부 가져옴. getOne()은 하나
 
     const str = JSON.stringify(reviews);
@@ -397,5 +397,28 @@ export class ReviewService {
       this.reviewRepository.likeCount(reviewId, 1);
     }
     return result;
+  }
+
+  // 사용자가 리뷰 좋아요 했는지 확인하기 (사용자 정보 아이디로 받음 - 토큰)
+  async likeOrNot(userId: number, reviewId: number) {
+
+    const user = await this.userRepository.findOne({ // 사용자
+      where: {
+        id: userId
+      }
+    });
+
+    const existLike = await this.reviewLikeRepository.findOne({
+      where: {
+        reviewId: reviewId,
+        userId: user.id
+      }
+    });
+
+    if (existLike) {
+      return 'LIKE';
+    } else {
+      return 'NOT';
+    }
   }
 }

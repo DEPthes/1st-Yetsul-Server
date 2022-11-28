@@ -33,6 +33,7 @@ AWS.config.update({
 10. 임시 저장 리뷰 하나 눌렀을 때
 11. 리뷰 하나 삭제
 12. 리뷰 좋아요
+13. 사용자가 리뷰 좋아요 했는지 확인하기
 */
 
 @ApiTags("리뷰 페이지")
@@ -378,5 +379,15 @@ export class ReviewController {
     const userId = user.id;
 
     return this.reviewService.reviewLike(alcoholId, reviewId2, userId);
+  }
+
+  // 13. 사용자가 리뷰 좋아요 했는지 확인하기 (토큰으로)
+  @UseGuards(AuthGuard())
+  @Get('/likeornot/:id') // id는 리뷰 아이디
+  likeOrNot(@GetUser() user: User, @Param('id') reviewId: number) {
+
+      const userId = user.id;
+
+      return this.reviewService.likeOrNot(userId, reviewId);
   }
 }
